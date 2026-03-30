@@ -13,7 +13,7 @@
  * @returns 截断后的字符串
  */
 export function truncate(str: string, maxLength: number, suffix: string = '...'): string {
-  if (str.length <= maxLength) return str;
+  if (str.length <= maxLength) {return str;}
   return str.slice(0, maxLength - suffix.length) + suffix;
 }
 
@@ -23,7 +23,7 @@ export function truncate(str: string, maxLength: number, suffix: string = '...')
  * @returns 首字母大写的字符串
  */
 export function capitalize(str: string): string {
-  if (!str) return '';
+  if (!str) {return '';}
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
@@ -84,7 +84,7 @@ export function interpolate(
   template: string,
   vars?: Record<string, string | number>
 ): string {
-  if (!vars) return template;
+  if (!vars) {return template;}
   return template.replace(/\{(\w+)\}/g, (_, key) =>
     vars[key] !== undefined ? String(vars[key]) : `{${key}}`
   );
@@ -149,7 +149,7 @@ export function removeWhitespace(str: string): string {
  */
 export function truncateByWords(str: string, maxWords: number, suffix: string = '...'): string {
   const words = str.split(/\s+/);
-  if (words.length <= maxWords) return str;
+  if (words.length <= maxWords) {return str;}
   return words.slice(0, maxWords).join(' ') + suffix;
 }
 

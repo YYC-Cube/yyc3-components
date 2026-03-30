@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint src",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
@@ -33,14 +33,14 @@
   ],
   "author": "YanYuCloudCube Team",
   "license": "MIT",
-  "homepage": "https://github.com/YYC-Cube/yyc3-reusable-components#readme",
+  "homepage": "https://github.com/YYC-Cube/yyc3-components#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YYC-Cube/yyc3-reusable-components.git",
+    "url": "https://github.com/YYC-Cube/yyc3-components.git",
     "directory": "packages/devops"
   },
   "bugs": {
-    "url": "https://github.com/YYC-Cube/yyc3-reusable-components/issues"
+    "url": "https://github.com/YYC-Cube/yyc3-components/issues"
   },
   "peerDependencies": {
     "react": "^18.0.0",

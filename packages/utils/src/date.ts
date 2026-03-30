@@ -14,12 +14,12 @@
 export function getGreeting(): { text: string; emoji: string } {
   const h = new Date().getHours();
 
-  if (h < 6) return { text: '夜深了，注意休息', emoji: 'night' };
-  if (h < 9) return { text: '早安，新的一天开始了', emoji: 'dawn' };
-  if (h < 12) return { text: '上午好，精力充沛', emoji: 'morning' };
-  if (h < 14) return { text: '中午好，记得午休', emoji: 'noon' };
-  if (h < 18) return { text: '下午好，继续加油', emoji: 'afternoon' };
-  if (h < 21) return { text: '傍晚好，辛苦了', emoji: 'evening' };
+  if (h < 6) {return { text: '夜深了，注意休息', emoji: 'night' };}
+  if (h < 9) {return { text: '早安，新的一天开始了', emoji: 'dawn' };}
+  if (h < 12) {return { text: '上午好，精力充沛', emoji: 'morning' };}
+  if (h < 14) {return { text: '中午好，记得午休', emoji: 'noon' };}
+  if (h < 18) {return { text: '下午好，继续加油', emoji: 'afternoon' };}
+  if (h < 21) {return { text: '傍晚好，辛苦了', emoji: 'evening' };}
   return { text: '晚上好，放松身心', emoji: 'night' };
 }
 
@@ -79,10 +79,10 @@ export function getRelativeTime(date: Date | number): string {
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
-  if (seconds < 60) return '刚刚';
-  if (minutes < 60) return `${minutes}分钟前`;
-  if (hours < 24) return `${hours}小时前`;
-  if (days < 7) return `${days}天前`;
+  if (seconds < 60) {return '刚刚';}
+  if (minutes < 60) {return `${minutes}分钟前`;}
+  if (hours < 24) {return `${hours}小时前`;}
+  if (days < 7) {return `${days}天前`;}
 
   return formatDate(d, 'YYYY-MM-DD');
 }

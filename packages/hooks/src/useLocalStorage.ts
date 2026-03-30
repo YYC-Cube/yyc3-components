@@ -46,9 +46,11 @@ export function useLocalStorage<T>(
 
   // 更新 localStorage
   const setStoredValue = useCallback(
-    (value: T | ((prev: T) => T)) => {
+    (valueOrFn: T | ((prev: T) => T)) => {
       try {
-        const valueToStore = value instanceof Function ? value(value) : value;
+        const valueToStore = typeof valueOrFn === 'function' 
+          ? (valueOrFn as (prev: T) => T)(value) 
+          : valueOrFn;
         setValue(valueToStore);
         if (typeof window !== "undefined") {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
@@ -57,7 +59,7 @@ export function useLocalStorage<T>(
         console.error(`Error setting localStorage key "${key}":`, error);
       }
     },
-    [key]
+    [key, value]
   );
 
   // 删除键

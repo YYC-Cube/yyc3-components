@@ -47,7 +47,7 @@ function interpolate(template: string, vars?: Record<string, string | number>): 
 // Context
 // ============================================================
 
-interface I18nProviderProps {
+export interface I18nProviderProps {
   children: React.ReactNode;
   defaultLocale?: Locale;
   messages: Record<Locale, I18nMessages>;

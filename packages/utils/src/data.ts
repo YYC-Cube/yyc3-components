@@ -60,9 +60,9 @@ export function getDataSummary<T extends {
  * @returns 克隆后的对象
  */
 export function deepClone<T>(obj: T): T {
-  if (obj === null || typeof obj !== 'object') return obj;
-  if (obj instanceof Date) return new Date(obj.getTime()) as T;
-  if (obj instanceof Array) return obj.map(item => deepClone(item)) as T;
+  if (obj === null || typeof obj !== 'object') {return obj;}
+  if (obj instanceof Date) {return new Date(obj.getTime()) as T;}
+  if (obj instanceof Array) {return obj.map(item => deepClone(item)) as T;}
   if (obj instanceof Object) {
     const clonedObj = {} as T;
     for (const key in obj) {
@@ -82,12 +82,12 @@ export function deepClone<T>(obj: T): T {
  * @returns 去重后的数组
  */
 export function unique<T>(arr: T[], key?: keyof T): T[] {
-  if (!key) return Array.from(new Set(arr));
+  if (!key) {return Array.from(new Set(arr));}
 
   const seen = new Set();
   return arr.filter(item => {
     const k = item[key];
-    if (seen.has(k)) return false;
+    if (seen.has(k)) {return false;}
     seen.add(k);
     return true;
   });
@@ -102,7 +102,7 @@ export function unique<T>(arr: T[], key?: keyof T): T[] {
 export function groupBy<T>(arr: T[], key: keyof T): Record<string, T[]> {
   return arr.reduce((groups, item) => {
     const k = String(item[key]);
-    if (!groups[k]) groups[k] = [];
+    if (!groups[k]) {groups[k] = [];}
     groups[k].push(item);
     return groups;
   }, {} as Record<string, T[]>);

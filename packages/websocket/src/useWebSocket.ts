@@ -205,7 +205,7 @@ export function useWebSocket(
    * 启动降级模式 / Start fallback mode
    */
   const startFallback = useCallback(() => {
-    if (!DEFAULT_FALLBACK.enabled) return;
+    if (!DEFAULT_FALLBACK.enabled) {return;}
     
     setIsFallbackActive(true);
     
