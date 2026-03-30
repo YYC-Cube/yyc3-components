@@ -45,20 +45,24 @@ check_environment() {
     # Node.js 版本
     echo -e "${BLUE}ℹ️ 检查 Node.js 版本...${NC}"
     NODE_VERSION=$(node -v 2>/dev/null || echo "未安装")
-    if [[ $NODE_VERSION == v20* ]]; then
-        echo -e "${GREEN}✅ Node.js $NODE_VERSION (符合要求)${NC}"
+    NODE_MAJOR=$(echo "$NODE_VERSION" | grep -oE '[0-9]+' | head -n 1)
+    
+    if [ "$NODE_MAJOR" -ge 18 ]; then
+        echo -e "${GREEN}✅ Node.js $NODE_VERSION (符合要求 >= 18)${NC}"
     else
-        echo -e "${YELLOW}⚠️ Node.js $NODE_VERSION (推荐 v20.x)${NC}"
-        ((WARNINGS++))
+        echo -e "${RED}❌ Node.js $NODE_VERSION (需要 >= 18)${NC}"
+        ((ERRORS++))
     fi
     
     # pnpm 版本
     echo -e "${BLUE}ℹ️ 检查 pnpm 版本...${NC}"
     PNPM_VERSION=$(pnpm -v 2>/dev/null || echo "未安装")
-    if [[ $PNPM_VERSION == 9* ]]; then
-        echo -e "${GREEN}✅ pnpm v$PNPM_VERSION (符合要求)${NC}"
+    PNPM_MAJOR=$(echo "$PNPM_VERSION" | grep -oE '[0-9]+' | head -n 1)
+    
+    if [ "$PNPM_MAJOR" -ge 8 ]; then
+        echo -e "${GREEN}✅ pnpm v$PNPM_VERSION (符合要求 >= 8)${NC}"
     else
-        echo -e "${YELLOW}⚠️ pnpm v$PNPM_VERSION (推荐 v9.x)${NC}"
+        echo -e "${YELLOW}⚠️ pnpm v$PNPM_VERSION (推荐 >= 8)${NC}"
         ((WARNINGS++))
     fi
     
