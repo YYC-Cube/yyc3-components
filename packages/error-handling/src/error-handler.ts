@@ -273,8 +273,8 @@ export class ErrorHandler {
   /**
    * 获取错误统计
    */
-  getErrorStats(): ErrorStats | Promise<ErrorStats> {
-    const log = this.storage.get();
+  async getErrorStats(): Promise<ErrorStats> {
+    const log = await this.storage.get();
     const byCategory: Record<ErrorCategory, number> = {
       network: 0,
       parse: 0,

@@ -40,6 +40,8 @@ export interface SQLQueryResult {
   rowCount: number;
   executionTime: number;
   error: string | null;
+  affectedRows?: number;
+  warnings?: string[];
 }
 
 export interface SQLHistory {
@@ -50,6 +52,8 @@ export interface SQLHistory {
   executionTime: number;
   rowCount: number;
   success: boolean;
+  affectedRows?: number;
+  warnings?: string[];
 }
 
 export interface DatabaseTable {
@@ -93,6 +97,8 @@ export interface BackupResult {
   size: number;
   duration: number;
   error: string | null;
+  path?: string;
+  createdAt?: string;
 }
 
 export interface RestoreConfig {

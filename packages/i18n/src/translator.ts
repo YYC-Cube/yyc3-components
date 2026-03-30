@@ -21,7 +21,7 @@ import type { I18nMessages } from '@yyc3/types';
  * 通过点分key获取嵌套翻译值
  * e.g. t("nav.dataMonitor") → messages.nav.dataMonitor
  */
-function getNestedValue(obj: Record<string, any>, path: string): string {
+export function getNestedValue(obj: Record<string, any>, path: string): string {
   const keys = path.split('.');
   let result: any = obj;
   for (const k of keys) {
@@ -36,7 +36,7 @@ function getNestedValue(obj: Record<string, any>, path: string): string {
 /**
  * 替换模板变量 e.g. "{n} 分钟前" + { n: 5 } → "5 分钟前"
  */
-function interpolate(template: string, vars?: Record<string, string | number>): string {
+export function interpolate(template: string, vars?: Record<string, string | number>): string {
   if (!vars) return template;
   return template.replace(/\{(\w+)\}/g, (_, key) =>
     vars[key] !== null ? String(vars[key]) : `{${key}}`
@@ -103,7 +103,7 @@ export function createTranslator(
 export function mergeMessages<T extends I18nMessages>(
   ...messages: Partial<T>[]
 ): T {
-  return messages.reduce((acc, msg) => deepMerge(acc, msg), {} as T);
+  return messages.reduce((acc: T, msg: Partial<T>) => deepMerge(acc, msg), {} as T);
 }
 
 /**

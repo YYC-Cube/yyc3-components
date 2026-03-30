@@ -161,7 +161,10 @@ class DatabaseService {
       const map = new Map<string, DatabaseConnection>();
       data.forEach(conn => {
         // 解密密码
-        map.set(conn.id, { ...conn, password: decryptPassword(conn.password) });
+        map.set(conn.id, { 
+          ...conn, 
+          password: conn.password ? decryptPassword(conn.password) : undefined 
+        });
       });
       return map;
     } catch {
@@ -175,7 +178,7 @@ class DatabaseService {
   private saveConnections(): void {
     const connections = Array.from(this.connections.values()).map(conn => ({
       ...conn,
-      password: encryptPassword(conn.password), // 加密密码
+      password: conn.password ? encryptPassword(conn.password) : undefined, // 加密密码
     }));
     localStorage.setItem(STORAGE_KEYS.CONNECTIONS, JSON.stringify(connections));
   }
@@ -351,7 +354,8 @@ class DatabaseService {
       connectionId: input.connectionId,
       sql: input.sql,
       executedAt: new Date().toISOString(),
-      duration: result.executionTime,
+      executionTime: result.executionTime,
+      rowCount: result.rowCount,
       success: result.success,
       affectedRows: result.affectedRows,
     });
@@ -419,7 +423,7 @@ class DatabaseService {
   /**
    * 获取表详情 / Get table details
    */
-  async getTableDetails(connectionId: string, tableName: string): Promise<DatabaseTable> {
+  async getTableDetails(connectionId: string, tableName: string): Promise<DatabaseTable | null> {
     return databaseRepository.getTableDetails(connectionId, tableName);
   }
 
@@ -473,7 +477,7 @@ class DatabaseService {
   /**
    * 获取备份列表 / Get backups
    */
-  async getBackups(connectionId: string): Promise<Array<{ path: string; size: number; createdAt: string }>> {
+  async getBackups(connectionId: string): Promise<BackupResult[]> {
     return databaseRepository.getBackups(connectionId);
   }
 
@@ -491,7 +495,7 @@ class DatabaseService {
   /**
    * 检查数据库服务健康 / Check database service health
    */
-  async checkHealth(): Promise<{ healthy: boolean; message: string }> {
+  async checkHealth(): Promise<boolean> {
     return databaseRepository.checkHealth();
   }
 
@@ -578,7 +582,7 @@ class DatabaseService {
   getDatabaseStats(): DatabaseStats {
     const history = this.getQueryHistory();
     const successCount = history.filter(h => h.success).length;
-    const totalDuration = history.reduce((sum, h) => sum + h.duration, 0);
+    const totalDuration = history.reduce((sum, h) => sum + h.executionTime, 0);
     
     return {
       totalQueries: history.length,

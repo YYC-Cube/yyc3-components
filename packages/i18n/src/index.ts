@@ -4,11 +4,9 @@
  */
 
 export {
-  getNestedValue,
-  interpolate,
   createTranslator,
   mergeMessages,
   validateMessages,
   extractKeys,
-  compareMessages,
+  checkConsistency,
 } from "./translator";
