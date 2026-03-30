@@ -46,12 +46,12 @@ export type {
   LogStreamMessage,
   FallbackStrategyConfig,
   WebSocketManagerState,
-} from "./types";
+} from './types';
 
 // Hooks
-export { useWebSocket } from "./useWebSocket";
-export type { UseWebSocketReturn } from "./useWebSocket";
+export { useWebSocket } from './useWebSocket';
+export type { UseWebSocketReturn } from './useWebSocket';
 
 // Utils
-export { createWebSocketManager } from "./manager";
-export type { WebSocketManager } from "./manager";
+export { createWebSocketManager } from './manager';
+export type { WebSocketManager } from './manager';

@@ -1,12 +1,12 @@
 /**
  * YYC³ AI Family - 协同编辑类型系统
- * 
+ *
  * 覆盖：
  * - CRDT 操作类型（文本操作转换）
  * - 面板布局规范（拖拽合并/拆分）
  * - 用户在线感知（Presence）
  * - WebSocket 协同消息协议
- * 
+ *
  * @file types/collaboration.ts
  */
 
@@ -15,42 +15,42 @@
 // ==========================================
 
 /** 文本操作类型 */
-export type TextOperationType = 'insert' | 'delete' | 'retain'
+export type TextOperationType = 'insert' | 'delete' | 'retain';
 
 /** 单个文本操作 */
 export interface TextOperation {
-  type: TextOperationType
-  position: number
-  content?: string     // insert 时的内容
-  length?: number      // delete / retain 的长度
-  timestamp: number
-  userId: string
-  version: number      // 操作版本号（Lamport 时钟）
+  type: TextOperationType;
+  position: number;
+  content?: string; // insert 时的内容
+  length?: number; // delete / retain 的长度
+  timestamp: number;
+  userId: string;
+  version: number; // 操作版本号（Lamport 时钟）
 }
 
 /** OT 转换后的操作 */
 export interface TransformedOperation extends TextOperation {
-  originalVersion: number
-  transformedAgainst: string[]  // 已转换过的操作 ID 列表
+  originalVersion: number;
+  transformedAgainst: string[]; // 已转换过的操作 ID 列表
 }
 
 /** CRDT 文档状态 */
 export interface CRDTDocumentState {
-  documentId: string
-  content: string
-  version: number
-  lastModified: number
-  contributors: string[]
-  operationLog: TextOperation[]
+  documentId: string;
+  content: string;
+  version: number;
+  lastModified: number;
+  contributors: string[];
+  operationLog: TextOperation[];
 }
 
 /** 协同编辑会话 */
 export interface CollaborationSession {
-  sessionId: string
-  documentId: string
-  participants: CollaborationParticipant[]
-  createdAt: number
-  isActive: boolean
+  sessionId: string;
+  documentId: string;
+  participants: CollaborationParticipant[];
+  createdAt: number;
+  isActive: boolean;
 }
 
 // ==========================================
@@ -59,29 +59,29 @@ export interface CollaborationSession {
 
 /** 协同参与者 */
 export interface CollaborationParticipant {
-  userId: string
-  userName: string
-  avatarColor: string
-  cursor: CursorPosition | null
-  selection: SelectionRange | null
-  isOnline: boolean
-  lastSeen: number
-  role: 'owner' | 'editor' | 'viewer'
+  userId: string;
+  userName: string;
+  avatarColor: string;
+  cursor: CursorPosition | null;
+  selection: SelectionRange | null;
+  isOnline: boolean;
+  lastSeen: number;
+  role: 'owner' | 'editor' | 'viewer';
 }
 
 /** 光标位置 */
 export interface CursorPosition {
-  line: number
-  column: number
-  timestamp: number
+  line: number;
+  column: number;
+  timestamp: number;
 }
 
 /** 选区范围 */
 export interface SelectionRange {
-  startLine: number
-  startColumn: number
-  endLine: number
-  endColumn: number
+  startLine: number;
+  startColumn: number;
+  endLine: number;
+  endColumn: number;
 }
 
 // ==========================================
@@ -89,61 +89,67 @@ export interface SelectionRange {
 // ==========================================
 
 /** 面板类型 */
-export type PanelType = 
+export type PanelType =
   | 'ai-chat'
   | 'file-tree'
   | 'code-editor'
   | 'terminal'
   | 'preview'
-  | 'code-detail'
+  | 'code-detail';
 
 /** 拆分方向 */
-export type SplitDirection = 'horizontal' | 'vertical'
+export type SplitDirection = 'horizontal' | 'vertical';
 
 /** 面板布局节点（树形结构） */
 export interface PanelLayoutNode {
-  id: string
-  type: 'panel' | 'split'
+  id: string;
+  type: 'panel' | 'split';
   /** panel 类型时的面板内容类型 */
-  panelType?: PanelType
+  panelType?: PanelType;
   /** split 类型时的方向 */
-  direction?: SplitDirection
+  direction?: SplitDirection;
   /** split 类型时的子节点 */
-  children?: PanelLayoutNode[]
+  children?: PanelLayoutNode[];
   /** 在父 split ��的比例 (0-100) */
-  ratio?: number
+  ratio?: number;
   /** 最小尺寸 (px) */
-  minSize?: number
+  minSize?: number;
   /** 面板标题 */
-  title?: string
+  title?: string;
   /** 是否可关闭 */
-  closable?: boolean
+  closable?: boolean;
 }
 
 /** 拖拽放置位置 */
-export type DropPosition = 'left' | 'right' | 'top' | 'bottom' | 'center' | 'tab'
+export type DropPosition =
+  | 'left'
+  | 'right'
+  | 'top'
+  | 'bottom'
+  | 'center'
+  | 'tab';
 
 /** 面板拖拽事件 */
 export interface PanelDragItem {
-  type: 'panel'
-  panelId: string
-  panelType: PanelType
-  sourceLayoutId?: string
+  type: 'panel';
+  panelId: string;
+  panelType: PanelType;
+  sourceLayoutId?: string;
 }
 
 /** 面板放置结果 */
 export interface PanelDropResult {
-  targetId: string
-  position: DropPosition
+  targetId: string;
+  position: DropPosition;
 }
 
 /** 面板布局状态 */
 export interface PanelLayoutState {
-  root: PanelLayoutNode
-  activePanel: string | null
-  maximizedPanel: string | null
-  dragOverTarget: string | null
-  dragOverPosition: DropPosition | null
+  root: PanelLayoutNode;
+  activePanel: string | null;
+  maximizedPanel: string | null;
+  dragOverTarget: string | null;
+  dragOverPosition: DropPosition | null;
 }
 
 // ==========================================
@@ -160,71 +166,71 @@ export type CollabMessageType =
   | 'collab:ack'
   | 'collab:conflict'
   | 'collab:sync_request'
-  | 'collab:version_check'
+  | 'collab:version_check';
 
 /** 协同加入消息 */
 export interface CollabJoinMessage {
-  type: 'collab:join'
-  sessionId: string
-  userId: string
-  userName: string
-  documentId: string
+  type: 'collab:join';
+  sessionId: string;
+  userId: string;
+  userName: string;
+  documentId: string;
 }
 
 /** 协同操作消息 */
 export interface CollabOperationMessage {
-  type: 'collab:operation'
-  sessionId: string
-  operation: TextOperation
-  baseVersion: number
+  type: 'collab:operation';
+  sessionId: string;
+  operation: TextOperation;
+  baseVersion: number;
 }
 
 /** 协同 Presence 消息 */
 export interface CollabPresenceMessage {
-  type: 'collab:presence'
-  sessionId: string
-  participant: CollaborationParticipant
+  type: 'collab:presence';
+  sessionId: string;
+  participant: CollaborationParticipant;
 }
 
 /** 协同同步消息 */
 export interface CollabSyncMessage {
-  type: 'collab:sync'
-  sessionId: string
-  document: CRDTDocumentState
-  participants: CollaborationParticipant[]
+  type: 'collab:sync';
+  sessionId: string;
+  document: CRDTDocumentState;
+  participants: CollaborationParticipant[];
 }
 
 /** 协同 ACK 消息 (Step 6c) */
 export interface CollabAckMessage {
-  type: 'collab:ack'
-  sessionId: string
-  operationId: string
-  serverVersion: number
+  type: 'collab:ack';
+  sessionId: string;
+  operationId: string;
+  serverVersion: number;
 }
 
 /** 协同冲突消息 (Step 6c) */
 export interface CollabConflictMessage {
-  type: 'collab:conflict'
-  sessionId: string
-  localOp: TextOperation
-  remoteOp: TextOperation
-  resolvedContent?: string
+  type: 'collab:conflict';
+  sessionId: string;
+  localOp: TextOperation;
+  remoteOp: TextOperation;
+  resolvedContent?: string;
 }
 
 /** 版本检查消息 (Step 6c) */
 export interface CollabVersionCheckMessage {
-  type: 'collab:version_check'
-  documentId: string
-  userId: string
-  localVersion: number
+  type: 'collab:version_check';
+  documentId: string;
+  userId: string;
+  localVersion: number;
 }
 
 /** 全量同步请求消息 (Step 6c) */
 export interface CollabSyncRequestMessage {
-  type: 'collab:sync_request'
-  documentId: string
-  userId: string
-  localVersion: number
+  type: 'collab:sync_request';
+  documentId: string;
+  userId: string;
+  localVersion: number;
 }
 
 /** 所有协同消息联合类型 */
@@ -234,7 +240,7 @@ export type CollabMessage =
   | CollabPresenceMessage
   | CollabSyncMessage
   | CollabAckMessage
-  | CollabConflictMessage
+  | CollabConflictMessage;
 
 // ==========================================
 // 默认面板布局配置
@@ -309,7 +315,7 @@ export const DEFAULT_PANEL_LAYOUT: PanelLayoutNode = {
       ],
     },
   ],
-}
+};
 
 /** Presence 颜色池 */
 export const PRESENCE_COLORS = [
@@ -321,4 +327,4 @@ export const PRESENCE_COLORS = [
   '#fb923c', // orange
   '#2dd4bf', // teal
   '#e879f9', // fuchsia
-]
+];

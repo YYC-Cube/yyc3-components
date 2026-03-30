@@ -45,19 +45,17 @@ function DevOpsDashboard() {
     probeServer,
     probeAllServers,
     disconnectServer,
-    executeTool
+    executeTool,
   } = useDevOps();
 
   return (
     <div>
       <h1>MCP Servers</h1>
-      {servers.map(server => (
+      {servers.map((server) => (
         <div key={server.id}>
           <h2>{server.name}</h2>
           <p>Status: {server.status}</p>
-          <button onClick={() => probeServer(server.id)}>
-            Probe
-          </button>
+          <button onClick={() => probeServer(server.id)}>Probe</button>
           <button onClick={() => disconnectServer(server.id)}>
             Disconnect
           </button>
@@ -79,7 +77,7 @@ function WorkflowManager() {
     createWorkflow,
     updateWorkflow,
     deleteWorkflow,
-    executeWorkflow
+    executeWorkflow,
   } = useDevOps();
 
   const handleCreate = async () => {
@@ -89,20 +87,18 @@ function WorkflowManager() {
       steps: [
         { name: 'Build', command: 'npm run build' },
         { name: 'Test', command: 'npm test' },
-        { name: 'Deploy', command: 'npm run deploy' }
-      ]
+        { name: 'Deploy', command: 'npm run deploy' },
+      ],
     });
   };
 
   return (
     <div>
       <button onClick={handleCreate}>Create Workflow</button>
-      {workflows.map(workflow => (
+      {workflows.map((workflow) => (
         <div key={workflow.id}>
           <h3>{workflow.name}</h3>
-          <button onClick={() => executeWorkflow(workflow.id)}>
-            Execute
-          </button>
+          <button onClick={() => executeWorkflow(workflow.id)}>Execute</button>
         </div>
       ))}
     </div>
@@ -116,17 +112,12 @@ function WorkflowManager() {
 import { useDevOps } from '@yyc3/devops';
 
 function InfrastructureMonitor() {
-  const {
-    services,
-    issues,
-    metrics,
-    runDiagnostics
-  } = useDevOps();
+  const { services, issues, metrics, runDiagnostics } = useDevOps();
 
   return (
     <div>
       <h2>Infrastructure Services</h2>
-      {services.map(service => (
+      {services.map((service) => (
         <div key={service.id}>
           <h3>{service.name}</h3>
           <p>Status: {service.status}</p>
@@ -135,7 +126,7 @@ function InfrastructureMonitor() {
       ))}
 
       <h2>Diagnostic Issues</h2>
-      {issues.map(issue => (
+      {issues.map((issue) => (
         <div key={issue.id}>
           <h3>{issue.title}</h3>
           <p>Severity: {issue.severity}</p>
@@ -155,18 +146,16 @@ function InfrastructureMonitor() {
 import { useDevOps } from '@yyc3/devops';
 
 function OpsLogs() {
-  const {
-    logs,
-    exportLogs,
-    clearLogs
-  } = useDevOps();
+  const { logs, exportLogs, clearLogs } = useDevOps();
 
   return (
     <div>
       <h2>Operations Logs</h2>
-      {logs.map(log => (
+      {logs.map((log) => (
         <div key={log.id}>
-          <p>{log.timestamp} - {log.level}: {log.message}</p>
+          <p>
+            {log.timestamp} - {log.level}: {log.message}
+          </p>
         </div>
       ))}
       <button onClick={exportLogs}>Export Logs</button>
@@ -188,7 +177,11 @@ interface UseDevOpsReturn {
   probeAllServers: () => Promise<number>;
   disconnectServer: (serverId: string) => void;
   toggleAutoConnect: (serverId: string) => void;
-  executeTool: (serverId: string, toolId: string, params?: Record<string, any>) => Promise<MCPToolResult>;
+  executeTool: (
+    serverId: string,
+    toolId: string,
+    params?: Record<string, any>
+  ) => Promise<MCPToolResult>;
   lastToolResult: MCPToolResult | null;
   isToolExecuting: boolean;
 
@@ -197,7 +190,10 @@ interface UseDevOpsReturn {
   createWorkflow: (input: WorkflowCreateInput) => Promise<string>;
   updateWorkflow: (id: string, input: WorkflowUpdateInput) => Promise<boolean>;
   deleteWorkflow: (id: string) => Promise<boolean>;
-  executeWorkflow: (id: string, params?: Record<string, any>) => Promise<WorkflowExecutionResult>;
+  executeWorkflow: (
+    id: string,
+    params?: Record<string, any>
+  ) => Promise<WorkflowExecutionResult>;
 
   // Infrastructure
   services: InfraService[];
@@ -217,15 +213,19 @@ interface UseDevOpsReturn {
 ## 🎨 组件
 
 ### DevOpsHub
+
 DevOps 智能运维中心主组件
 
 ### GitPanel
+
 Git 版本控制面板
 
 ### SystemMonitor
+
 系统监控面板
 
 ### WebSocketStatus
+
 WebSocket 连接状态显示
 
 ## 🎯 最佳实践
@@ -270,6 +270,7 @@ const handleExecute = async () => {
 ## 📚 类型定义
 
 ### MCPServer
+
 ```typescript
 interface MCPServer {
   id: string;
@@ -283,6 +284,7 @@ interface MCPServer {
 ```
 
 ### Workflow
+
 ```typescript
 interface Workflow {
   id: string;
@@ -296,6 +298,7 @@ interface Workflow {
 ```
 
 ### InfraService
+
 ```typescript
 interface InfraService {
   id: string;

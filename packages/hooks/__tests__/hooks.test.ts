@@ -59,9 +59,7 @@ describe('Hooks Utilities', () => {
 
   describe('useMediaQuery', () => {
     it('should detect media query match', () => {
-      const { result } = renderHook(() =>
-        useMediaQuery('(min-width: 768px)')
-      );
+      const { result } = renderHook(() => useMediaQuery('(min-width: 768px)'));
       expect(typeof result.current).toBe('boolean');
     });
   });

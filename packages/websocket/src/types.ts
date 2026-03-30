@@ -31,26 +31,26 @@
 /**
  * WebSocket 连接状态 / WebSocket connection state
  */
-export type WebSocketState = 
-  | 'connecting'    // 连接中 / Connecting
-  | 'connected'     // 已连接 / Connected
-  | 'disconnected'  // 已断开 / Disconnected
-  | 'reconnecting'  // 重连中 / Reconnecting
-  | 'failed';       // 连接失败 / Failed
+export type WebSocketState =
+  | 'connecting' // 连接中 / Connecting
+  | 'connected' // 已连接 / Connected
+  | 'disconnected' // 已断开 / Disconnected
+  | 'reconnecting' // 重连中 / Reconnecting
+  | 'failed'; // 连接失败 / Failed
 
 /**
  * WebSocket 消息类型 / WebSocket message type
  */
 export type WebSocketMessageType =
-  | 'terminal_output'     // 终端输出 / Terminal output
-  | 'docker_log'          // Docker 日志 / Docker log
-  | 'git_operation'       // Git 操作 / Git operation
-  | 'system_diagnostic'   // 系统诊断 / System diagnostic
-  | 'workflow_execution'  // 工作流执行 / Workflow execution
-  | 'heartbeat'           // 心跳 / Heartbeat
-  | 'error'               // 错误 / Error
-  | 'ping'                // Ping
-  | 'pong';               // Pong
+  | 'terminal_output' // 终端输出 / Terminal output
+  | 'docker_log' // Docker 日志 / Docker log
+  | 'git_operation' // Git 操作 / Git operation
+  | 'system_diagnostic' // 系统诊断 / System diagnostic
+  | 'workflow_execution' // 工作流执行 / Workflow execution
+  | 'heartbeat' // 心跳 / Heartbeat
+  | 'error' // 错误 / Error
+  | 'ping' // Ping
+  | 'pong'; // Pong
 
 /**
  * WebSocket 消息 / WebSocket message
@@ -175,7 +175,9 @@ export interface TerminalOutputMessage extends WebSocketMessage<string> {
   terminalId?: string;
 }
 
-export interface DockerLogMessage extends WebSocketMessage<Record<string, unknown>> {
+export interface DockerLogMessage extends WebSocketMessage<
+  Record<string, unknown>
+> {
   type: 'docker_log';
   data: {
     containerId: string;
@@ -186,7 +188,9 @@ export interface DockerLogMessage extends WebSocketMessage<Record<string, unknow
   };
 }
 
-export interface GitOperationMessage extends WebSocketMessage<Record<string, unknown>> {
+export interface GitOperationMessage extends WebSocketMessage<
+  Record<string, unknown>
+> {
   type: 'git_operation';
   data: {
     repository: string;
@@ -197,7 +201,9 @@ export interface GitOperationMessage extends WebSocketMessage<Record<string, unk
   };
 }
 
-export interface SystemDiagnosticMessage extends WebSocketMessage<Record<string, unknown>> {
+export interface SystemDiagnosticMessage extends WebSocketMessage<
+  Record<string, unknown>
+> {
   type: 'system_diagnostic';
   data: {
     cpu: number;
@@ -210,7 +216,9 @@ export interface SystemDiagnosticMessage extends WebSocketMessage<Record<string,
   };
 }
 
-export interface WorkflowExecutionMessage extends WebSocketMessage<Record<string, unknown>> {
+export interface WorkflowExecutionMessage extends WebSocketMessage<
+  Record<string, unknown>
+> {
   type: 'workflow_execution';
   data: {
     workflowId: string;

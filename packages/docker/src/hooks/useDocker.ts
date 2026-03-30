@@ -8,8 +8,8 @@
  * Docker React state bridge, connecting DockerService and UI components
  */
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { dockerService } from "../services/DockerService";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { dockerService } from '../services/DockerService';
 import type {
   DockerContainer,
   DockerImage,
@@ -20,7 +20,7 @@ import type {
   ContainerCreateConfig,
   ContainerOperationResult,
   ContainerOperationType,
-} from "../types/docker";
+} from '../types/docker';
 
 /* ──────────────────── Hook 返回类型 / Hook Return Type ──────────────────── */
 
@@ -34,11 +34,17 @@ export interface UseDockerReturn {
   /** 获取容器 / Get container */
   getContainer: (containerId: string) => DockerContainer | null;
   /** 容器操作 / Container operation */
-  containerOperation: (containerId: string, operation: ContainerOperationType) => Promise<ContainerOperationResult>;
+  containerOperation: (
+    containerId: string,
+    operation: ContainerOperationType
+  ) => Promise<ContainerOperationResult>;
   /** 创建容器 / Create container */
   createContainer: (config: ContainerCreateConfig) => Promise<string | null>;
   /** 获取容器日志 / Get container logs */
-  getContainerLogs: (containerId: string, tail?: number) => Promise<DockerLogEntry[]>;
+  getContainerLogs: (
+    containerId: string,
+    tail?: number
+  ) => Promise<DockerLogEntry[]>;
   /** 是否正在操作 / Is operating */
   isOperating: boolean;
   /** 最后操作结果 / Last operation result */
@@ -100,7 +106,8 @@ export function useDocker(): UseDockerReturn {
   const [volumes, setVolumes] = useState<DockerVolume[]>([]);
   const [metrics, setMetrics] = useState<DockerMetrics | null>(null);
   const [isOperating, setIsOperating] = useState(false);
-  const [lastOperationResult, setLastOperationResult] = useState<ContainerOperationResult | null>(null);
+  const [lastOperationResult, setLastOperationResult] =
+    useState<ContainerOperationResult | null>(null);
   const [isHealthy, setIsHealthy] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -155,7 +162,10 @@ export function useDocker(): UseDockerReturn {
     async (containerId: string, operation: ContainerOperationType) => {
       setIsOperating(true);
       try {
-        const result = await dockerService.containerOperation(containerId, operation);
+        const result = await dockerService.containerOperation(
+          containerId,
+          operation
+        );
         setLastOperationResult(result);
         return result;
       } finally {
@@ -175,9 +185,12 @@ export function useDocker(): UseDockerReturn {
     }
   }, []);
 
-  const getContainerLogs = useCallback(async (containerId: string, tail?: number) => {
-    return dockerService.getContainerLogs(containerId, tail);
-  }, []);
+  const getContainerLogs = useCallback(
+    async (containerId: string, tail?: number) => {
+      return dockerService.getContainerLogs(containerId, tail);
+    },
+    []
+  );
 
   /* ── 镜像管理 / Image Management ── */
 

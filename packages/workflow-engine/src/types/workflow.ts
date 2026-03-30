@@ -1,6 +1,18 @@
-import type { WorkflowDefinition, WorkflowStep, WorkflowStatus, StepStatus, WorkflowInstance } from '../services/workflow-engine';
+import type {
+  WorkflowDefinition,
+  WorkflowStep,
+  WorkflowStatus,
+  StepStatus,
+  WorkflowInstance,
+} from '../services/workflow-engine';
 
-export type { WorkflowStep, WorkflowStatus, StepStatus, WorkflowDefinition, WorkflowInstance };
+export type {
+  WorkflowStep,
+  WorkflowStatus,
+  StepStatus,
+  WorkflowDefinition,
+  WorkflowInstance,
+};
 
 export type Workflow = WorkflowDefinition;
 
@@ -26,9 +38,19 @@ export interface WorkflowVariable {
 export type WorkflowEvent =
   | { type: 'started'; instanceId: string; workflowId: string }
   | { type: 'step_started'; instanceId: string; stepId: string }
-  | { type: 'step_completed'; instanceId: string; stepId: string; result: unknown }
+  | {
+      type: 'step_completed';
+      instanceId: string;
+      stepId: string;
+      result: unknown;
+    }
   | { type: 'step_failed'; instanceId: string; stepId: string; error: string }
-  | { type: 'completed'; instanceId: string; workflowId: string; duration: number }
+  | {
+      type: 'completed';
+      instanceId: string;
+      workflowId: string;
+      duration: number;
+    }
   | { type: 'failed'; instanceId: string; workflowId: string; error: string }
   | { type: 'approval_required'; instanceId: string; stepId: string }
   | { type: 'approved'; instanceId: string; stepId: string }

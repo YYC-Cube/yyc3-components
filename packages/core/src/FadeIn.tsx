@@ -10,15 +10,15 @@
  * - 兼容性强
  */
 
-import React, { useState, useEffect } from "react";
-import type { BaseComponentProps, AnimationOptions } from "@yyc3/types";
+import React, { useState, useEffect } from 'react';
+import type { BaseComponentProps, AnimationOptions } from '@yyc3/types';
 
 export interface FadeInProps extends BaseComponentProps, AnimationOptions {
   children: React.ReactNode;
   /** 延迟时间（秒） */
   delay?: number;
   /** 动画方向 */
-  direction?: "up" | "down" | "left" | "right" | "none";
+  direction?: 'up' | 'down' | 'left' | 'right' | 'none';
   /** 动画时长（秒） */
   duration?: number;
   /** 点击事件 */
@@ -30,8 +30,8 @@ export interface FadeInProps extends BaseComponentProps, AnimationOptions {
 export function FadeIn({
   children,
   delay = 0,
-  className = "",
-  direction = "up",
+  className = '',
+  direction = 'up',
   duration = 0.5,
   onClick,
   style,
@@ -45,11 +45,11 @@ export function FadeIn({
   }, [delay]);
 
   const transforms: Record<string, string> = {
-    up: "translateY(12px)",
-    down: "translateY(-12px)",
-    left: "translateX(12px)",
-    right: "translateX(-12px)",
-    none: "none",
+    up: 'translateY(12px)',
+    down: 'translateY(-12px)',
+    left: 'translateX(12px)',
+    right: 'translateX(-12px)',
+    none: 'none',
   };
 
   return (
@@ -59,7 +59,7 @@ export function FadeIn({
       style={{
         ...style,
         opacity: show ? 1 : 0,
-        transform: show ? "none" : transforms[direction],
+        transform: show ? 'none' : transforms[direction],
         transition: `opacity ${duration}s ease, transform ${duration}s ease`,
       }}
       {...rest}

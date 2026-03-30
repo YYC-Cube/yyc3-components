@@ -1,11 +1,11 @@
 /**
  * CodeDetailPanel - 文件代码编辑区（右栏）
- * 
+ *
  * 职责：
  * - 代码详情面板（语法高亮显示、代码折叠/展开）
  * - 集成终端命令交互区
  * - 多终端标签页管理
- * 
+ *
  * 对应规格：Functional-Spec §智能AI编程模式页面 → 右栏
  */
 
@@ -59,13 +59,48 @@ export interface CodeDetailPanelProps {
 // ==========================================
 
 const INITIAL_TERMINAL_LINES: TerminalLine[] = [
-  { id: 'sys-1', content: '$ YYC³ AI Family - 智能终端 v1.0', type: 'info', timestamp: Date.now() - 10000 },
-  { id: 'sys-2', content: '> 已连接到协同工作区。输入 help 查看可用命令。', type: 'info', timestamp: Date.now() - 9000 },
-  { id: 'cmd-1', content: '$ npm run dev', type: 'input', timestamp: Date.now() - 5000 },
-  { id: 'out-1', content: '  VITE v5.4.1  ready in 342 ms', type: 'output', timestamp: Date.now() - 4000 },
-  { id: 'out-2', content: '  ➜  Local:   http://localhost:5173/', type: 'output', timestamp: Date.now() - 3800 },
-  { id: 'out-3', content: '  ➜  Network: http://192.168.1.100:5173/', type: 'output', timestamp: Date.now() - 3600 },
-  { id: 'out-4', content: '  ➜  press h + enter to show help', type: 'info', timestamp: Date.now() - 3400 },
+  {
+    id: 'sys-1',
+    content: '$ YYC³ AI Family - 智能终端 v1.0',
+    type: 'info',
+    timestamp: Date.now() - 10000,
+  },
+  {
+    id: 'sys-2',
+    content: '> 已连接到协同工作区。输入 help 查看可用命令。',
+    type: 'info',
+    timestamp: Date.now() - 9000,
+  },
+  {
+    id: 'cmd-1',
+    content: '$ npm run dev',
+    type: 'input',
+    timestamp: Date.now() - 5000,
+  },
+  {
+    id: 'out-1',
+    content: '  VITE v5.4.1  ready in 342 ms',
+    type: 'output',
+    timestamp: Date.now() - 4000,
+  },
+  {
+    id: 'out-2',
+    content: '  ➜  Local:   http://localhost:5173/',
+    type: 'output',
+    timestamp: Date.now() - 3800,
+  },
+  {
+    id: 'out-3',
+    content: '  ➜  Network: http://192.168.1.100:5173/',
+    type: 'output',
+    timestamp: Date.now() - 3600,
+  },
+  {
+    id: 'out-4',
+    content: '  ➜  press h + enter to show help',
+    type: 'info',
+    timestamp: Date.now() - 3400,
+  },
 ];
 
 const SAMPLE_CODE = `// YYC³ AI Family - 组件代码详情
@@ -160,12 +195,18 @@ export function CodeDetailPanel({
   const [copied, setCopied] = useState(false);
   const [codeContent] = useState(externalCode || SAMPLE_CODE);
   const [terminalTabs, setTerminalTabs] = useState<TerminalTab[]>([
-    { id: 'tab-1', name: 'Terminal 1', lines: INITIAL_TERMINAL_LINES, isRunning: true },
+    {
+      id: 'tab-1',
+      name: 'Terminal 1',
+      lines: INITIAL_TERMINAL_LINES,
+      isRunning: true,
+    },
   ]);
   const [activeTabId, setActiveTabId] = useState('tab-1');
   const terminalEndRef = useRef<HTMLDivElement>(null);
 
-  const activeTerminal = terminalTabs.find(t => t.id === activeTabId) || terminalTabs[0];
+  const activeTerminal =
+    terminalTabs.find((t) => t.id === activeTabId) || terminalTabs[0];
 
   useEffect(() => {
     terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -178,81 +219,99 @@ export function CodeDetailPanel({
     });
   }, [codeContent]);
 
-  const handleTerminalSubmit = useCallback((e: React.KeyboardEvent) => {
-    if (e.key !== 'Enter' || !terminalInput.trim()) return;
+  const handleTerminalSubmit = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key !== 'Enter' || !terminalInput.trim()) return;
 
-    const input = terminalInput.trim();
-    const newLine: TerminalLine = {
-      id: `cmd-${Date.now()}`,
-      content: `$ ${input}`,
-      type: 'input',
-      timestamp: Date.now(),
-    };
-
-    // Mock responses
-    let response: TerminalLine;
-    if (input === 'help') {
-      response = {
-        id: `out-${Date.now()}`,
-        content: '可用命令: help, clear, status, build, test, deploy, ls, pwd',
-        type: 'info',
+      const input = terminalInput.trim();
+      const newLine: TerminalLine = {
+        id: `cmd-${Date.now()}`,
+        content: `$ ${input}`,
+        type: 'input',
         timestamp: Date.now(),
       };
-    } else if (input === 'clear') {
-      setTerminalTabs(prev => prev.map(t =>
-        t.id === activeTabId ? { ...t, lines: [] } : t
-      ));
+
+      // Mock responses
+      let response: TerminalLine;
+      if (input === 'help') {
+        response = {
+          id: `out-${Date.now()}`,
+          content:
+            '可用命令: help, clear, status, build, test, deploy, ls, pwd',
+          type: 'info',
+          timestamp: Date.now(),
+        };
+      } else if (input === 'clear') {
+        setTerminalTabs((prev) =>
+          prev.map((t) => (t.id === activeTabId ? { ...t, lines: [] } : t))
+        );
+        setTerminalInput('');
+        return;
+      } else if (input === 'status') {
+        response = {
+          id: `out-${Date.now()}`,
+          content:
+            '✅ System: ONLINE | Backend: MOCK | Agents: 7/7 | Uptime: 2h 34m',
+          type: 'output',
+          timestamp: Date.now(),
+        };
+      } else if (input.startsWith('build')) {
+        response = {
+          id: `out-${Date.now()}`,
+          content:
+            '⚡ Building... Done in 1.2s\n   ✓ 47 modules transformed\n   ✓ No errors or warnings',
+          type: 'output',
+          timestamp: Date.now(),
+        };
+      } else {
+        response = {
+          id: `out-${Date.now()}`,
+          content: `Command executed: ${input}`,
+          type: 'output',
+          timestamp: Date.now(),
+        };
+      }
+
+      setTerminalTabs((prev) =>
+        prev.map((t) =>
+          t.id === activeTabId
+            ? { ...t, lines: [...t.lines, newLine, response] }
+            : t
+        )
+      );
       setTerminalInput('');
-      return;
-    } else if (input === 'status') {
-      response = {
-        id: `out-${Date.now()}`,
-        content: '✅ System: ONLINE | Backend: MOCK | Agents: 7/7 | Uptime: 2h 34m',
-        type: 'output',
-        timestamp: Date.now(),
-      };
-    } else if (input.startsWith('build')) {
-      response = {
-        id: `out-${Date.now()}`,
-        content: '⚡ Building... Done in 1.2s\n   ✓ 47 modules transformed\n   ✓ No errors or warnings',
-        type: 'output',
-        timestamp: Date.now(),
-      };
-    } else {
-      response = {
-        id: `out-${Date.now()}`,
-        content: `Command executed: ${input}`,
-        type: 'output',
-        timestamp: Date.now(),
-      };
-    }
-
-    setTerminalTabs(prev => prev.map(t =>
-      t.id === activeTabId
-        ? { ...t, lines: [...t.lines, newLine, response] }
-        : t
-    ));
-    setTerminalInput('');
-  }, [terminalInput, activeTabId]);
+    },
+    [terminalInput, activeTabId]
+  );
 
   const handleAddTab = useCallback(() => {
     const newTab: TerminalTab = {
       id: `tab-${Date.now()}`,
       name: `Terminal ${terminalTabs.length + 1}`,
-      lines: [{ id: `sys-new-${Date.now()}`, content: '$ 新终端会话已创建', type: 'info', timestamp: Date.now() }],
+      lines: [
+        {
+          id: `sys-new-${Date.now()}`,
+          content: '$ 新终端会话已创建',
+          type: 'info',
+          timestamp: Date.now(),
+        },
+      ],
       isRunning: false,
     };
-    setTerminalTabs(prev => [...prev, newTab]);
+    setTerminalTabs((prev) => [...prev, newTab]);
     setActiveTabId(newTab.id);
   }, [terminalTabs.length]);
 
-  const handleCloseTab = useCallback((tabId: string) => {
-    if (terminalTabs.length <= 1) return;
-    setTerminalTabs(prev => prev.filter(t => t.id !== tabId));
-    if (activeTabId === tabId) {
-      setActiveTabId(terminalTabs[0].id);
-    }
-  }, [terminalTabs, activeTabId]);
+  const handleCloseTab = useCallback(
+    (tabId: string) => {
+      if (terminalTabs.length <= 1) return;
+      setTerminalTabs((prev) => prev.filter((t) => t.id !== tabId));
+      if (activeTabId === tabId) {
+        setActiveTabId(terminalTabs[0].id);
+      }
+    },
+    [terminalTabs, activeTabId]
+  );
 
   // Syntax highlight helper (simplified)
   const renderCodeLine = (line: string, lineNum: number) => {
@@ -279,12 +338,12 @@ export function CodeDetailPanel({
     );
 
     return (
-      <div key={lineNum} className="flex hover:bg-white/[0.02] group">
-        <span className="flex-none w-10 text-right pr-3 text-[10px] text-slate-700 font-mono select-none leading-[1.6]">
+      <div key={lineNum} className="group flex hover:bg-white/[0.02]">
+        <span className="w-10 flex-none select-none pr-3 text-right font-mono text-[10px] leading-[1.6] text-slate-700">
           {lineNum}
         </span>
         <code
-          className="flex-1 text-[11px] font-mono text-slate-300 leading-[1.6] whitespace-pre"
+          className="flex-1 whitespace-pre font-mono text-[11px] leading-[1.6] text-slate-300"
           dangerouslySetInnerHTML={{ __html: highlighted || '&nbsp;' }}
         />
       </div>
@@ -292,32 +351,32 @@ export function CodeDetailPanel({
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-950/40">
+    <div className="flex h-full flex-col bg-slate-950/40">
       {/* View Toggle Header */}
-      <div className="flex-none flex items-center justify-between px-2 py-1.5 border-b border-white/[0.06]">
+      <div className="flex flex-none items-center justify-between border-b border-white/[0.06] px-2 py-1.5">
         <div className="flex items-center gap-1">
           <button
             onClick={() => setActiveView('code')}
             className={cn(
-              "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono transition-all",
+              'flex items-center gap-1.5 rounded-md px-2.5 py-1 font-mono text-[10px] transition-all',
               activeView === 'code'
-                ? "bg-blue-500/10 text-blue-400"
-                : "text-slate-500 hover:text-slate-300"
+                ? 'bg-blue-500/10 text-blue-400'
+                : 'text-slate-500 hover:text-slate-300'
             )}
           >
-            <Code2 className="w-3 h-3" />
+            <Code2 className="h-3 w-3" />
             代码详情
           </button>
           <button
             onClick={() => setActiveView('terminal')}
             className={cn(
-              "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono transition-all",
+              'flex items-center gap-1.5 rounded-md px-2.5 py-1 font-mono text-[10px] transition-all',
               activeView === 'terminal'
-                ? "bg-green-500/10 text-green-400"
-                : "text-slate-500 hover:text-slate-300"
+                ? 'bg-green-500/10 text-green-400'
+                : 'text-slate-500 hover:text-slate-300'
             )}
           >
-            <Terminal className="w-3 h-3" />
+            <Terminal className="h-3 w-3" />
             终端
           </button>
         </div>
@@ -326,89 +385,104 @@ export function CodeDetailPanel({
           {activeView === 'code' && (
             <button
               onClick={handleCopyCode}
-              className="flex items-center gap-1 p-1 rounded hover:bg-white/5 text-slate-500 hover:text-slate-300 transition-colors"
+              className="flex items-center gap-1 rounded p-1 text-slate-500 transition-colors hover:bg-white/5 hover:text-slate-300"
               title="复制代码"
             >
-              {copied
-                ? <Check className="w-3 h-3 text-emerald-400" />
-                : <Copy className="w-3 h-3" />
-              }
+              {copied ? (
+                <Check className="h-3 w-3 text-emerald-400" />
+              ) : (
+                <Copy className="h-3 w-3" />
+              )}
             </button>
           )}
-          <button className="p-1 rounded hover:bg-white/5 text-slate-500 hover:text-slate-300 transition-colors" title="格式化">
-            <AlignLeft className="w-3 h-3" />
+          <button
+            className="rounded p-1 text-slate-500 transition-colors hover:bg-white/5 hover:text-slate-300"
+            title="格式化"
+          >
+            <AlignLeft className="h-3 w-3" />
           </button>
         </div>
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-hidden flex flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
         {activeView === 'code' ? (
           /* Code Detail View */
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex flex-1 flex-col overflow-hidden">
             {/* File info bar */}
-            <div className="flex-none flex items-center gap-2 px-3 py-1 bg-black/20 border-b border-white/[0.04]">
-              <FileCode className="w-3 h-3 text-blue-400" />
-              <span className="text-[10px] font-mono text-slate-400">{fileName}</span>
-              <span className="text-[9px] text-slate-600 font-mono">{language}</span>
-              <span className="ml-auto text-[9px] text-slate-600 font-mono">{codeContent.split('\n').length} lines</span>
+            <div className="flex flex-none items-center gap-2 border-b border-white/[0.04] bg-black/20 px-3 py-1">
+              <FileCode className="h-3 w-3 text-blue-400" />
+              <span className="font-mono text-[10px] text-slate-400">
+                {fileName}
+              </span>
+              <span className="font-mono text-[9px] text-slate-600">
+                {language}
+              </span>
+              <span className="ml-auto font-mono text-[9px] text-slate-600">
+                {codeContent.split('\n').length} lines
+              </span>
             </div>
 
             {/* Code content with syntax highlighting */}
             <div className="flex-1 overflow-auto py-1">
-              {codeContent.split('\n').map((line, idx) => renderCodeLine(line, idx + 1))}
+              {codeContent
+                .split('\n')
+                .map((line, idx) => renderCodeLine(line, idx + 1))}
             </div>
           </div>
         ) : (
           /* Terminal View */
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex flex-1 flex-col overflow-hidden">
             {/* Terminal Tabs */}
-            <div className="flex-none flex items-center gap-0.5 px-1 py-1 bg-black/30 border-b border-white/[0.04]">
-              {terminalTabs.map(tab => (
+            <div className="flex flex-none items-center gap-0.5 border-b border-white/[0.04] bg-black/30 px-1 py-1">
+              {terminalTabs.map((tab) => (
                 <div
                   key={tab.id}
                   className={cn(
-                    "flex items-center gap-1.5 px-2.5 py-1 rounded-t-md text-[10px] font-mono cursor-pointer transition-all",
+                    'flex cursor-pointer items-center gap-1.5 rounded-t-md px-2.5 py-1 font-mono text-[10px] transition-all',
                     tab.id === activeTabId
-                      ? "bg-slate-900/80 text-slate-300 border-t border-x border-white/[0.06]"
-                      : "text-slate-600 hover:text-slate-400"
+                      ? 'border-x border-t border-white/[0.06] bg-slate-900/80 text-slate-300'
+                      : 'text-slate-600 hover:text-slate-400'
                   )}
                   onClick={() => setActiveTabId(tab.id)}
                 >
-                  <Terminal className="w-2.5 h-2.5" />
+                  <Terminal className="h-2.5 w-2.5" />
                   <span>{tab.name}</span>
                   {tab.isRunning && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
                   )}
                   {terminalTabs.length > 1 && (
                     <button
-                      onClick={(e) => { e.stopPropagation(); handleCloseTab(tab.id); }}
-                      className="ml-1 hover:text-red-400 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCloseTab(tab.id);
+                      }}
+                      className="ml-1 transition-colors hover:text-red-400"
                     >
-                      <X className="w-2.5 h-2.5" />
+                      <X className="h-2.5 w-2.5" />
                     </button>
                   )}
                 </div>
               ))}
               <button
                 onClick={handleAddTab}
-                className="p-1 rounded hover:bg-white/5 text-slate-600 hover:text-slate-300 transition-colors"
+                className="rounded p-1 text-slate-600 transition-colors hover:bg-white/5 hover:text-slate-300"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="h-3 w-3" />
               </button>
             </div>
 
             {/* Terminal Output */}
-            <div className="flex-1 overflow-y-auto p-2 bg-black/40 font-mono text-[11px] leading-relaxed">
-              {activeTerminal.lines.map(line => (
+            <div className="flex-1 overflow-y-auto bg-black/40 p-2 font-mono text-[11px] leading-relaxed">
+              {activeTerminal.lines.map((line) => (
                 <div
                   key={line.id}
                   className={cn(
-                    "whitespace-pre-wrap break-all",
-                    line.type === 'input' && "text-slate-200",
-                    line.type === 'output' && "text-emerald-400/80",
-                    line.type === 'error' && "text-red-400",
-                    line.type === 'info' && "text-slate-500",
+                    'whitespace-pre-wrap break-all',
+                    line.type === 'input' && 'text-slate-200',
+                    line.type === 'output' && 'text-emerald-400/80',
+                    line.type === 'error' && 'text-red-400',
+                    line.type === 'info' && 'text-slate-500'
                   )}
                 >
                   {line.content}
@@ -418,17 +492,17 @@ export function CodeDetailPanel({
             </div>
 
             {/* Terminal Input */}
-            <div className="flex-none flex items-center gap-2 px-2 py-1.5 bg-black/60 border-t border-white/[0.04]">
-              <ChevronRight className="w-3 h-3 text-emerald-400 flex-none" />
+            <div className="flex flex-none items-center gap-2 border-t border-white/[0.04] bg-black/60 px-2 py-1.5">
+              <ChevronRight className="h-3 w-3 flex-none text-emerald-400" />
               <input
                 value={terminalInput}
                 onChange={(e) => setTerminalInput(e.target.value)}
                 onKeyDown={handleTerminalSubmit}
                 placeholder="输入命令..."
-                className="flex-1 bg-transparent text-[11px] text-slate-200 font-mono placeholder-slate-700 focus:outline-none"
+                className="flex-1 bg-transparent font-mono text-[11px] text-slate-200 placeholder-slate-700 focus:outline-none"
               />
-              <div className="flex-none flex items-center gap-1 text-[9px] text-slate-700 font-mono">
-                <CornerDownLeft className="w-3 h-3" />
+              <div className="flex flex-none items-center gap-1 font-mono text-[9px] text-slate-700">
+                <CornerDownLeft className="h-3 w-3" />
                 Enter
               </div>
             </div>
@@ -437,12 +511,17 @@ export function CodeDetailPanel({
       </div>
 
       {/* Bottom Status */}
-      <div className="flex-none flex items-center justify-between px-3 py-1 border-t border-white/[0.06] bg-black/20 text-[9px] font-mono text-slate-600">
+      <div className="flex flex-none items-center justify-between border-t border-white/[0.06] bg-black/20 px-3 py-1 font-mono text-[9px] text-slate-600">
         <div className="flex items-center gap-2">
           {activeView === 'terminal' ? (
             <>
               <span className="flex items-center gap-1">
-                <div className={cn("w-1.5 h-1.5 rounded-full", activeTerminal.isRunning ? "bg-emerald-500" : "bg-slate-600")} />
+                <div
+                  className={cn(
+                    'h-1.5 w-1.5 rounded-full',
+                    activeTerminal.isRunning ? 'bg-emerald-500' : 'bg-slate-600'
+                  )}
+                />
                 {activeTerminal.isRunning ? 'Running' : 'Idle'}
               </span>
               <span>{activeTerminal.lines.length} lines</span>

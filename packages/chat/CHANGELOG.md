@@ -7,6 +7,7 @@
 ## [1.0.0] - 2026-03-26
 
 ### 新增 / Added
+
 - ✅ `useChatPersistence` Hook - 聊天数据持久化
 - ✅ `useChannelManager` Hook - 频道管理
 - ✅ `TypingIndicator` 组件 - 打字指示器
@@ -19,6 +20,7 @@
 - ✅ 收藏保护（星标聊天不会被清理）
 
 ### 类型 / Types
+
 - ✅ `Message` - 消息接口（支持流式状态）
 - ✅ `Chat` - 聊天会话接口（包含消息列表和元数据）
 - ✅ `Channel` - 频道接口（支持加密和预设）
@@ -26,6 +28,7 @@
 - ✅ `UseChannelManagerReturn` - 频道管理 Hook 返回类型
 
 ### 文档 / Documentation
+
 - ✅ 完整的 README.md（中英文）
 - ✅ 代码标头规范（YYC3 标准）
 - ✅ 使用示例和最佳实践
@@ -35,6 +38,7 @@
 ## [Unreleased]
 
 ### 计划中 / Planned
+
 - [ ] 支持消息编辑和删除
 - [ ] 支持消息搜索和过滤
 - [ ] 支持消息标签和分类
@@ -56,8 +60,8 @@
 
 <div align="center">
 
-> 「***YanYuCloudCube***」
-> 「***Words Initiate Quadrants, Language Serves as Core for Future***」
-> 「***All things converge in cloud pivot; Deep stacks ignite a new era of intelligence***」
+> 「**_YanYuCloudCube_**」
+> 「**_Words Initiate Quadrants, Language Serves as Core for Future_**」
+> 「**_All things converge in cloud pivot; Deep stacks ignite a new era of intelligence_**」
 
 </div>

@@ -36,7 +36,10 @@ export function getNestedValue(obj: Record<string, any>, path: string): string {
 /**
  * 替换模板变量 e.g. "{n} 分钟前" + { n: 5 } → "5 分钟前"
  */
-export function interpolate(template: string, vars?: Record<string, string | number>): string {
+export function interpolate(
+  template: string,
+  vars?: Record<string, string | number>
+): string {
   if (!vars) return template;
   return template.replace(/\{(\w+)\}/g, (_, key) =>
     vars[key] !== null ? String(vars[key]) : `{${key}}`
@@ -46,10 +49,7 @@ export function interpolate(template: string, vars?: Record<string, string | num
 /**
  * 深度合并对象
  */
-function deepMerge<T extends I18nMessages>(
-  target: T,
-  source: Partial<T>
-): T {
+function deepMerge<T extends I18nMessages>(target: T, source: Partial<T>): T {
   const output = { ...target } as any;
 
   for (const key in source) {
@@ -57,13 +57,10 @@ function deepMerge<T extends I18nMessages>(
       if (
         typeof source[key] === 'object' &&
         !Array.isArray(source[key]) &&
-        typeof (target[key as any]) === 'object' &&
+        typeof target[key as any] === 'object' &&
         !Array.isArray(target[key as any])
       ) {
-        output[key] = deepMerge(
-          target[key] as any,
-          source[key] as any
-        ) as any;
+        output[key] = deepMerge(target[key] as any, source[key] as any) as any;
       } else {
         output[key] = source[key] as any;
       }
@@ -103,7 +100,10 @@ export function createTranslator(
 export function mergeMessages<T extends I18nMessages>(
   ...messages: Partial<T>[]
 ): T {
-  return messages.reduce((acc: T, msg: Partial<T>) => deepMerge(acc, msg), {} as T);
+  return messages.reduce(
+    (acc: T, msg: Partial<T>) => deepMerge(acc, msg),
+    {} as T
+  );
 }
 
 /**
@@ -117,7 +117,11 @@ export function validateMessages(messages: I18nMessages): string[] {
       const fullPath = path ? `${path}.${key}` : key;
       const value = obj[key];
 
-      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         traverse(value, fullPath);
       } else if (typeof value !== 'string') {
         errors.push(`[${fullPath}] Translation must be a string`);
@@ -142,7 +146,11 @@ export function extractKeys(messages: I18nMessages): string[] {
       const fullPath = path ? `${path}.${key}` : key;
       const value = obj[key];
 
-      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         traverse(value, fullPath);
       } else if (typeof value === 'string') {
         keys.push(fullPath);

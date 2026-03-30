@@ -31,19 +31,19 @@ interface ButtonProps {
   children: React.ReactNode;
 }
 
-export function Button(props: ButtonProps): JSX.Element
+export function Button(props: ButtonProps): JSX.Element;
 ```
 
 **Props**:
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| variant | `'primary' \| 'secondary' \| 'ghost'` | `'primary'` | 按钮变体 |
-| size | `'sm' \| 'md' \| 'lg'` | `'md'` | 按钮大小 |
-| disabled | `boolean` | `false` | 是否禁用 |
-| loading | `boolean` | `false` | 是否显示加载状态 |
-| onClick | `() => void` | - | 点击事件 |
-| children | `React.ReactNode` | - | 按钮内容 |
+| 属性     | 类型                                  | 默认值      | 说明             |
+| -------- | ------------------------------------- | ----------- | ---------------- |
+| variant  | `'primary' \| 'secondary' \| 'ghost'` | `'primary'` | 按钮变体         |
+| size     | `'sm' \| 'md' \| 'lg'`                | `'md'`      | 按钮大小         |
+| disabled | `boolean`                             | `false`     | 是否禁用         |
+| loading  | `boolean`                             | `false`     | 是否显示加载状态 |
+| onClick  | `() => void`                          | -           | 点击事件         |
+| children | `React.ReactNode`                     | -           | 按钮内容         |
 
 **示例**:
 
@@ -66,16 +66,16 @@ interface CardProps {
   children: React.ReactNode;
 }
 
-export function Card(props: CardProps): JSX.Element
+export function Card(props: CardProps): JSX.Element;
 ```
 
 **Props**:
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| className | `string` | - | 自定义类名 |
-| style | `React.CSSProperties` | - | 自定义样式 |
-| children | `React.ReactNode` | - | 卡片内容 |
+| 属性      | 类型                  | 默认值 | 说明       |
+| --------- | --------------------- | ------ | ---------- |
+| className | `string`              | -      | 自定义类名 |
+| style     | `React.CSSProperties` | -      | 自定义样式 |
+| children  | `React.ReactNode`     | -      | 卡片内容   |
 
 **示例**:
 
@@ -95,12 +95,13 @@ export function Card(props: CardProps): JSX.Element
 #### truncate
 
 ```ts
-function truncate(str: string, length: number): string
+function truncate(str: string, length: number): string;
 ```
 
 截断字符串到指定长度。
 
 **参数**:
+
 - `str`: 要截断的字符串
 - `length`: 最大长度
 
@@ -117,12 +118,13 @@ truncate('Hello World', 5); // "Hello..."
 #### capitalize
 
 ```ts
-function capitalize(str: string): string
+function capitalize(str: string): string;
 ```
 
 首字母大写。
 
 **参数**:
+
 - `str`: 要处理的字符串
 
 **返回**: 首字母大写的字符串
@@ -138,7 +140,7 @@ capitalize('hello'); // "Hello"
 #### uuid
 
 ```ts
-function uuid(): string
+function uuid(): string;
 ```
 
 生成UUID v4。
@@ -158,15 +160,17 @@ const id = uuid(); // "550e8400-e29b-41d4-a716-446655440000"
 #### deepClone
 
 ```ts
-function deepClone<T>(obj: T): T
+function deepClone<T>(obj: T): T;
 ```
 
 深度克隆对象。
 
 **类型参数**:
+
 - `T`: 对象类型
 
 **参数**:
+
 - `obj`: 要克隆的对象
 
 **返回**: 克隆后的对象
@@ -184,15 +188,17 @@ cloned.b.c = 3; // original.b.c 仍然是 2
 #### unique
 
 ```ts
-function unique<T>(arr: T[]): T[]
+function unique<T>(arr: T[]): T[];
 ```
 
 数组去重。
 
 **类型参数**:
+
 - `T`: 数组元素类型
 
 **参数**:
+
 - `arr`: 要去重的数组
 
 **返回**: 去重后的数组
@@ -210,12 +216,13 @@ unique([1, 2, 2, 3, 3, 3]); // [1, 2, 3]
 #### formatDate
 
 ```ts
-function formatDate(date: Date, locale?: string): string
+function formatDate(date: Date, locale?: string): string;
 ```
 
 格式化日期。
 
 **参数**:
+
 - `date`: 要格式化的日期
 - `locale`: 区域设置（默认: 'en-US'）
 
@@ -232,12 +239,13 @@ formatDate(new Date(), 'zh-CN'); // "2024年3月26日"
 #### getRelativeTime
 
 ```ts
-function getRelativeTime(date: Date): string
+function getRelativeTime(date: Date): string;
 ```
 
 获取相对时间。
 
 **参数**:
+
 - `date`: 要比较的日期
 
 **返回**: 相对时间字符串（如 "just now", "1 hour ago"）
@@ -255,12 +263,13 @@ getRelativeTime(new Date()); // "just now"
 #### hexToRgb
 
 ```ts
-function hexToRgb(hex: string): { r: number; g: number; b: number }
+function hexToRgb(hex: string): { r: number; g: number; b: number };
 ```
 
 十六进制颜色转RGB。
 
 **参数**:
+
 - `hex`: 十六进制颜色值（如 #ffffff）
 
 **返回**: RGB颜色对象
@@ -276,12 +285,13 @@ hexToRgb('#ffffff'); // { r: 255, g: 255, b: 255 }
 #### isDarkColor
 
 ```ts
-function isDarkColor(hex: string): boolean
+function isDarkColor(hex: string): boolean;
 ```
 
 检测颜色是否为深色。
 
 **参数**:
+
 - `hex`: 十六进制颜色值
 
 **返回**: 是否为深色
@@ -308,16 +318,16 @@ interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
 
-export function ErrorBoundary(props: ErrorBoundaryProps): JSX.Element
+export function ErrorBoundary(props: ErrorBoundaryProps): JSX.Element;
 ```
 
 **Props**:
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| fallback | `React.ReactNode` | - | 错误发生时显示的内容 |
-| onError | `(error: Error, errorInfo: React.ErrorInfo) => void` | - | 错误回调 |
-| children | `React.ReactNode` | - | 子组件 |
+| 属性     | 类型                                                 | 默认值 | 说明                 |
+| -------- | ---------------------------------------------------- | ------ | -------------------- |
+| fallback | `React.ReactNode`                                    | -      | 错误发生时显示的内容 |
+| onError  | `(error: Error, errorInfo: React.ErrorInfo) => void` | -      | 错误回调             |
+| children | `React.ReactNode`                                    | -      | 子组件               |
 
 **示例**:
 
@@ -340,16 +350,16 @@ interface GlassCardProps {
   children: React.ReactNode;
 }
 
-export function GlassCard(props: GlassCardProps): JSX.Element
+export function GlassCard(props: GlassCardProps): JSX.Element;
 ```
 
 **Props**:
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| className | `string` | - | 自定义类名 |
-| style | `React.CSSProperties` | - | 自定义样式 |
-| children | `React.ReactNode` | - | 卡片内容 |
+| 属性      | 类型                  | 默认值 | 说明       |
+| --------- | --------------------- | ------ | ---------- |
+| className | `string`              | -      | 自定义类名 |
+| style     | `React.CSSProperties` | -      | 自定义样式 |
+| children  | `React.ReactNode`     | -      | 卡片内容   |
 
 **示例**:
 
@@ -375,18 +385,18 @@ interface FadeInProps {
   style?: React.CSSProperties;
 }
 
-export function FadeIn(props: FadeInProps): JSX.Element
+export function FadeIn(props: FadeInProps): JSX.Element;
 ```
 
 **Props**:
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| children | `React.ReactNode` | - | 要动画的子元素 |
-| duration | `number` | `500` | 动画持续时间（毫秒） |
-| delay | `number` | `0` | 动画延迟（毫秒） |
-| className | `string` | - | 自定义类名 |
-| style | `React.CSSProperties` | - | 自定义样式 |
+| 属性      | 类型                  | 默认值 | 说明                 |
+| --------- | --------------------- | ------ | -------------------- |
+| children  | `React.ReactNode`     | -      | 要动画的子元素       |
+| duration  | `number`              | `500`  | 动画持续时间（毫秒） |
+| delay     | `number`              | `0`    | 动画延迟（毫秒）     |
+| className | `string`              | -      | 自定义类名           |
+| style     | `React.CSSProperties` | -      | 自定义样式           |
 
 **示例**:
 
@@ -403,12 +413,13 @@ export function FadeIn(props: FadeInProps): JSX.Element
 ### useToggle
 
 ```ts
-function useToggle(initial: boolean): [boolean, () => void]
+function useToggle(initial: boolean): [boolean, () => void];
 ```
 
 布尔值切换Hook。
 
 **参数**:
+
 - `initial`: 初始值
 
 **返回**: `[state, toggle]` - 当前状态和切换函数
@@ -425,15 +436,20 @@ const [isOpen, toggleOpen] = useToggle(false);
 ### useLocalStorage
 
 ```ts
-function useLocalStorage<T>(key: string, initial: T): [T, (value: T | ((prev: T) => T)) => void]
+function useLocalStorage<T>(
+  key: string,
+  initial: T
+): [T, (value: T | ((prev: T) => T)) => void];
 ```
 
 本地存储Hook。
 
 **类型参数**:
+
 - `T`: 存储值的类型
 
 **参数**:
+
 - `key`: localStorage键名
 - `initial`: 初始值
 
@@ -451,15 +467,17 @@ setCount(count + 1);
 ### useDebounce
 
 ```ts
-function useDebounce<T>(value: T, delay: number): T
+function useDebounce<T>(value: T, delay: number): T;
 ```
 
 防抖Hook。
 
 **类型参数**:
+
 - `T`: 值类型
 
 **参数**:
+
 - `value`: 要防抖的值
 - `delay`: 延迟时间（毫秒）
 
@@ -477,7 +495,7 @@ const debouncedInput = useDebounce(input, 500);
 ### useWindowSize
 
 ```ts
-function useWindowSize(): { width: number; height: number }
+function useWindowSize(): { width: number; height: number };
 ```
 
 窗口尺寸Hook。
@@ -498,12 +516,13 @@ console.log(`窗口: ${width} x ${height}`);
 ### getErrorHandler
 
 ```ts
-function getErrorHandler(config?: ErrorHandlerConfig): ErrorHandler
+function getErrorHandler(config?: ErrorHandlerConfig): ErrorHandler;
 ```
 
 获取错误处理器实例。
 
 **参数**:
+
 - `config`: 配置对象
 
 **返回**: ErrorHandler实例
@@ -513,12 +532,13 @@ function getErrorHandler(config?: ErrorHandlerConfig): ErrorHandler
 ### captureError
 
 ```ts
-function captureError(error: Error, context?: string): void
+function captureError(error: Error, context?: string): void;
 ```
 
 捕获错误。
 
 **参数**:
+
 - `error`: 错误对象
 - `context`: 错误上下文
 
@@ -527,12 +547,16 @@ function captureError(error: Error, context?: string): void
 ### trySafe
 
 ```ts
-async function trySafe<T>(fn: () => Promise<T>, context?: string): Promise<[T | null, Error | null]>
+async function trySafe<T>(
+  fn: () => Promise<T>,
+  context?: string
+): Promise<[T | null, Error | null]>;
 ```
 
 安全异步执行包装器。
 
 **参数**:
+
 - `fn`: 要执行的异步函数
 - `context`: 上下文标识
 
@@ -558,12 +582,15 @@ if (error) {
 ### createTranslator
 
 ```ts
-function createTranslator(messages: Record<string, string>): (key: string, params?: Record<string, any>) => string
+function createTranslator(
+  messages: Record<string, string>
+): (key: string, params?: Record<string, any>) => string;
 ```
 
 创建翻译器函数。
 
 **参数**:
+
 - `messages`: 翻译消息对象
 
 **返回**: 翻译函数
@@ -585,12 +612,15 @@ console.log(t('greeting', { name: '张三' })); // "你好, 张三!"
 ### mergeMessages
 
 ```ts
-function mergeMessages(...messages: Record<string, string>[]): Record<string, string>
+function mergeMessages(
+  ...messages: Record<string, string>[]
+): Record<string, string>;
 ```
 
 合并翻译消息。
 
 **参数**:
+
 - `messages`: 多个消息对象
 
 **返回**: 合并后的消息对象
@@ -600,12 +630,13 @@ function mergeMessages(...messages: Record<string, string>[]): Record<string, st
 ### validateMessages
 
 ```ts
-function validateMessages(messages: Record<string, string>): string[]
+function validateMessages(messages: Record<string, string>): string[];
 ```
 
 验证翻译消息。
 
 **参数**:
+
 - `messages`: 消息对象
 
 **返回**: 错误信息数组
@@ -617,12 +648,13 @@ function validateMessages(messages: Record<string, string>): string[]
 ### createIndexedDB
 
 ```ts
-function createIndexedDB(config: IndexedDBConfig): IndexedDBWrapper
+function createIndexedDB(config: IndexedDBConfig): IndexedDBWrapper;
 ```
 
 创建IndexedDB实例。
 
 **参数**:
+
 - `config`: 配置对象
 
 ```ts
@@ -657,12 +689,16 @@ const user = await db.get('users', '1');
 ### createBroadcastChannel
 
 ```ts
-function createBroadcastChannel(name: string, callback: (data: unknown) => void): BroadcastChannelWrapper
+function createBroadcastChannel(
+  name: string,
+  callback: (data: unknown) => void
+): BroadcastChannelWrapper;
 ```
 
 创建BroadcastChannel实例。
 
 **参数**:
+
 - `name`: 频道名称
 - `callback`: 消息接收回调
 

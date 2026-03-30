@@ -32,13 +32,14 @@ pnpm add @yyc3/terminal
 import { useTerminal } from '@yyc3/terminal';
 
 function TerminalComponent() {
-  const { sessions, createSession, executeCommand, isExecuting, lastResult } = useTerminal();
+  const { sessions, createSession, executeCommand, isExecuting, lastResult } =
+    useTerminal();
 
   const handleCreateSession = () => {
     const session = createSession('My Session', {
       shell: 'bash',
       cwd: '/home/user',
-      enableColors: true
+      enableColors: true,
     });
     console.log('Created:', session);
   };

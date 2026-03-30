@@ -23,6 +23,7 @@ YYC3可复用组件库 - 错误处理系统
 核心错误处理器类，提供完整的错误管理功能。
 
 **功能**:
+
 - 自动错误分类
 - 错误日志记录
 - 错误统计分析
@@ -59,6 +60,7 @@ console.log(error.id, error.message);
 提供可配置的平台错误过滤规则，用于忽略特定平台的错误。
 
 **功能**:
+
 - 支持多种过滤维度（名称、消息、来源、堆栈）
 - 可配置的过滤规则
 - 内置Figma平台过滤器
@@ -66,7 +68,11 @@ console.log(error.id, error.message);
 **使用示例**:
 
 ```ts
-import { PlatformErrorFilter, createFigmaErrorFilter, isPlatformError } from '@yyc3/error-handling';
+import {
+  PlatformErrorFilter,
+  createFigmaErrorFilter,
+  isPlatformError,
+} from '@yyc3/error-handling';
 
 // 使用内置Figma过滤器
 const figmaFilter = createFigmaErrorFilter();
@@ -92,6 +98,7 @@ const isFigmaError = isPlatformError(
 基于localStorage的错误存储实现。
 
 **功能**:
+
 - 自动限制日志条目数量
 - 存储满时自动清理
 - 支持自定义key和最大条目数
@@ -113,6 +120,7 @@ storage.clear();
 提供异步和同步操作的安全包装器。
 
 **功能**:
+
 - 自动捕获错误
 - 返回结果或错误元组
 - 类型安全
@@ -123,12 +131,9 @@ storage.clear();
 import { trySafe, trySafeSync } from '@yyc3/error-handling';
 
 // 异步操作
-const [data, error] = await trySafe(
-  async () => {
-    return await fetch('/api/data');
-  },
-  'API-Data'
-);
+const [data, error] = await trySafe(async () => {
+  return await fetch('/api/data');
+}, 'API-Data');
 
 if (error) {
   console.error('操作失败:', error);
@@ -182,7 +187,11 @@ const log = getErrorHandler().getErrorLog(10);
 ### 自定义配置
 
 ```ts
-import { ErrorHandler, LocalStorageErrorStorage, createFigmaErrorFilter } from '@yyc3/error-handling';
+import {
+  ErrorHandler,
+  LocalStorageErrorStorage,
+  createFigmaErrorFilter,
+} from '@yyc3/error-handling';
 
 const handler = new ErrorHandler({
   // 自定义存储
@@ -208,7 +217,11 @@ handler.installGlobalListeners();
 ### 自定义存储
 
 ```ts
-import { ErrorHandler, type ErrorStorage, type AppError } from '@yyc3/error-handling';
+import {
+  ErrorHandler,
+  type ErrorStorage,
+  type AppError,
+} from '@yyc3/error-handling';
 
 class CustomStorage implements ErrorStorage {
   async save(error: AppError): Promise<void> {
@@ -239,27 +252,27 @@ const handler = new ErrorHandler({ storage: new CustomStorage() });
 
 ### ErrorHandler
 
-| 方法 | 返回类型 | 说明 |
-|------|----------|------|
-| `capture(error, options)` | `AppError` | 捕获并记录错误 |
-| `getErrorLog(limit?)` | `AppError[]` | 获取错误日志 |
-| `getErrorStats()` | `ErrorStats` | 获取错误统计 |
-| `clearErrorLog()` | `void` | 清除错误日志 |
-| `installGlobalListeners()` | `void` | 安装全局监听器 |
-| `trySafe(fn, source?)` | `Promise<[T, null] \| [null, AppError]>` | 异步安全包装 |
-| `trySafeSync(fn, source?)` `[T, null] \| [null, AppError]` | 同步安全包装 |
+| 方法                                                       | 返回类型                                 | 说明           |
+| ---------------------------------------------------------- | ---------------------------------------- | -------------- |
+| `capture(error, options)`                                  | `AppError`                               | 捕获并记录错误 |
+| `getErrorLog(limit?)`                                      | `AppError[]`                             | 获取错误日志   |
+| `getErrorStats()`                                          | `ErrorStats`                             | 获取错误统计   |
+| `clearErrorLog()`                                          | `void`                                   | 清除错误日志   |
+| `installGlobalListeners()`                                 | `void`                                   | 安装全局监听器 |
+| `trySafe(fn, source?)`                                     | `Promise<[T, null] \| [null, AppError]>` | 异步安全包装   |
+| `trySafeSync(fn, source?)` `[T, null] \| [null, AppError]` | 同步安全包装                             |
 
 ### 快捷函数
 
-| 函数 | 说明 |
-|------|------|
-| `getErrorHandler()` | 获取全局错误处理器 |
-| `captureError(error, options?)` | 捕获错误（快捷方式） |
-| `getErrorLog(limit?)` | 获取错误日志（快捷方式） |
-| `getErrorStats()` | 获取错误统计（快捷方式） |
-| `clearErrorLog()` | 清除错误日志（快捷方式） |
-| `trySafe(fn, source?)` | 异步安全包装（快捷方式） |
-| `trySafeSync(fn, source?)` | 同步安全包装（快捷方式） |
+| 函数                            | 说明                     |
+| ------------------------------- | ------------------------ |
+| `getErrorHandler()`             | 获取全局错误处理器       |
+| `captureError(error, options?)` | 捕获错误（快捷方式）     |
+| `getErrorLog(limit?)`           | 获取错误日志（快捷方式） |
+| `getErrorStats()`               | 获取错误统计（快捷方式） |
+| `clearErrorLog()`               | 清除错误日志（快捷方式） |
+| `trySafe(fn, source?)`          | 异步安全包装（快捷方式） |
+| `trySafeSync(fn, source?)`      | 同步安全包装（快捷方式） |
 
 ## 🎨 使用场景
 
@@ -286,13 +299,10 @@ function App() {
 import { trySafe } from '@yyc3/error-handling';
 
 async function fetchUserData() {
-  const [data, error] = await trySafe(
-    async () => {
-      const res = await fetch('/api/user');
-      return res.json();
-    },
-    'API-UserData'
-  );
+  const [data, error] = await trySafe(async () => {
+    const res = await fetch('/api/user');
+    return res.json();
+  }, 'API-UserData');
 
   if (error) {
     // 错误已被自动捕获和记录
@@ -354,7 +364,7 @@ npm run dev
 
 ## 📄 依赖
 
-- `@yyc3/types`: workspace:* (dependency)
+- `@yyc3/types`: workspace:\* (dependency)
 
 ## 📝 许可证
 

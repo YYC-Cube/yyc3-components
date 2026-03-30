@@ -42,24 +42,19 @@ export type {
   SelectionRange,
   CollabMessage,
   CRDTDocumentState,
-  FileSyncStatus,
-  ConflictResolution,
-  UseCollaborativeEditingReturn,
-  UseCRDTSyncReturn,
-  UseFileSyncReturn,
 } from './types/collaboration';
 
 // Components
-export { default as CollaborationPresence } from './components/CollaborationPresence';
-export { default as DiffViewer } from './components/DiffViewer';
-export { default as MonacoCodeEditor } from './components/MonacoCodeEditor';
-export { default as UserAIPanel } from './components/UserAIPanel';
-export { default as CodeDetailPanel } from './components/CodeDetailPanel';
-export { default as CollabViewSwitcher } from './components/CollabViewSwitcher';
-export { default as TerminalPanel } from './components/TerminalPanel';
-export { default as ProjectFileManager } from './components/ProjectFileManager';
-export { default as ProjectTemplateSelector } from './components/ProjectTemplateSelector';
-export { default as SandboxPreview } from './components/SandboxPreview';
-export { default as GlobalSearchPalette } from './components/GlobalSearchPalette';
-export { default as DraggablePanelLayout } from './components/DraggablePanelLayout';
-export { default as EditorTabBar } from './components/EditorTabBar';
+export { CollaborationPresence } from './components/CollaborationPresence';
+export { DiffViewer } from './components/DiffViewer';
+export { MonacoCodeEditor } from './components/MonacoCodeEditor';
+export { UserAIPanel } from './components/UserAIPanel';
+export { CodeDetailPanel } from './components/CodeDetailPanel';
+export { CollabViewSwitcher } from './components/CollabViewSwitcher';
+export { TerminalPanel } from './components/TerminalPanel';
+export { ProjectFileManager } from './components/ProjectFileManager';
+export { ProjectTemplateSelector } from './components/ProjectTemplateSelector';
+export { SandboxPreview } from './components/SandboxPreview';
+export { GlobalSearchPalette } from './components/GlobalSearchPalette';
+export { DraggablePanelLayout } from './components/DraggablePanelLayout';
+export { EditorTabBar } from './components/EditorTabBar';

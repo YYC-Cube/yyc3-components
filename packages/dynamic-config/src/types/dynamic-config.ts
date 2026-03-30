@@ -95,7 +95,15 @@ export interface ComputeNodeConfig {
   isEnabled: boolean;
 }
 
-export type ConfigSection = 'providers' | 'models' | 'agents' | 'endpoints' | 'mcpServers' | 'workflows' | 'extensions' | 'computeNodes';
+export type ConfigSection =
+  | 'providers'
+  | 'models'
+  | 'agents'
+  | 'endpoints'
+  | 'mcpServers'
+  | 'workflows'
+  | 'extensions'
+  | 'computeNodes';
 
 export interface NetworkConfig {
   reconnectInterval: number;
@@ -154,4 +162,5 @@ export interface ConfigChange {
   current?: unknown;
 }
 
-export type UseDynamicConfigReturn = import('../hooks/useDynamicConfig').DynamicConfigContextType;
+export type UseDynamicConfigReturn =
+  import('../hooks/useDynamicConfig').DynamicConfigContextType;

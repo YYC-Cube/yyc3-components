@@ -10,7 +10,7 @@ export {
   isPlatformError,
   type FilterRule,
   type ErrorContext,
-} from "./platform-error-filter";
+} from './platform-error-filter';
 
 // Error handler
 export {
@@ -25,4 +25,4 @@ export {
   trySafeSync,
   type ErrorStorage,
   type ErrorHandlerConfig,
-} from "./error-handler";
+} from './error-handler';

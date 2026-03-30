@@ -355,7 +355,7 @@ bash scripts/smart-commit.sh "chore: 更新依赖"
 # 添加自定义检查
 check_custom_rules() {
     print_section "自定义检查"
-    
+
     # 你的检查逻辑
     if your_check; then
         print_pass "自定义检查通过"
@@ -373,10 +373,10 @@ check_custom_rules() {
 # 添加自定义修复
 fix_custom_issues() {
     print_section "自定义修复"
-    
+
     # 你的修复逻辑
     your_fix_command
-    
+
     ((FIXES_APPLIED++))
 }
 ```

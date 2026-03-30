@@ -1,13 +1,13 @@
 export interface PanelLayoutNode {
-  id: string
-  type: 'panel' | 'split'
-  panelType?: PanelType
-  direction?: SplitDirection
-  children?: PanelLayoutNode[]
-  ratio?: number
-  minSize?: number
-  title?: string
-  closable?: boolean
+  id: string;
+  type: 'panel' | 'split';
+  panelType?: PanelType;
+  direction?: SplitDirection;
+  children?: PanelLayoutNode[];
+  ratio?: number;
+  minSize?: number;
+  title?: string;
+  closable?: boolean;
 }
 
 export type PanelType =
@@ -16,29 +16,35 @@ export type PanelType =
   | 'code-editor'
   | 'terminal'
   | 'preview'
-  | 'code-detail'
+  | 'code-detail';
 
-export type SplitDirection = 'horizontal' | 'vertical'
+export type SplitDirection = 'horizontal' | 'vertical';
 
-export type DropPosition = 'left' | 'right' | 'top' | 'bottom' | 'center' | 'tab'
+export type DropPosition =
+  | 'left'
+  | 'right'
+  | 'top'
+  | 'bottom'
+  | 'center'
+  | 'tab';
 
 export interface PanelLayoutState {
-  root: PanelLayoutNode
-  activePanel: string | null
-  maximizedPanel: string | null
-  dragOverTarget: string | null
-  dragOverPosition: DropPosition | null
+  root: PanelLayoutNode;
+  activePanel: string | null;
+  maximizedPanel: string | null;
+  dragOverTarget: string | null;
+  dragOverPosition: DropPosition | null;
 }
 
 export interface PanelDragItem {
-  panelId: string
-  panelType: PanelType
+  panelId: string;
+  panelType: PanelType;
 }
 
 export interface PanelDropResult {
-  sourceId: string
-  targetId: string
-  position: DropPosition
+  sourceId: string;
+  targetId: string;
+  position: DropPosition;
 }
 
 export const DEFAULT_PANEL_LAYOUT: PanelLayoutNode = {
@@ -81,4 +87,4 @@ export const DEFAULT_PANEL_LAYOUT: PanelLayoutNode = {
       ],
     },
   ],
-}
+};

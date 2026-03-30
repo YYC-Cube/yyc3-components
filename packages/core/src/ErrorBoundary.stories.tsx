@@ -22,17 +22,19 @@ type Story = StoryObj<typeof ErrorBoundary>;
 
 export const Default: Story = {
   args: {
-    fallback: <div style={{ padding: '20px', background: '#fee' }}>出错了！</div>,
+    fallback: (
+      <div style={{ padding: '20px', background: '#fee' }}>出错了！</div>
+    ),
     children: <div>正常内容</div>,
   },
 };
 
 export const WithError: Story = {
   args: {
-    fallback: <div style={{ padding: '20px', background: '#fee' }}>出错了！</div>,
-    children: (
-      <BuggyComponent />
+    fallback: (
+      <div style={{ padding: '20px', background: '#fee' }}>出错了！</div>
     ),
+    children: <BuggyComponent />,
   },
 };
 

@@ -65,6 +65,7 @@ git commit -m "fix: resolve bug in component"
 ```
 
 提交信息格式：
+
 - `feat:` 新功能
 - `fix:` Bug修复
 - `docs:` 文档更新
@@ -143,12 +144,13 @@ export interface YourComponentProps {
 #### 4. 文档要求
 
 每个组件/函数必须包含：
+
 - JSDoc注释
 - 参数说明
 - 返回值说明
 - 使用示例
 
-```ts
+````ts
 /**
  * Formats a date to a readable string
  * @param date - The date to format
@@ -163,7 +165,7 @@ export interface YourComponentProps {
 export function formatDate(date: Date, locale = 'en-US'): string {
   // implementation
 }
-```
+````
 
 ### 测试要求
 

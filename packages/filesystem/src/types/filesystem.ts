@@ -19,22 +19,29 @@
 /**
  * 文件系统节点类型 / Filesystem node type
  */
-export type FSNodeType = "file" | "directory" | "symlink";
+export type FSNodeType = 'file' | 'directory' | 'symlink';
 
 /**
  * Git 文件状态 / Git file status
  */
-export type GitStatus = "untracked" | "modified" | "added" | "deleted" | "renamed" | "ignored" | "tracked";
+export type GitStatus =
+  | 'untracked'
+  | 'modified'
+  | 'added'
+  | 'deleted'
+  | 'renamed'
+  | 'ignored'
+  | 'tracked';
 
 /**
  * 文件排序方式 / File sort method
  */
-export type FileSortMethod = "name" | "size" | "modified" | "type";
+export type FileSortMethod = 'name' | 'size' | 'modified' | 'type';
 
 /**
  * 文件排序方向 / File sort direction
  */
-export type FileSortDirection = "asc" | "desc";
+export type FileSortDirection = 'asc' | 'desc';
 
 /* ══════════════════════════════════════════════════════════════════
  *  数据结构 / Data Structures
@@ -137,7 +144,7 @@ export interface FSCreateInput {
   /** 文件/目录名称 / File/Directory name */
   name: string;
   /** 节点类型 / Node type */
-  type: "file" | "directory";
+  type: 'file' | 'directory';
   /** 初始内容（仅文件）/ Initial content (files only) */
   content?: string;
 }
@@ -336,39 +343,74 @@ export const FILE_SIZE_LIMITS = {
  * 文本文件扩展名白名单 / Text file extension whitelist
  */
 export const TEXT_FILE_EXTENSIONS = [
-  ".txt", ".md", ".json", ".yaml", ".yml", ".xml", ".html", ".css", ".scss",
-  ".js", ".jsx", ".ts", ".tsx", ".vue", ".py", ".java", ".c", ".cpp", ".h",
-  ".sh", ".bash", ".zsh", ".fish", ".sql", ".env", ".gitignore", ".dockerfile",
-  ".toml", ".ini", ".conf", ".cfg", ".log",
+  '.txt',
+  '.md',
+  '.json',
+  '.yaml',
+  '.yml',
+  '.xml',
+  '.html',
+  '.css',
+  '.scss',
+  '.js',
+  '.jsx',
+  '.ts',
+  '.tsx',
+  '.vue',
+  '.py',
+  '.java',
+  '.c',
+  '.cpp',
+  '.h',
+  '.sh',
+  '.bash',
+  '.zsh',
+  '.fish',
+  '.sql',
+  '.env',
+  '.gitignore',
+  '.dockerfile',
+  '.toml',
+  '.ini',
+  '.conf',
+  '.cfg',
+  '.log',
 ] as const;
 
 /**
  * 危险文件扩展名黑名单 / Dangerous file extension blacklist
  */
 export const DANGEROUS_FILE_EXTENSIONS = [
-  ".exe", ".dll", ".bat", ".cmd", ".com", ".scr", ".vbs", ".ps1",
+  '.exe',
+  '.dll',
+  '.bat',
+  '.cmd',
+  '.com',
+  '.scr',
+  '.vbs',
+  '.ps1',
 ] as const;
 
 /**
  * MIME 类型映射 / MIME type mapping
  */
 export const MIME_TYPE_MAP: Record<string, string> = {
-  ".txt": "text/plain",
-  ".md": "text/markdown",
-  ".json": "application/json",
-  ".js": "application/javascript",
-  ".ts": "application/typescript",
-  ".html": "text/html",
-  ".css": "text/css",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".gif": "image/gif",
-  ".svg": "image/svg+xml",
-  ".pdf": "application/pdf",
-  ".zip": "application/zip",
-  ".tar": "application/x-tar",
-  ".gz": "application/gzip",
+  '.txt': 'text/plain',
+  '.md': 'text/markdown',
+  '.json': 'application/json',
+  '.js': 'application/javascript',
+  '.ts': 'application/typescript',
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.pdf': 'application/pdf',
+  '.zip': 'application/zip',
+  '.tar': 'application/x-tar',
+  '.gz': 'application/gzip',
 };
 
 export interface UseFileSystemReturn {

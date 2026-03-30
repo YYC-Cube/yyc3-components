@@ -1,9 +1,9 @@
 /**
  * Git Hook
  * Git Hook Layer
- * 
+ *
  * React Hook for Git operations
- * 
+ *
  * @module hooks/useGit
  */
 
@@ -68,9 +68,9 @@ export interface UseGitReturn {
 
 /**
  * useGit Hook
- * 
+ *
  * 用于 Git 操作的 React Hook / React Hook for Git operations
- * 
+ *
  * @param autoRefresh - 是否自动刷新 / Auto refresh enabled
  * @param refreshInterval - 刷新间隔（毫秒）/ Refresh interval in milliseconds
  * @returns Git Hook 返回值 / Git Hook return value
@@ -83,11 +83,15 @@ export function useGit(
   const [repository, setRepository] = useState<GitRepository | null>(
     gitService.getCurrentRepository()
   );
-  const [branches, setBranches] = useState<GitBranch[]>(gitService.getBranches());
+  const [branches, setBranches] = useState<GitBranch[]>(
+    gitService.getBranches()
+  );
   const [currentBranch, setCurrentBranch] = useState<GitBranch | null>(
     gitService.getCurrentBranch()
   );
-  const [commits, setCommits] = useState<GitCommit[]>(gitService.getCommitHistory());
+  const [commits, setCommits] = useState<GitCommit[]>(
+    gitService.getCommitHistory()
+  );
   const [fileChanges, setFileChanges] = useState<GitFileChange[]>(
     gitService.getFileChanges()
   );
@@ -101,7 +105,9 @@ export function useGit(
   const [tags, setTags] = useState<GitTag[]>(gitService.getTags());
   const [config, setConfig] = useState<GitConfig>(gitService.getConfig());
   const [metrics, setMetrics] = useState<GitMetrics>(gitService.getMetrics());
-  const [statusText, setStatusText] = useState<string>(gitService.getStatusText());
+  const [statusText, setStatusText] = useState<string>(
+    gitService.getStatusText()
+  );
 
   const [isOperating, setIsOperating] = useState(false);
   const [lastResult, setLastResult] = useState<GitOperationResult | null>(null);
@@ -128,36 +134,45 @@ export function useGit(
   /**
    * 处理状态变更事件 / Handle status change event
    */
-  const handleStatusChange = useCallback((event: GitStatusEvent) => {
-    updateStates();
+  const handleStatusChange = useCallback(
+    (event: GitStatusEvent) => {
+      updateStates();
 
-    if (event.type === 'error') {
-      const errorData = event.data as { message: string };
-      setError(errorData.message);
-    } else if (event.type === 'operation_completed') {
-      const result = event.data as GitOperationResult;
-      setLastResult(result);
-      setError(null);
-    }
-  }, [updateStates]);
+      if (event.type === 'error') {
+        const errorData = event.data as { message: string };
+        setError(errorData.message);
+      } else if (event.type === 'operation_completed') {
+        const result = event.data as GitOperationResult;
+        setLastResult(result);
+        setError(null);
+      }
+    },
+    [updateStates]
+  );
 
   /**
    * 打开仓库 / Open repository
    */
-  const openRepository = useCallback(async (path: string) => {
-    setIsOperating(true);
-    setError(null);
+  const openRepository = useCallback(
+    async (path: string) => {
+      setIsOperating(true);
+      setError(null);
 
-    try {
-      await gitService.openRepository(path);
-      updateStates();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'OPEN_REPOSITORY_FAILED / 打开仓库失败';
-      setError(message);
-    } finally {
-      setIsOperating(false);
-    }
-  }, [updateStates]);
+      try {
+        await gitService.openRepository(path);
+        updateStates();
+      } catch (err) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : 'OPEN_REPOSITORY_FAILED / 打开仓库失败';
+        setError(message);
+      } finally {
+        setIsOperating(false);
+      }
+    },
+    [updateStates]
+  );
 
   /**
    * 刷新仓库状态 / Refresh repository status
@@ -170,7 +185,8 @@ export function useGit(
       await gitService.refresh();
       updateStates();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'REFRESH_FAILED / 刷新失败';
+      const message =
+        err instanceof Error ? err.message : 'REFRESH_FAILED / 刷新失败';
       setError(message);
     } finally {
       setIsOperating(false);
@@ -180,104 +196,127 @@ export function useGit(
   /**
    * 提交更改 / Commit changes
    */
-  const commit = useCallback(async (options: GitCommitOptions) => {
-    setIsOperating(true);
-    setError(null);
+  const commit = useCallback(
+    async (options: GitCommitOptions) => {
+      setIsOperating(true);
+      setError(null);
 
-    try {
-      const result = await gitService.commit(options);
-      setLastResult(result);
-      updateStates();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'COMMIT_FAILED / 提交失败';
-      setError(message);
-    } finally {
-      setIsOperating(false);
-    }
-  }, [updateStates]);
+      try {
+        const result = await gitService.commit(options);
+        setLastResult(result);
+        updateStates();
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'COMMIT_FAILED / 提交失败';
+        setError(message);
+      } finally {
+        setIsOperating(false);
+      }
+    },
+    [updateStates]
+  );
 
   /**
    * 推送到远程 / Push to remote
    */
-  const push = useCallback(async (options: GitPushOptions = {}) => {
-    setIsOperating(true);
-    setError(null);
+  const push = useCallback(
+    async (options: GitPushOptions = {}) => {
+      setIsOperating(true);
+      setError(null);
 
-    try {
-      const result = await gitService.push(options);
-      setLastResult(result);
-      updateStates();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'PUSH_FAILED / 推送失败';
-      setError(message);
-    } finally {
-      setIsOperating(false);
-    }
-  }, [updateStates]);
+      try {
+        const result = await gitService.push(options);
+        setLastResult(result);
+        updateStates();
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'PUSH_FAILED / 推送失败';
+        setError(message);
+      } finally {
+        setIsOperating(false);
+      }
+    },
+    [updateStates]
+  );
 
   /**
    * 从远程拉取 / Pull from remote
    */
-  const pull = useCallback(async (options: GitPullOptions = {}) => {
-    setIsOperating(true);
-    setError(null);
+  const pull = useCallback(
+    async (options: GitPullOptions = {}) => {
+      setIsOperating(true);
+      setError(null);
 
-    try {
-      const result = await gitService.pull(options);
-      setLastResult(result);
-      updateStates();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'PULL_FAILED / 拉取失败';
-      setError(message);
-    } finally {
-      setIsOperating(false);
-    }
-  }, [updateStates]);
+      try {
+        const result = await gitService.pull(options);
+        setLastResult(result);
+        updateStates();
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'PULL_FAILED / 拉取失败';
+        setError(message);
+      } finally {
+        setIsOperating(false);
+      }
+    },
+    [updateStates]
+  );
 
   /**
    * 检出分支 / Checkout branch
    */
-  const checkout = useCallback(async (options: GitCheckoutOptions) => {
-    setIsOperating(true);
-    setError(null);
+  const checkout = useCallback(
+    async (options: GitCheckoutOptions) => {
+      setIsOperating(true);
+      setError(null);
 
-    try {
-      const result = await gitService.checkout(options);
-      setLastResult(result);
-      updateStates();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'CHECKOUT_FAILED / 检出失败';
-      setError(message);
-    } finally {
-      setIsOperating(false);
-    }
-  }, [updateStates]);
+      try {
+        const result = await gitService.checkout(options);
+        setLastResult(result);
+        updateStates();
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'CHECKOUT_FAILED / 检出失败';
+        setError(message);
+      } finally {
+        setIsOperating(false);
+      }
+    },
+    [updateStates]
+  );
 
   /**
    * 合并分支 / Merge branch
    */
-  const merge = useCallback(async (options: GitMergeOptions) => {
-    setIsOperating(true);
-    setError(null);
+  const merge = useCallback(
+    async (options: GitMergeOptions) => {
+      setIsOperating(true);
+      setError(null);
 
-    try {
-      const result = await gitService.merge(options);
-      setLastResult(result);
-      updateStates();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'MERGE_FAILED / 合并失败';
-      setError(message);
-    } finally {
-      setIsOperating(false);
-    }
-  }, [updateStates]);
+      try {
+        const result = await gitService.merge(options);
+        setLastResult(result);
+        updateStates();
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'MERGE_FAILED / 合并失败';
+        setError(message);
+      } finally {
+        setIsOperating(false);
+      }
+    },
+    [updateStates]
+  );
 
   /**
    * 启动自动刷新 / Start auto refresh
    */
-  const startAutoRefresh = useCallback((intervalMs?: number) => {
-    gitService.startAutoRefresh(intervalMs || refreshInterval);
-  }, [refreshInterval]);
+  const startAutoRefresh = useCallback(
+    (intervalMs?: number) => {
+      gitService.startAutoRefresh(intervalMs || refreshInterval);
+    },
+    [refreshInterval]
+  );
 
   /**
    * 停止自动刷新 / Stop auto refresh

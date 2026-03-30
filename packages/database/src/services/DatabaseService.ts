@@ -13,7 +13,7 @@
  * - 备份恢复业务逻辑
  */
 
-import { databaseRepository } from "../repositories/DatabaseRepository";
+import { databaseRepository } from '../repositories/DatabaseRepository';
 import type {
   DatabaseConnection,
   ConnectionTestResult,
@@ -29,14 +29,14 @@ import type {
   DatabaseStatistics,
   DatabaseType,
   ConnectionStatus,
-} from "../types/database";
-import { DEFAULT_PORTS, DANGEROUS_SQL_KEYWORDS } from "../types/database";
+} from '../types/database';
+import { DEFAULT_PORTS, DANGEROUS_SQL_KEYWORDS } from '../types/database';
 
 /* ══════════════════════════════════════════════════════════════════
  *  兼容旧接口类型 / Legacy Interface Types
  * ══════════════════════════════════════════════════════════════════ */
 
-export type SyncStrategy = "realtime" | "polling" | "manual";
+export type SyncStrategy = 'realtime' | 'polling' | 'manual';
 
 export interface DatabaseStats {
   totalQueries: number;
@@ -70,9 +70,9 @@ export interface ConnectionHealth {
  * ══════════════════════════════════════════════════════════════════ */
 
 const STORAGE_KEYS = {
-  CONNECTIONS: "yyc3_db_connections",
-  ACTIVE_CONNECTION: "yyc3_db_active_connection",
-  QUERY_HISTORY: "yyc3_db_query_history",
+  CONNECTIONS: 'yyc3_db_connections',
+  ACTIVE_CONNECTION: 'yyc3_db_active_connection',
+  QUERY_HISTORY: 'yyc3_db_query_history',
 } as const;
 
 const MAX_HISTORY_SIZE = 100; // 最大历史记录数
@@ -112,14 +112,28 @@ function generateConnectionId(): string {
  */
 function detectSQLType(sql: string): string {
   const normalized = sql.trim().toUpperCase();
-  if (normalized.startsWith("SELECT")) {return "SELECT";}
-  if (normalized.startsWith("INSERT")) {return "INSERT";}
-  if (normalized.startsWith("UPDATE")) {return "UPDATE";}
-  if (normalized.startsWith("DELETE")) {return "DELETE";}
-  if (normalized.startsWith("CREATE")) {return "CREATE";}
-  if (normalized.startsWith("ALTER")) {return "ALTER";}
-  if (normalized.startsWith("DROP")) {return "DROP";}
-  return "UNKNOWN";
+  if (normalized.startsWith('SELECT')) {
+    return 'SELECT';
+  }
+  if (normalized.startsWith('INSERT')) {
+    return 'INSERT';
+  }
+  if (normalized.startsWith('UPDATE')) {
+    return 'UPDATE';
+  }
+  if (normalized.startsWith('DELETE')) {
+    return 'DELETE';
+  }
+  if (normalized.startsWith('CREATE')) {
+    return 'CREATE';
+  }
+  if (normalized.startsWith('ALTER')) {
+    return 'ALTER';
+  }
+  if (normalized.startsWith('DROP')) {
+    return 'DROP';
+  }
+  return 'UNKNOWN';
 }
 
 /**
@@ -127,8 +141,8 @@ function detectSQLType(sql: string): string {
  */
 function isDangerousSQL(sql: string): boolean {
   const normalized = sql.toUpperCase();
-  return DANGEROUS_SQL_KEYWORDS.some(keyword => {
-    const regex = new RegExp(keyword, "i");
+  return DANGEROUS_SQL_KEYWORDS.some((keyword) => {
+    const regex = new RegExp(keyword, 'i');
     return regex.test(normalized);
   });
 }
@@ -144,7 +158,9 @@ class DatabaseService {
   constructor() {
     // 从 localStorage 加载连接配置
     this.connections = this.loadConnections();
-    this.activeConnectionId = localStorage.getItem(STORAGE_KEYS.ACTIVE_CONNECTION);
+    this.activeConnectionId = localStorage.getItem(
+      STORAGE_KEYS.ACTIVE_CONNECTION
+    );
   }
 
   /* ──────────── 连接持久化 / Connection Persistence ──────────── */
@@ -154,16 +170,18 @@ class DatabaseService {
    */
   private loadConnections(): Map<string, DatabaseConnection> {
     const stored = localStorage.getItem(STORAGE_KEYS.CONNECTIONS);
-    if (!stored) {return new Map();}
+    if (!stored) {
+      return new Map();
+    }
 
     try {
       const data: DatabaseConnection[] = JSON.parse(stored);
       const map = new Map<string, DatabaseConnection>();
-      data.forEach(conn => {
+      data.forEach((conn) => {
         // 解密密码
-        map.set(conn.id, { 
-          ...conn, 
-          password: conn.password ? decryptPassword(conn.password) : undefined 
+        map.set(conn.id, {
+          ...conn,
+          password: conn.password ? decryptPassword(conn.password) : undefined,
         });
       });
       return map;
@@ -176,7 +194,7 @@ class DatabaseService {
    * 保存连接到 localStorage / Save connections to localStorage
    */
   private saveConnections(): void {
-    const connections = Array.from(this.connections.values()).map(conn => ({
+    const connections = Array.from(this.connections.values()).map((conn) => ({
       ...conn,
       password: conn.password ? encryptPassword(conn.password) : undefined, // 加密密码
     }));
@@ -203,7 +221,9 @@ class DatabaseService {
    * 获取当前活跃连接 / Get active connection
    */
   getActiveConnection(): DatabaseConnection | null {
-    if (!this.activeConnectionId) {return null;}
+    if (!this.activeConnectionId) {
+      return null;
+    }
     return this.connections.get(this.activeConnectionId) || null;
   }
 
@@ -212,7 +232,7 @@ class DatabaseService {
    */
   setActiveConnection(id: string): void {
     if (!this.connections.has(id)) {
-      throw new Error("CONNECTION_NOT_FOUND / 连接不存在");
+      throw new Error('CONNECTION_NOT_FOUND / 连接不存在');
     }
     this.activeConnectionId = id;
     localStorage.setItem(STORAGE_KEYS.ACTIVE_CONNECTION, id);
@@ -221,15 +241,18 @@ class DatabaseService {
   /**
    * 创建连接 / Create connection
    */
-  async createConnection(
-    input: Omit<DatabaseConnection, "id" | "createdAt" | "lastConnectedAt" | "status">
-  ): Promise<DatabaseConnection> {
+  createConnection(
+    input: Omit<
+      DatabaseConnection,
+      'id' | 'createdAt' | 'lastConnectedAt' | 'status'
+    >
+  ): DatabaseConnection {
     const connection: DatabaseConnection = {
       ...input,
       id: generateConnectionId(),
       createdAt: new Date().toISOString(),
       lastConnectedAt: null,
-      status: "disconnected",
+      status: 'disconnected',
     };
 
     this.connections.set(connection.id, connection);
@@ -241,10 +264,13 @@ class DatabaseService {
   /**
    * 更新连接 / Update connection
    */
-  async updateConnection(id: string, updates: Partial<DatabaseConnection>): Promise<DatabaseConnection> {
+  updateConnection(
+    id: string,
+    updates: Partial<DatabaseConnection>
+  ): DatabaseConnection {
     const existing = this.connections.get(id);
     if (!existing) {
-      throw new Error("CONNECTION_NOT_FOUND / 连接不存在");
+      throw new Error('CONNECTION_NOT_FOUND / 连接不存在');
     }
 
     const updated: DatabaseConnection = { ...existing, ...updates };
@@ -257,9 +283,9 @@ class DatabaseService {
   /**
    * 删除连接 / Delete connection
    */
-  async deleteConnection(id: string): Promise<void> {
+  deleteConnection(id: string): void {
     if (!this.connections.has(id)) {
-      throw new Error("CONNECTION_NOT_FOUND / 连接存在");
+      throw new Error('CONNECTION_NOT_FOUND / 连接存在');
     }
 
     this.connections.delete(id);
@@ -278,25 +304,25 @@ class DatabaseService {
   async testConnection(id: string): Promise<ConnectionTestResult> {
     const connection = this.connections.get(id);
     if (!connection) {
-      throw new Error("CONNECTION_NOT_FOUND / 连接存在");
+      throw new Error('CONNECTION_NOT_FOUND / 连接存在');
     }
 
     try {
       const result = await databaseRepository.testConnection(id);
-      
+
       // 更新连接状态
       if (result.success) {
         await this.updateConnection(id, {
-          status: "connected",
+          status: 'connected',
           lastConnectedAt: new Date().toISOString(),
         });
       } else {
-        await this.updateConnection(id, { status: "error" });
+        await this.updateConnection(id, { status: 'error' });
       }
 
       return result;
     } catch (error) {
-      await this.updateConnection(id, { status: "error" });
+      await this.updateConnection(id, { status: 'error' });
       throw error;
     }
   }
@@ -313,23 +339,29 @@ class DatabaseService {
   /**
    * 验证 SQL 语句 / Validate SQL statement
    */
-  validateSQL(sql: string): { valid: boolean; error: string | null; warnings: string[] } {
+  validateSQL(sql: string): {
+    valid: boolean;
+    error: string | null;
+    warnings: string[];
+  } {
     const warnings: string[] = [];
 
     // 检查空语句
     if (!sql.trim()) {
-      return { valid: false, error: "EMPTY_SQL / SQL 语句为空", warnings };
+      return { valid: false, error: 'EMPTY_SQL / SQL 语句为空', warnings };
     }
 
     // 检查危险操作
     if (isDangerousSQL(sql)) {
-      warnings.push("DANGEROUS_OPERATION / 检测到危险操作（DROP/TRUNCATE/DELETE）");
+      warnings.push(
+        'DANGEROUS_OPERATION / 检测到危险操作（DROP/TRUNCATE/DELETE）'
+      );
     }
 
     // 检查多语句（简化检查）
-    const statements = sql.split(";").filter(s => s.trim());
+    const statements = sql.split(';').filter((s) => s.trim());
     if (statements.length > 1) {
-      warnings.push("MULTIPLE_STATEMENTS / 检测到多条语句");
+      warnings.push('MULTIPLE_STATEMENTS / 检测到多条语句');
     }
 
     return { valid: true, error: null, warnings };
@@ -342,7 +374,7 @@ class DatabaseService {
     // 验证 SQL
     const validation = this.validateSQL(input.sql);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_SQL / 无效的 SQL 语句");
+      throw new Error(validation.error || 'INVALID_SQL / 无效的 SQL 语句');
     }
 
     // 执行查询
@@ -373,12 +405,14 @@ class DatabaseService {
    */
   getQueryHistory(connectionId?: string): SQLHistory[] {
     const stored = localStorage.getItem(STORAGE_KEYS.QUERY_HISTORY);
-    if (!stored) {return [];}
+    if (!stored) {
+      return [];
+    }
 
     try {
       const history: SQLHistory[] = JSON.parse(stored);
       if (connectionId) {
-        return history.filter(h => h.connectionId === connectionId);
+        return history.filter((h) => h.connectionId === connectionId);
       }
       return history;
     } catch {
@@ -404,8 +438,11 @@ class DatabaseService {
   clearQueryHistory(connectionId?: string): void {
     if (connectionId) {
       const history = this.getQueryHistory();
-      const filtered = history.filter(h => h.connectionId !== connectionId);
-      localStorage.setItem(STORAGE_KEYS.QUERY_HISTORY, JSON.stringify(filtered));
+      const filtered = history.filter((h) => h.connectionId !== connectionId);
+      localStorage.setItem(
+        STORAGE_KEYS.QUERY_HISTORY,
+        JSON.stringify(filtered)
+      );
     } else {
       localStorage.removeItem(STORAGE_KEYS.QUERY_HISTORY);
     }
@@ -416,27 +453,35 @@ class DatabaseService {
   /**
    * 获取数据库所有表 / Get all tables
    */
-  async getTables(connectionId: string): Promise<DatabaseTable[]> {
+  getTables(connectionId: string): DatabaseTable[] {
     return databaseRepository.getTables(connectionId);
   }
 
   /**
    * 获取表详情 / Get table details
    */
-  async getTableDetails(connectionId: string, tableName: string): Promise<DatabaseTable | null> {
+  getTableDetails(
+    connectionId: string,
+    tableName: string
+  ): DatabaseTable | null {
     return databaseRepository.getTableDetails(connectionId, tableName);
   }
 
   /**
    * 获取表数据 / Get table data
    */
-  async getTableData(
+  getTableData(
     connectionId: string,
     tableName: string,
     page: number = 1,
     pageSize: number = 100
-  ): Promise<{ rows: Array<Record<string, unknown>>; total: number }> {
-    return databaseRepository.getTableData(connectionId, tableName, page, pageSize);
+  ): { rows: Array<Record<string, unknown>>; total: number } {
+    return databaseRepository.getTableData(
+      connectionId,
+      tableName,
+      page,
+      pageSize
+    );
   }
 
   /* ──────────── ER 关系图 / ER Diagram ──────────── */
@@ -444,7 +489,7 @@ class DatabaseService {
   /**
    * 获取 ER 关系图 / Get ER diagram
    */
-  async getERDiagram(connectionId: string): Promise<ERDiagramData> {
+  getERDiagram(connectionId: string): ERDiagramData {
     return databaseRepository.getERDiagram(connectionId);
   }
 
@@ -453,10 +498,10 @@ class DatabaseService {
   /**
    * 创建备份 / Create backup
    */
-  async createBackup(config: BackupConfig): Promise<BackupResult> {
+  createBackup(config: BackupConfig): BackupResult {
     // 验证连接存在
     if (!this.connections.has(config.connectionId)) {
-      throw new Error("CONNECTION_NOT_FOUND / 连接存在");
+      throw new Error('CONNECTION_NOT_FOUND / 连接存在');
     }
 
     return databaseRepository.createBackup(config);
@@ -465,10 +510,10 @@ class DatabaseService {
   /**
    * 恢复数据库 / Restore database
    */
-  async restoreDatabase(config: RestoreConfig): Promise<RestoreResult> {
+  restoreDatabase(config: RestoreConfig): RestoreResult {
     // 验证连接存在
     if (!this.connections.has(config.connectionId)) {
-      throw new Error("CONNECTION_NOT_FOUND / 连接存在");
+      throw new Error('CONNECTION_NOT_FOUND / 连接存在');
     }
 
     return databaseRepository.restoreDatabase(config);
@@ -477,7 +522,7 @@ class DatabaseService {
   /**
    * 获取备份列表 / Get backups
    */
-  async getBackups(connectionId: string): Promise<BackupResult[]> {
+  getBackups(connectionId: string): BackupResult[] {
     return databaseRepository.getBackups(connectionId);
   }
 
@@ -486,7 +531,7 @@ class DatabaseService {
   /**
    * 获取数据库统计 / Get database statistics
    */
-  async getStatistics(connectionId: string): Promise<DatabaseStatistics> {
+  getStatistics(connectionId: string): DatabaseStatistics {
     return databaseRepository.getStatistics(connectionId);
   }
 
@@ -495,7 +540,7 @@ class DatabaseService {
   /**
    * 检查数据库服务健康 / Check database service health
    */
-  async checkHealth(): Promise<boolean> {
+  checkHealth(): boolean {
     return databaseRepository.checkHealth();
   }
 
@@ -505,22 +550,22 @@ class DatabaseService {
    * 获取同步策略 / Get sync strategy
    */
   getSyncStrategy(): SyncStrategy {
-    const stored = localStorage.getItem("yyc3_sync_strategy");
-    return (stored as SyncStrategy) || "polling";
+    const stored = localStorage.getItem('yyc3_sync_strategy');
+    return (stored as SyncStrategy) || 'polling';
   }
 
   /**
    * 设置同步策略 / Set sync strategy
    */
   setSyncStrategy(strategy: SyncStrategy): void {
-    localStorage.setItem("yyc3_sync_strategy", strategy);
+    localStorage.setItem('yyc3_sync_strategy', strategy);
   }
 
   /**
    * 获取数据库配置 / Get database config
    */
   getDatabaseConfig(): DatabaseConfig {
-    const stored = localStorage.getItem("yyc3_database_config");
+    const stored = localStorage.getItem('yyc3_database_config');
     if (stored) {
       try {
         return JSON.parse(stored);
@@ -530,11 +575,11 @@ class DatabaseService {
     }
     // 浏览器环境默认配置 / Browser environment default config
     return {
-      host: "localhost",
+      host: 'localhost',
       port: 5432,
-      database: "yyc3_family",
-      user: "yyc3_admin",
-      password: "",
+      database: 'yyc3_family',
+      user: 'yyc3_admin',
+      password: '',
       ssl: false,
     };
   }
@@ -545,14 +590,14 @@ class DatabaseService {
   saveDatabaseConfig(config: Partial<DatabaseConfig>): void {
     const current = this.getDatabaseConfig();
     const updated = { ...current, ...config };
-    localStorage.setItem("yyc3_database_config", JSON.stringify(updated));
+    localStorage.setItem('yyc3_database_config', JSON.stringify(updated));
   }
 
   /**
    * 获取代理配置 / Get proxy config
    */
   getProxyConfig(): LocalAPIProxyConfig {
-    const stored = localStorage.getItem("yyc3_proxy_config");
+    const stored = localStorage.getItem('yyc3_proxy_config');
     if (stored) {
       try {
         return JSON.parse(stored);
@@ -563,7 +608,7 @@ class DatabaseService {
     return {
       enabled: true,
       port: 3721,
-      host: "localhost",
+      host: 'localhost',
     };
   }
 
@@ -573,7 +618,7 @@ class DatabaseService {
   saveProxyConfig(config: Partial<LocalAPIProxyConfig>): void {
     const current = this.getProxyConfig();
     const updated = { ...current, ...config };
-    localStorage.setItem("yyc3_proxy_config", JSON.stringify(updated));
+    localStorage.setItem('yyc3_proxy_config', JSON.stringify(updated));
   }
 
   /**
@@ -581,13 +626,16 @@ class DatabaseService {
    */
   getDatabaseStats(): DatabaseStats {
     const history = this.getQueryHistory();
-    const successCount = history.filter(h => h.success).length;
+    const successCount = history.filter((h) => h.success).length;
     const totalDuration = history.reduce((sum, h) => sum + h.executionTime, 0);
-    
+
     return {
       totalQueries: history.length,
       avgResponseTime: history.length > 0 ? totalDuration / history.length : 0,
-      errorRate: history.length > 0 ? (history.length - successCount) / history.length : 0,
+      errorRate:
+        history.length > 0
+          ? (history.length - successCount) / history.length
+          : 0,
     };
   }
 
@@ -598,13 +646,13 @@ class DatabaseService {
     try {
       const result = await this.testConnection(connectionId);
       return {
-        status: "connected",
+        status: 'connected',
         latency: result.latency,
         lastChecked: new Date().toISOString(),
       };
     } catch {
       return {
-        status: "error",
+        status: 'error',
         latency: 0,
         lastChecked: new Date().toISOString(),
       };
@@ -629,8 +677,12 @@ class DatabaseService {
   /**
    * 获取重连统计 / Get reconnect stats
    */
-  getReconnectStats(): { attempts: number; probeInterval: number; consecutiveSuccess: number } {
-    const stored = localStorage.getItem("yyc3_reconnect_stats");
+  getReconnectStats(): {
+    attempts: number;
+    probeInterval: number;
+    consecutiveSuccess: number;
+  } {
+    const stored = localStorage.getItem('yyc3_reconnect_stats');
     if (stored) {
       try {
         return JSON.parse(stored);
@@ -648,12 +700,14 @@ class DatabaseService {
   /**
    * 状态变化回调类型 / Status change callback type
    */
-  private statusChangeListeners: Array<(event: {
-    currentStatus: ConnectionStatus;
-    previousStatus: ConnectionStatus;
-    isMockMode: boolean;
-    reconnectAttempts: number;
-  }) => void> = [];
+  private statusChangeListeners: Array<
+    (event: {
+      currentStatus: ConnectionStatus;
+      previousStatus: ConnectionStatus;
+      isMockMode: boolean;
+      reconnectAttempts: number;
+    }) => void
+  > = [];
 
   /**
    * 订阅状态变化 / Subscribe to status change
@@ -667,7 +721,7 @@ class DatabaseService {
     }) => void
   ): () => void {
     this.statusChangeListeners.push(callback);
-    
+
     // 返回取消订阅函数 / Return unsubscribe function
     return () => {
       const index = this.statusChangeListeners.indexOf(callback);
@@ -686,8 +740,13 @@ class DatabaseService {
     isMockMode: boolean,
     reconnectAttempts: number
   ): void {
-    const event = { currentStatus, previousStatus, isMockMode, reconnectAttempts };
-    this.statusChangeListeners.forEach(listener => listener(event));
+    const event = {
+      currentStatus,
+      previousStatus,
+      isMockMode,
+      reconnectAttempts,
+    };
+    this.statusChangeListeners.forEach((listener) => listener(event));
   }
 
   /**
@@ -707,14 +766,19 @@ class DatabaseService {
   /**
    * 初始化连接 / Initialize connection
    */
-  async initializeConnection(config: DatabaseConfig): Promise<{ success: boolean; error: string | null }> {
+  async initializeConnection(
+    config: DatabaseConfig
+  ): Promise<{ success: boolean; error: string | null }> {
     try {
       // 保存配置
       this.saveDatabaseConfig(config);
 
       // 创建或更新连接
       const existingConn = Array.from(this.connections.values()).find(
-        c => c.host === config.host && c.port === config.port && c.database === config.database
+        (c) =>
+          c.host === config.host &&
+          c.port === config.port &&
+          c.database === config.database
       );
 
       let conn: DatabaseConnection;
@@ -727,7 +791,7 @@ class DatabaseService {
       } else {
         conn = await this.createConnection({
           name: `${config.host}:${config.port}/${config.database}`,
-          type: "postgresql",
+          type: 'postgresql',
           host: config.host,
           port: config.port,
           database: config.database,
@@ -750,7 +814,10 @@ class DatabaseService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "INIT_FAILED / 初始化连接失败",
+        error:
+          error instanceof Error
+            ? error.message
+            : 'INIT_FAILED / 初始化连接失败',
       };
     }
   }
@@ -762,7 +829,9 @@ class DatabaseService {
     if (this.activeConnectionId) {
       const conn = this.connections.get(this.activeConnectionId);
       if (conn) {
-        this.updateConnection(this.activeConnectionId, { status: "disconnected" });
+        this.updateConnection(this.activeConnectionId, {
+          status: 'disconnected',
+        });
       }
       this.activeConnectionId = null;
       localStorage.removeItem(STORAGE_KEYS.ACTIVE_CONNECTION);
@@ -774,7 +843,7 @@ class DatabaseService {
    */
   async syncNow(): Promise<{ success: boolean; error: string | null }> {
     if (!this.activeConnectionId) {
-      return { success: false, error: "NO_ACTIVE_CONNECTION / 没有活跃连接" };
+      return { success: false, error: 'NO_ACTIVE_CONNECTION / 没有活跃连接' };
     }
 
     try {
@@ -783,7 +852,8 @@ class DatabaseService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "SYNC_FAILED / 同步失败",
+        error:
+          error instanceof Error ? error.message : 'SYNC_FAILED / 同步失败',
       };
     }
   }

@@ -15,7 +15,7 @@ import type {
   ErrorSeverity,
   AppError,
   ErrorStats,
-} from "@yyc3/types";
+} from '@yyc3/types';
 
 // ============================================================
 // 错误日志存储接口
@@ -34,7 +34,7 @@ export class LocalStorageErrorStorage implements ErrorStorage {
   private key: string;
   private maxEntries: number;
 
-  constructor(key: string = "yyc3_error_log", maxEntries: number = 200) {
+  constructor(key: string = 'yyc3_error_log', maxEntries: number = 200) {
     this.key = key;
     this.maxEntries = maxEntries;
   }
@@ -83,7 +83,12 @@ export interface ErrorHandlerConfig {
   /** 是否打印到控制台 */
   logToConsole?: boolean;
   /** 是否过滤平台特定错误 */
-  platformErrorFilter?: (name: string, message: string, source?: string, stack?: string) => boolean;
+  platformErrorFilter?: (
+    name: string,
+    message: string,
+    source?: string,
+    stack?: string
+  ) => boolean;
 }
 
 // ============================================================
@@ -115,42 +120,49 @@ export class ErrorHandler {
     this.listenersInstalled = true;
 
     // 全局运行时错误
-    window.addEventListener("error", (event) => {
+    window.addEventListener('error', (event) => {
       if (this.config.platformErrorFilter) {
-        const name = event.error?.name || event.error?.constructor?.name || "";
-        const msg = String(event.message || "");
-        const stack = event.error?.stack || "";
-        if (this.config.platformErrorFilter(name, msg, event.filename || "", stack)) {
+        const name = event.error?.name || event.error?.constructor?.name || '';
+        const msg = String(event.message || '');
+        const stack = event.error?.stack || '';
+        if (
+          this.config.platformErrorFilter(
+            name,
+            msg,
+            event.filename || '',
+            stack
+          )
+        ) {
           return;
         }
       }
       this.capture(event.error || event.message, {
-        category: "runtime",
-        severity: "critical",
+        category: 'runtime',
+        severity: 'critical',
         source: `${event.filename}:${event.lineno}:${event.colno}`,
       });
     });
 
     // 未捕获的 Promise rejection
-    window.addEventListener("unhandledrejection", (event) => {
+    window.addEventListener('unhandledrejection', (event) => {
       if (this.config.platformErrorFilter) {
         const reason = event.reason;
-        const name = reason?.name || reason?.constructor?.name || "";
-        const msg = String(reason?.message || reason || "");
-        const stack = reason?.stack || "";
+        const name = reason?.name || reason?.constructor?.name || '';
+        const msg = String(reason?.message || reason || '');
+        const stack = reason?.stack || '';
         if (this.config.platformErrorFilter(name, msg, undefined, stack)) {
           event.preventDefault();
           return;
         }
       }
       this.capture(event.reason, {
-        category: "runtime",
-        severity: "error",
-        source: "UnhandledPromiseRejection",
+        category: 'runtime',
+        severity: 'error',
+        source: 'UnhandledPromiseRejection',
       });
     });
 
-    console.info("[YYC3 Error Handler] 全局错误监听器已安装");
+    console.info('[YYC3 Error Handler] 全局错误监听器已安装');
   }
 
   /**
@@ -168,23 +180,23 @@ export class ErrorHandler {
     severity: ErrorSeverity;
   } {
     if (error instanceof TypeError) {
-      return { category: "runtime", severity: "error" };
+      return { category: 'runtime', severity: 'error' };
     }
     if (error instanceof SyntaxError) {
-      return { category: "parse", severity: "error" };
+      return { category: 'parse', severity: 'error' };
     }
     if (error instanceof DOMException) {
-      if (error.name === "QuotaExceededError") {
-        return { category: "storage", severity: "warning" };
+      if (error.name === 'QuotaExceededError') {
+        return { category: 'storage', severity: 'warning' };
       }
-      if (error.name === "SecurityError") {
-        return { category: "auth", severity: "error" };
+      if (error.name === 'SecurityError') {
+        return { category: 'auth', severity: 'error' };
       }
     }
-    if (error instanceof Event && error.type === "error") {
-      return { category: "network", severity: "error" };
+    if (error instanceof Event && error.type === 'error') {
+      return { category: 'network', severity: 'error' };
     }
-    return { category: "unknown", severity: "error" };
+    return { category: 'unknown', severity: 'error' };
   }
 
   /**
@@ -194,13 +206,13 @@ export class ErrorHandler {
     if (error instanceof Error) {
       return error.message;
     }
-    if (typeof error === "string") {
+    if (typeof error === 'string') {
       return error;
     }
-    if (error && typeof error === "object" && "message" in error) {
+    if (error && typeof error === 'object' && 'message' in error) {
       return String((error as Record<string, unknown>).message);
     }
-    return "未知错误";
+    return '未知错误';
   }
 
   /**
@@ -247,11 +259,11 @@ export class ErrorHandler {
     if (this.config.logToConsole && !options.silent) {
       const prefix = `[YYC3 Error ${appError.category}]`;
       switch (appError.severity) {
-        case "critical":
-        case "error":
-          console.error(prefix, appError.message, appError.stack || "");
+        case 'critical':
+        case 'error':
+          console.error(prefix, appError.message, appError.stack || '');
           break;
-        case "warning":
+        case 'warning':
           console.warn(prefix, appError.message);
           break;
         default:
@@ -336,10 +348,7 @@ export class ErrorHandler {
   /**
    * 同步操作安全包装器
    */
-  trySafeSync<T>(
-    fn: () => T,
-    source?: string
-  ): [T, null] | [null, AppError] {
+  trySafeSync<T>(fn: () => T, source?: string): [T, null] | [null, AppError] {
     try {
       const result = fn();
       return [result, null];
@@ -372,7 +381,7 @@ export function getErrorHandler(config?: ErrorHandlerConfig): ErrorHandler {
  */
 export function captureError(
   error: unknown,
-  options?: Parameters<ErrorHandler["capture"]>[1]
+  options?: Parameters<ErrorHandler['capture']>[1]
 ): AppError {
   return getErrorHandler().capture(error, options);
 }

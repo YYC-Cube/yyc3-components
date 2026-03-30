@@ -16,12 +16,23 @@
 /**
  * 容器状态 / Container status
  */
-export type ContainerStatus = "created" | "running" | "paused" | "restarting" | "removing" | "exited" | "dead";
+export type ContainerStatus =
+  | 'created'
+  | 'running'
+  | 'paused'
+  | 'restarting'
+  | 'removing'
+  | 'exited'
+  | 'dead';
 
 /**
  * 容器健康状态 / Container health status
  */
-export type ContainerHealthStatus = "healthy" | "unhealthy" | "starting" | "none";
+export type ContainerHealthStatus =
+  | 'healthy'
+  | 'unhealthy'
+  | 'starting'
+  | 'none';
 
 /**
  * 容器端口映射 / Container port mapping
@@ -32,7 +43,7 @@ export interface ContainerPort {
   /** 宿主机端口 / Host port */
   hostPort: number;
   /** 协议 / Protocol */
-  protocol: "tcp" | "udp";
+  protocol: 'tcp' | 'udp';
   /** 宿主机 IP / Host IP */
   hostIp: string;
 }
@@ -42,13 +53,13 @@ export interface ContainerPort {
  */
 export interface ContainerMount {
   /** 挂载类型 / Mount type */
-  type: "bind" | "volume" | "tmpfs";
+  type: 'bind' | 'volume' | 'tmpfs';
   /** 源路径 / Source */
   source: string;
   /** 目标路径 / Destination */
   destination: string;
   /** 读写模式 / Read-write mode */
-  mode: "rw" | "ro";
+  mode: 'rw' | 'ro';
 }
 
 /**
@@ -146,7 +157,13 @@ export interface DockerImage {
 /**
  * Docker 网络驱动 / Docker network driver
  */
-export type DockerNetworkDriver = "bridge" | "host" | "overlay" | "macvlan" | "none" | "custom";
+export type DockerNetworkDriver =
+  | 'bridge'
+  | 'host'
+  | 'overlay'
+  | 'macvlan'
+  | 'none'
+  | 'custom';
 
 /**
  * Docker 网络 / Docker network
@@ -159,7 +176,7 @@ export interface DockerNetwork {
   /** 驱动类型 / Driver type */
   driver: DockerNetworkDriver;
   /** 作用域 / Scope */
-  scope: "local" | "global" | "swarm";
+  scope: 'local' | 'global' | 'swarm';
   /** 子网 / Subnet */
   subnet: string;
   /** 网关 / Gateway */
@@ -191,7 +208,7 @@ export interface DockerVolume {
   /** 挂载点 / Mount point */
   mountpoint: string;
   /** 作用域 / Scope */
-  scope: "local" | "global";
+  scope: 'local' | 'global';
   /** 创建时间 / Created timestamp */
   createdAt: string;
   /** 标签 / Labels */
@@ -213,7 +230,7 @@ export interface DockerLogEntry {
   /** 容器 ID / Container ID */
   containerId: string;
   /** 流类型 / Stream type */
-  stream: "stdout" | "stderr";
+  stream: 'stdout' | 'stderr';
   /** 日志内容 / Log content */
   content: string;
   /** 时间戳 / Timestamp */
@@ -237,13 +254,13 @@ export interface ContainerCreateConfig {
   /** 环境变量 / Environment variables */
   env: Record<string, string>;
   /** 端口映射 / Port mappings */
-  ports: Omit<ContainerPort, "hostIp">[];
+  ports: Omit<ContainerPort, 'hostIp'>[];
   /** 卷挂载 / Volume mounts */
-  volumes: Omit<ContainerMount, "mode">[];
+  volumes: Omit<ContainerMount, 'mode'>[];
   /** 网络 / Network */
   network: string | null;
   /** 自动重启 / Restart policy */
-  restartPolicy: "no" | "always" | "on-failure" | "unless-stopped";
+  restartPolicy: 'no' | 'always' | 'on-failure' | 'unless-stopped';
   /** 标签 / Labels */
   labels: Record<string, string>;
 }
@@ -251,18 +268,18 @@ export interface ContainerCreateConfig {
 /**
  * 容器操作类型 / Container operation type
  */
-export type ContainerOperationType = 
-  | "start"
-  | "stop"
-  | "restart"
-  | "pause"
-  | "unpause"
-  | "kill"
-  | "remove"
-  | "rename"
-  | "inspect"
-  | "logs"
-  | "exec";
+export type ContainerOperationType =
+  | 'start'
+  | 'stop'
+  | 'restart'
+  | 'pause'
+  | 'unpause'
+  | 'kill'
+  | 'remove'
+  | 'rename'
+  | 'inspect'
+  | 'logs'
+  | 'exec';
 
 /**
  * 容器操作结果 / Container operation result

@@ -12,7 +12,7 @@ export {
   type StoreDefinition,
   type StoreName,
   type IDBConfig,
-} from "./indexed-db";
+} from './indexed-db';
 
 // BroadcastChannel
 export {
@@ -21,4 +21,4 @@ export {
   sendMessage,
   onMessage,
   type ChannelConfig,
-} from "./broadcast-channel";
+} from './broadcast-channel';

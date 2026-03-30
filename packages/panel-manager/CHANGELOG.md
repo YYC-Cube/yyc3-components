@@ -3,6 +3,7 @@
 ## [1.0.0] - 2026-03-26
 
 ### Added
+
 - 🎉 Initial release of @yyc3/panel-manager
 - ✨ Unified panel state management
 - ✨ Draggable panel layouts

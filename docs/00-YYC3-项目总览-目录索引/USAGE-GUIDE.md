@@ -43,12 +43,7 @@ npm install @yyc3/core @yyc3/utils @yyc3/types @yyc3/hooks \
 
 ```tsx
 // 从主入口导入
-import {
-  ErrorBoundary,
-  GlassCard,
-  Button,
-  Card,
-} from '@yyc3/core';
+import { ErrorBoundary, GlassCard, Button, Card } from '@yyc3/core';
 
 // 从具体包导入
 import { ErrorBoundary, GlassCard } from '@yyc3/core';
@@ -95,6 +90,7 @@ function MyComponent() {
 #### 主要函数
 
 **字符串处理**
+
 - `truncate(str, length)` - 截断字符串
 - `capitalize(str)` - 首字母大写
 - `camelToKebab(str)` / `kebabToCamel(str)` - 命名转换
@@ -102,17 +98,20 @@ function MyComponent() {
 - `slugify(str)` - URL友好化
 
 **数据处理**
+
 - `deepClone(obj)` - 深度克隆
 - `unique(arr)` - 去重
 - `groupBy(arr, key)` - 分组
 - `chunk(arr, size)` - 分块
 
 **日期处理**
+
 - `formatDate(date, locale)` - 格式化日期
 - `getRelativeTime(date)` - 相对时间
 - `isToday(date)` / `isThisWeek(date)` - 日期判断
 
 **颜色处理**
+
 - `hexToRgb(hex)` / `hexToRgba(hex, alpha)` - 颜色转换
 - `isDarkColor(hex)` - 深色检测
 - `getContrastColor(hex)` - 对比色
@@ -120,12 +119,7 @@ function MyComponent() {
 #### 使用示例
 
 ```ts
-import {
-  formatDate,
-  uuid,
-  deepClone,
-  truncate,
-} from '@yyc3/utils';
+import { formatDate, uuid, deepClone, truncate } from '@yyc3/utils';
 
 // 日期格式化
 const formatted = formatDate(new Date(), 'zh-CN');
@@ -174,16 +168,16 @@ function MyComponent() {
 
   return (
     <div>
-      <button onClick={() => toggleOpen()}>
-        {isOpen ? '关闭' : '打开'}
-      </button>
+      <button onClick={() => toggleOpen()}>{isOpen ? '关闭' : '打开'}</button>
       <input
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="输入内容..."
       />
       <p>防抖结果: {debouncedInput}</p>
-      <p>窗口: {width} x {height}</p>
+      <p>
+        窗口: {width} x {height}
+      </p>
     </div>
   );
 }
@@ -203,20 +197,11 @@ function MyComponent() {
 #### 使用示例
 
 ```tsx
-import {
-  ErrorBoundary,
-  GlassCard,
-  FadeIn,
-  LoadingSpinner,
-} from '@yyc3/core';
+import { ErrorBoundary, GlassCard, FadeIn, LoadingSpinner } from '@yyc3/core';
 
 function MyComponent() {
   return (
-    <ErrorBoundary
-      fallback={
-        <div>出错了！</div>
-      }
-    >
+    <ErrorBoundary fallback={<div>出错了！</div>}>
       <GlassCard>
         <FadeIn>
           <LoadingSpinner />
@@ -242,11 +227,7 @@ function MyComponent() {
 #### 使用示例
 
 ```ts
-import {
-  getErrorHandler,
-  captureError,
-  trySafe,
-} from '@yyc3/error-handling';
+import { getErrorHandler, captureError, trySafe } from '@yyc3/error-handling';
 
 // 捕获错误
 try {
@@ -256,12 +237,9 @@ try {
 }
 
 // 安全包装器
-const [data, error] = await trySafe(
-  async () => {
-    return await fetch('/api/data');
-  },
-  'API-Data'
-);
+const [data, error] = await trySafe(async () => {
+  return await fetch('/api/data');
+}, 'API-Data');
 
 if (error) {
   console.error('操作失败:', error);
@@ -451,7 +429,7 @@ const t = createTranslator(messages);
 const greeting = t('greeting', { name: userName });
 
 // ❌ 不推荐
-const greeting = `Hello, ${userName}!`;  // 硬编码
+const greeting = `Hello, ${userName}!`; // 硬编码
 ```
 
 ## 🐛 调试技巧

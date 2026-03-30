@@ -63,7 +63,10 @@ export interface UseChannelManagerReturn {
   channels: Channel[];
   activeChannelId: string;
   setActiveChannelId: (id: string) => void;
-  createChannel: (name: string, options?: { isEncrypted?: boolean, preset?: string }) => string;
+  createChannel: (
+    name: string,
+    options?: { isEncrypted?: boolean; preset?: string }
+  ) => string;
   deleteChannel: (id: string) => void;
   updateChannelName: (id: string, name: string) => void;
 }

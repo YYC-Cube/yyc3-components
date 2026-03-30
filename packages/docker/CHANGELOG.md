@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [1.0.0] - 2026-03-26
 
 ### Added
+
 - 🎉 Initial release of @yyc3/docker
 - ✨ Complete container management (create, start, stop, restart, remove)
 - ✨ Image management (pull, remove, build)
@@ -19,6 +20,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Planned
+
 - [ ] More advanced metrics
 - [ ] Container stats dashboard
 - [ ] Image registry integration

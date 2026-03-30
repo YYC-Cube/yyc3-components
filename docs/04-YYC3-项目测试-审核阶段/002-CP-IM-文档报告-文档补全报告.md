@@ -23,52 +23,52 @@
 
 #### @yyc3/websocket 包 (4个文件)
 
-| 文件 | 状态 | 说明 |
-|------|------|------|
-| `src/index.ts` | ✅ 完成 | 包主入口文件 |
-| `src/types.ts` | ✅ 完成 | 类型定义文件 |
-| `src/useWebSocket.ts` | ✅ 完成 | 核心 Hook 文件 |
-| `src/manager.ts` | ✅ 完成 | WebSocket 管理器 |
+| 文件                  | 状态    | 说明             |
+| --------------------- | ------- | ---------------- |
+| `src/index.ts`        | ✅ 完成 | 包主入口文件     |
+| `src/types.ts`        | ✅ 完成 | 类型定义文件     |
+| `src/useWebSocket.ts` | ✅ 完成 | 核心 Hook 文件   |
+| `src/manager.ts`      | ✅ 完成 | WebSocket 管理器 |
 
 #### @yyc3/ai 包 (4个文件)
 
-| 文件 | 状态 | 说明 |
-|------|------|------|
-| `src/index.ts` | ✅ 完成 | 包主入口文件 |
-| `src/types.ts` | ✅ 完成 | 类型定义文件 |
+| 文件           | 状态    | 说明           |
+| -------------- | ------- | -------------- |
+| `src/index.ts` | ✅ 完成 | 包主入口文件   |
+| `src/types.ts` | ✅ 完成 | 类型定义文件   |
 | `src/useAI.ts` | ✅ 完成 | 核心 Hook 文件 |
-| `src/utils.ts` | ✅ 完成 | 工具函数文件 |
+| `src/utils.ts` | ✅ 完成 | 工具函数文件   |
 
 #### @yyc3/terminal 包 (3个文件)
 
-| 文件 | 状态 | 说明 |
-|------|------|------|
-| `src/index.ts` | ✅ 完成 | 包主入口文件 |
-| `src/types.ts` | ✅ 完成 | 类型定义文件 |
+| 文件                 | 状态    | 说明           |
+| -------------------- | ------- | -------------- |
+| `src/index.ts`       | ✅ 完成 | 包主入口文件   |
+| `src/types.ts`       | ✅ 完成 | 类型定义文件   |
 | `src/useTerminal.ts` | ✅ 完成 | 核心 Hook 文件 |
 
 #### @yyc3/diagnostics 包 (3个文件)
 
-| 文件 | 状态 | 说明 |
-|------|------|------|
-| `src/index.ts` | ✅ 完成 | 包主入口文件 |
-| `src/types.ts` | ✅ 完成 | 类型定义文件 |
+| 文件                 | 状态    | 说明         |
+| -------------------- | ------- | ------------ |
+| `src/index.ts`       | ✅ 完成 | 包主入口文件 |
+| `src/types.ts`       | ✅ 完成 | 类型定义文件 |
 | `src/diagnostics.ts` | ✅ 完成 | 诊断工具函数 |
 
 #### @yyc3/chat 包 (5个文件)
 
-| 文件 | 状态 | 说明 |
-|------|------|------|
-| `src/index.ts` | ✅ 完成 | 包主入口文件 |
-| `src/types.ts` | ✅ 完成 | 类型定义文件 |
-| `src/useChatPersistence.ts` | ✅ 完成 | 聊天持久化 Hook |
-| `src/useChannelManager.ts` | ✅ 完成 | 频道管理 Hook |
-| `src/components/TypingIndicator.tsx` | ✅ 完成 | 打字指示器组件 |
+| 文件                                 | 状态    | 说明            |
+| ------------------------------------ | ------- | --------------- |
+| `src/index.ts`                       | ✅ 完成 | 包主入口文件    |
+| `src/types.ts`                       | ✅ 完成 | 类型定义文件    |
+| `src/useChatPersistence.ts`          | ✅ 完成 | 聊天持久化 Hook |
+| `src/useChannelManager.ts`           | ✅ 完成 | 频道管理 Hook   |
+| `src/components/TypingIndicator.tsx` | ✅ 完成 | 打字指示器组件  |
 
 #### @yyc3/utils 包 (1个文件)
 
-| 文件 | 状态 | 说明 |
-|------|------|------|
+| 文件                | 状态    | 说明         |
+| ------------------- | ------- | ------------ |
 | `src/validation.ts` | ✅ 完成 | 数据验证工具 |
 
 **总计**: 20个文件已完成代码标头规范化
@@ -79,13 +79,13 @@
 
 已为以下包创建完整的 README.md 文档：
 
-| 包 | 状态 | 内容 |
-|------|------|------|
-| `@yyc3/websocket` | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、示例、最佳实践 |
-| `@yyc3/ai` | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、配置示例、最佳实践 |
-| `@yyc3/terminal` | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、使用示例 |
-| `@yyc3/diagnostics` | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、使用示例 |
-| `@yyc3/chat` | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、使用示例 |
+| 包                  | 状态    | 内容                                                      |
+| ------------------- | ------- | --------------------------------------------------------- |
+| `@yyc3/websocket`   | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、示例、最佳实践     |
+| `@yyc3/ai`          | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、配置示例、最佳实践 |
+| `@yyc3/terminal`    | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、使用示例           |
+| `@yyc3/diagnostics` | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、使用示例           |
+| `@yyc3/chat`        | ✅ 完成 | 完整的中英文文档，包含特性、安装、API、使用示例           |
 
 **总计**: 5个包已完成 README.md 文档
 
@@ -95,13 +95,13 @@
 
 已为以下包创建完整的 CHANGELOG.md 文档：
 
-| 包 | 状态 | 版本 | 内容 |
-|------|------|------|------|
-| `@yyc3/websocket` | ✅ 完成 | v1.0.0 | 初始版本，包含所有功能 |
-| `@yyc3/ai` | ✅ 完成 | v1.0.0 | 初始版本，包含所有功能 |
-| `@yyc3/terminal` | ✅ 完成 | v1.0.0 | 初始版本，包含所有功能 |
+| 包                  | 状态    | 版本   | 内容                   |
+| ------------------- | ------- | ------ | ---------------------- |
+| `@yyc3/websocket`   | ✅ 完成 | v1.0.0 | 初始版本，包含所有功能 |
+| `@yyc3/ai`          | ✅ 完成 | v1.0.0 | 初始版本，包含所有功能 |
+| `@yyc3/terminal`    | ✅ 完成 | v1.0.0 | 初始版本，包含所有功能 |
 | `@yyc3/diagnostics` | ✅ 完成 | v1.0.0 | 初始版本，包含所有功能 |
-| `@yyc3/chat` | ✅ 完成 | v1.0.0 | 初始版本，包含所有功能 |
+| `@yyc3/chat`        | ✅ 完成 | v1.0.0 | 初始版本，包含所有功能 |
 
 **总计**: 5个包已完成 CHANGELOG.md 文档
 
@@ -139,28 +139,28 @@
 
 ### 必填字段
 
-| 字段 | 说明 | 示例 |
-|------|------|------|
-| file | 文件名（包含扩展名） | file: useI18n.ts |
+| 字段        | 说明                   | 示例                                          |
+| ----------- | ---------------------- | --------------------------------------------- |
+| file        | 文件名（包含扩展名）   | file: useI18n.ts                              |
 | description | 文件描述（一句话概括） | description: 国际化 Hook · 支持中英文动态切换 |
-| author | 作者名称 | author: YanYuCloudCube Team |
-| version | 版本号 | version: v1.0.0 |
-| created | 创建日期 | created: 2026-03-26 |
-| updated | 更新日期 | updated: 2026-03-26 |
-| status | 文件状态 | status: active |
-| tags | 标签列表 | tags: [hook],[i18n],[locale] |
+| author      | 作者名称               | author: YanYuCloudCube Team                   |
+| version     | 版本号                 | version: v1.0.0                               |
+| created     | 创建日期               | created: 2026-03-26                           |
+| updated     | 更新日期               | updated: 2026-03-26                           |
+| status      | 文件状态               | status: active                                |
+| tags        | 标签列表               | tags: [hook],[i18n],[locale]                  |
 
 ### 可选字段
 
-| 字段 | 说明 |
-|------|------|
-| copyright | 版权信息 |
-| license | 许可证 |
-| brief | 简要说明（100字以内） |
-| details | 详细说明（功能特性） |
-| dependencies | 依赖列表 |
-| exports | 导出内容 |
-| notes | 注意事项 |
+| 字段         | 说明                  |
+| ------------ | --------------------- |
+| copyright    | 版权信息              |
+| license      | 许可证                |
+| brief        | 简要说明（100字以内） |
+| details      | 详细说明（功能特性）  |
+| dependencies | 依赖列表              |
+| exports      | 导出内容              |
+| notes        | 注意事项              |
 
 ---
 
@@ -169,12 +169,14 @@
 ### 1. 中英文双语
 
 所有文档均提供完整的中英文双语支持：
+
 - 🇨🇳 中文说明
 - 🇺🇸 English description
 
 ### 2. 完整的 API 文档
 
 每个包的 README.md 都包含：
+
 - ✅ 特性列表
 - ✅ 安装指南
 - ✅ 快速开始示例
@@ -187,6 +189,7 @@
 ### 3. 代码示例
 
 所有文档都包含丰富的代码示例：
+
 - ✅ 基础用法
 - ✅ 高级用法
 - ✅ 最佳实践
@@ -195,6 +198,7 @@
 ### 4. TypeScript 类型支持
 
 所有文档都明确标注 TypeScript 类型：
+
 - ✅ 接口定义
 - ✅ 类型参数
 - ✅ 返回类型
@@ -238,23 +242,23 @@
 
 ### 代码标头
 
-| 包 | 文件数 | 已完成 | 完成率 |
-|------|--------|--------|--------|
-| @yyc3/websocket | 4 | 4 | 100% |
-| @yyc3/ai | 4 | 4 | 100% |
-| @yyc3/terminal | 3 | 3 | 100% |
-| @yyc3/diagnostics | 3 | 3 | 100% |
-| @yyc3/chat | 5 | 5 | 100% |
-| @yyc3/utils | 1 | 1 | 100% |
-| **总计** | **20** | **20** | **100%** |
+| 包                | 文件数 | 已完成 | 完成率   |
+| ----------------- | ------ | ------ | -------- |
+| @yyc3/websocket   | 4      | 4      | 100%     |
+| @yyc3/ai          | 4      | 4      | 100%     |
+| @yyc3/terminal    | 3      | 3      | 100%     |
+| @yyc3/diagnostics | 3      | 3      | 100%     |
+| @yyc3/chat        | 5      | 5      | 100%     |
+| @yyc3/utils       | 1      | 1      | 100%     |
+| **总计**          | **20** | **20** | **100%** |
 
 ### 文档文件
 
-| 类型 | 数量 | 状态 |
-|------|------|------|
-| README.md | 5 | ✅ 完成 |
-| CHANGELOG.md | 5 | ✅ 完成 |
-| **总计** | **10** | **✅ 完成** |
+| 类型         | 数量   | 状态        |
+| ------------ | ------ | ----------- |
+| README.md    | 5      | ✅ 完成     |
+| CHANGELOG.md | 5      | ✅ 完成     |
+| **总计**     | **10** | **✅ 完成** |
 
 ---
 
@@ -288,6 +292,7 @@
 ### 1. 单一职责原则 ✅
 
 每个包都专注于一个功能领域：
+
 - `@yyc3/websocket` - WebSocket 连接管理
 - `@yyc3/ai` - AI 对话功能
 - `@yyc3/terminal` - 终端会话管理
@@ -297,6 +302,7 @@
 ### 2. 可复用性原则 ✅
 
 所有包都：
+
 - ✅ 高度可复用
 - ✅ 支持多种使用场景
 - ✅ 灵活可配置
@@ -305,6 +311,7 @@
 ### 3. 层次化原则 ✅
 
 所有包都遵循原子化设计：
+
 - ✅ 独立的类型定义
 - ✅ 独立的工具函数
 - ✅ 独立的 Hooks
@@ -313,6 +320,7 @@
 ### 4. 文档完整性 ✅
 
 所有包都有：
+
 - ✅ 完整的代码标头
 - ✅ 完整的 README.md
 - ✅ 完整的 CHANGELOG.md
@@ -349,9 +357,9 @@
 
 <div align="center">
 
-> 「***YanYuCloudCube***」
-> 「***<admin@0379.email>***」
-> 「***Words Initiate Quadrants, Language Serves as Core for Future***」
-> 「***All things converge in cloud pivot; Deep stacks ignite a new era of intelligence***」
+> 「**_YanYuCloudCube_**」
+> 「**_<admin@0379.email>_**」
+> 「**_Words Initiate Quadrants, Language Serves as Core for Future_**」
+> 「**_All things converge in cloud pivot; Deep stacks ignite a new era of intelligence_**」
 
 </div>

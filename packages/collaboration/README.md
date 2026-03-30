@@ -41,20 +41,15 @@ pnpm add @yyc3/collaboration
 import { useCollaborativeEditing } from '@yyc3/collaboration';
 
 function CollaborativeEditor() {
-  const {
-    document,
-    participants,
-    handleOperation,
-    joinSession,
-    leaveSession
-  } = useCollaborativeEditing();
+  const { document, participants, handleOperation, joinSession, leaveSession } =
+    useCollaborativeEditing();
 
   return (
     <div>
       <h1>Collaborative Editor</h1>
       <div>
         <h2>Participants ({participants.length})</h2>
-        {participants.map(p => (
+        {participants.map((p) => (
           <div key={p.id}>
             <span style={{ color: p.cursorColor }}>{p.name}</span>
           </div>
@@ -76,12 +71,8 @@ function CollaborativeEditor() {
 import { useCRDTSync } from '@yyc3/collaboration';
 
 function CRDTSync() {
-  const {
-    syncStatus,
-    pendingOperations,
-    lastSyncTime,
-    forceSync
-  } = useCRDTSync();
+  const { syncStatus, pendingOperations, lastSyncTime, forceSync } =
+    useCRDTSync();
 
   return (
     <div>
@@ -100,17 +91,12 @@ function CRDTSync() {
 import { useFileSync } from '@yyc3/collaboration';
 
 function FileSync() {
-  const {
-    files,
-    syncFile,
-    resolveConflict,
-    syncStatus
-  } = useFileSync();
+  const { files, syncFile, resolveConflict, syncStatus } = useFileSync();
 
   return (
     <div>
       <h2>File Sync</h2>
-      {files.map(file => (
+      {files.map((file) => (
         <div key={file.id}>
           <h3>{file.name}</h3>
           <p>Status: {file.syncStatus}</p>
@@ -119,9 +105,7 @@ function FileSync() {
               Resolve Conflict
             </button>
           )}
-          <button onClick={() => syncFile(file.id)}>
-            Sync
-          </button>
+          <button onClick={() => syncFile(file.id)}>Sync</button>
         </div>
       ))}
     </div>
@@ -186,49 +170,65 @@ interface UseFileSyncReturn {
 
   // Conflict
   conflicts: Conflict[];
-  resolveConflict: (fileId: string, resolution: ConflictResolution) => Promise<void>;
+  resolveConflict: (
+    fileId: string,
+    resolution: ConflictResolution
+  ) => Promise<void>;
 }
 ```
 
 ## 🎨 组件
 
 ### MonacoCodeEditor
+
 专业的代码编辑器，支持协同编辑和光标显示
 
 ### CollaborationPresence
+
 显示当前在线用户和他们的光标位置
 
 ### DiffViewer
+
 文件差异对比视图
 
 ### UserAIPanel
+
 用户 AI 面板
 
 ### CodeDetailPanel
+
 代码详情面板
 
 ### CollabViewSwitcher
+
 协同视图切换器
 
 ### TerminalPanel
+
 终端面板
 
 ### ProjectFileManager
+
 项目管理器
 
 ### ProjectTemplateSelector
+
 项目模板选择器
 
 ### SandboxPreview
+
 沙盒预览
 
 ### GlobalSearchPalette
+
 全局搜索面板
 
 ### DraggablePanelLayout
+
 可拖动面板布局
 
 ### EditorTabBar
+
 编辑器标签栏
 
 ## 🎯 最佳实践
@@ -271,6 +271,7 @@ const debouncedOperation = useMemo(
 ## 📚 类型定义
 
 ### CollaborationParticipant
+
 ```typescript
 interface CollaborationParticipant {
   id: string;
@@ -284,6 +285,7 @@ interface CollaborationParticipant {
 ```
 
 ### TextOperation
+
 ```typescript
 interface TextOperation {
   type: 'insert' | 'delete' | 'retain';

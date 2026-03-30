@@ -16,12 +16,7 @@ YYC3 Supabase 同步库 - 完整的 Supabase 数据同步功能。
 import { useSupabaseSync } from '@yyc3/supabase';
 
 function SupabaseSync() {
-  const {
-    syncStatus,
-    isSyncing,
-    syncData,
-    lastSyncTime
-  } = useSupabaseSync();
+  const { syncStatus, isSyncing, syncData, lastSyncTime } = useSupabaseSync();
 
   return (
     <div>

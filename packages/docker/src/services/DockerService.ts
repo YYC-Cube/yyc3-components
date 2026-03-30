@@ -8,7 +8,7 @@
  * Docker business logic: container, image, network, volume management
  */
 
-import { dockerRepository } from "../repositories/DockerRepository";
+import { dockerRepository } from '../repositories/DockerRepository';
 import type {
   DockerContainer,
   DockerImage,
@@ -19,7 +19,7 @@ import type {
   ContainerCreateConfig,
   ContainerOperationResult,
   ContainerOperationType,
-} from "../types/docker";
+} from '../types/docker';
 
 /* ══════════════════════════════════════════════════════════════════
  *  DockerService 类 / DockerService Class
@@ -86,9 +86,9 @@ class DockerService {
    */
   private startAutoRefresh(): void {
     if (this.refreshInterval) return;
-    
+
     this.refreshAll();
-    
+
     this.refreshInterval = window.setInterval(() => {
       this.refreshAll();
     }, 5000);
@@ -117,13 +117,14 @@ class DockerService {
    */
   async refreshAll(): Promise<void> {
     try {
-      const [containers, images, networks, volumes, metrics] = await Promise.all([
-        dockerRepository.getContainers(),
-        dockerRepository.getImages(),
-        dockerRepository.getNetworks(),
-        dockerRepository.getVolumes(),
-        dockerRepository.getMetrics(),
-      ]);
+      const [containers, images, networks, volumes, metrics] =
+        await Promise.all([
+          dockerRepository.getContainers(),
+          dockerRepository.getImages(),
+          dockerRepository.getNetworks(),
+          dockerRepository.getVolumes(),
+          dockerRepository.getMetrics(),
+        ]);
 
       this.containers = containers;
       this.images = images;
@@ -178,12 +179,15 @@ class DockerService {
     containerId: string,
     operation: ContainerOperationType
   ): Promise<ContainerOperationResult> {
-    const result = await dockerRepository.containerOperation(containerId, operation);
-    
+    const result = await dockerRepository.containerOperation(
+      containerId,
+      operation
+    );
+
     if (result.success) {
       await this.refreshAll();
     }
-    
+
     return result;
   }
 
@@ -198,11 +202,11 @@ class DockerService {
    */
   async createContainer(config: ContainerCreateConfig): Promise<string | null> {
     const containerId = await dockerRepository.createContainer(config);
-    
+
     if (containerId) {
       await this.refreshAll();
     }
-    
+
     return containerId;
   }
 
@@ -216,7 +220,10 @@ class DockerService {
    * @param {number} [tail=100] - 尾部行数 / Tail lines
    * @returns {Promise<DockerLogEntry[]>} 日志列表 / Log entries
    */
-  async getContainerLogs(containerId: string, tail?: number): Promise<DockerLogEntry[]> {
+  async getContainerLogs(
+    containerId: string,
+    tail?: number
+  ): Promise<DockerLogEntry[]> {
     return dockerRepository.getContainerLogs(containerId, tail);
   }
 
@@ -309,18 +316,20 @@ class DockerService {
    * @returns {{ cpu: number; memory: number }} 资源使用率 / Resource usage
    */
   calculateResourceUsage(): { cpu: number; memory: number } {
-    const runningContainers = this.containers.filter((c) => c.status === "running");
-    
+    const runningContainers = this.containers.filter(
+      (c) => c.status === 'running'
+    );
+
     const totalCpu = runningContainers.reduce(
       (sum, c) => sum + (c.stats?.cpuPercent ?? 0),
       0
     );
-    
+
     const totalMemory = runningContainers.reduce(
       (sum, c) => sum + (c.stats?.memoryUsage ?? 0),
       0
     );
-    
+
     return {
       cpu: totalCpu,
       memory: totalMemory,

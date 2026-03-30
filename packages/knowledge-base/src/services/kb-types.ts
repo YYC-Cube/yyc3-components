@@ -1,6 +1,6 @@
 /**
  * YYC³ AI Knowledge Base - Complete Type System (知识长河·万象类型)
- * 
+ *
  * Defines all types for the 6 knowledge base modules:
  *   M1: Local File Intelligent Management (本地文件智能管理)
  *   M2: Semantic Penetration Search (语义穿透检索)
@@ -20,30 +20,90 @@ export type KBEntityId = string;
 /** Supported file formats — "全格式通吃" */
 export type FileFormat =
   // Documents
-  | "md" | "txt" | "pdf" | "docx" | "doc" | "xlsx" | "xls" | "csv"
-  | "pptx" | "html" | "xml" | "json" | "yaml" | "toml"
+  | 'md'
+  | 'txt'
+  | 'pdf'
+  | 'docx'
+  | 'doc'
+  | 'xlsx'
+  | 'xls'
+  | 'csv'
+  | 'pptx'
+  | 'html'
+  | 'xml'
+  | 'json'
+  | 'yaml'
+  | 'toml'
   // Code
-  | "ts" | "tsx" | "js" | "jsx" | "py" | "go" | "rs" | "java" | "css" | "sql"
+  | 'ts'
+  | 'tsx'
+  | 'js'
+  | 'jsx'
+  | 'py'
+  | 'go'
+  | 'rs'
+  | 'java'
+  | 'css'
+  | 'sql'
   // Images (OCR)
-  | "png" | "jpg" | "jpeg" | "gif" | "webp" | "svg" | "bmp" | "tiff"
+  | 'png'
+  | 'jpg'
+  | 'jpeg'
+  | 'gif'
+  | 'webp'
+  | 'svg'
+  | 'bmp'
+  | 'tiff'
   // Audio/Video (transcription)
-  | "mp3" | "wav" | "m4a" | "ogg" | "mp4" | "webm" | "mkv"
+  | 'mp3'
+  | 'wav'
+  | 'm4a'
+  | 'ogg'
+  | 'mp4'
+  | 'webm'
+  | 'mkv'
   // Archives
-  | "zip" | "tar" | "gz"
+  | 'zip'
+  | 'tar'
+  | 'gz'
   // Other
-  | "unknown";
+  | 'unknown';
 
 /** Knowledge source type */
-export type SourceType = "local_file" | "local_directory" | "manual_input" | "external_api" | "web_crawl" | "clipboard" | "ocr_scan";
+export type SourceType =
+  | 'local_file'
+  | 'local_directory'
+  | 'manual_input'
+  | 'external_api'
+  | 'web_crawl'
+  | 'clipboard'
+  | 'ocr_scan';
 
 /** Processing status for any async operation */
-export type ProcessingStatus = "queued" | "processing" | "completed" | "failed" | "cancelled";
+export type ProcessingStatus =
+  | 'queued'
+  | 'processing'
+  | 'completed'
+  | 'failed'
+  | 'cancelled';
 
 /** Content modality */
-export type ContentModality = "text" | "image" | "audio" | "video" | "structured_data" | "code" | "mixed";
+export type ContentModality =
+  | 'text'
+  | 'image'
+  | 'audio'
+  | 'video'
+  | 'structured_data'
+  | 'code'
+  | 'mixed';
 
 /** Knowledge quality level */
-export type QualityLevel = "authoritative" | "verified" | "unverified" | "outdated" | "deprecated";
+export type QualityLevel =
+  | 'authoritative'
+  | 'verified'
+  | 'unverified'
+  | 'outdated'
+  | 'deprecated';
 
 // ==========================================
 // M1: Local File Intelligent Management
@@ -61,13 +121,13 @@ export interface FileMetadata {
 
   // AI-extracted metadata
   title?: string;
-  summary?: string;              // 100-char AI-generated summary
-  keywords: string[];            // Extracted keywords
-  entities: ExtractedEntity[];   // Named entities (people, orgs, dates, etc.)
-  language: string;              // Detected language (zh/en/mixed)
-  category: FileCategory;        // AI-classified category
-  tags: string[];                // Auto-generated + user tags
-  sentiment?: "positive" | "neutral" | "negative";
+  summary?: string; // 100-char AI-generated summary
+  keywords: string[]; // Extracted keywords
+  entities: ExtractedEntity[]; // Named entities (people, orgs, dates, etc.)
+  language: string; // Detected language (zh/en/mixed)
+  category: FileCategory; // AI-classified category
+  tags: string[]; // Auto-generated + user tags
+  sentiment?: 'positive' | 'neutral' | 'negative';
 
   // Temporal
   createdAt: number;
@@ -79,7 +139,7 @@ export interface FileMetadata {
   // Version tracking
   version: number;
   previousVersionId?: KBEntityId;
-  contentHash: string;           // SHA-256 of raw content
+  contentHash: string; // SHA-256 of raw content
 
   // Processing state
   processingStatus: ProcessingStatus;
@@ -90,9 +150,9 @@ export interface FileMetadata {
 
 /** Three-level file category — "智能分类" */
 export interface FileCategory {
-  level1: string;  // e.g., "工作", "学习", "个人"
-  level2: string;  // e.g., "项目A", "课程笔记", "日记"
-  level3: string;  // e.g., "预算文档", "第三章", "2024年"
+  level1: string; // e.g., "工作", "学习", "个人"
+  level2: string; // e.g., "项目A", "课程笔记", "日记"
+  level3: string; // e.g., "预算文档", "第三章", "2024年"
   confidence: number; // 0-1, classification confidence
   isManualOverride: boolean;
 }
@@ -104,15 +164,29 @@ export interface ExtractedEntity {
   startOffset: number;
   endOffset: number;
   confidence: number;
-  normalizedValue?: string;  // e.g., date → ISO format
+  normalizedValue?: string; // e.g., date → ISO format
   linkedGraphNodeId?: KBEntityId;
 }
 
 export type EntityType =
-  | "PERSON" | "ORGANIZATION" | "LOCATION" | "DATE" | "TIME"
-  | "MONEY" | "PERCENTAGE" | "EMAIL" | "PHONE" | "URL"
-  | "PRODUCT" | "TECHNOLOGY" | "EVENT" | "PROJECT"
-  | "CODE_SYMBOL" | "FILE_PATH" | "VERSION" | "CUSTOM";
+  | 'PERSON'
+  | 'ORGANIZATION'
+  | 'LOCATION'
+  | 'DATE'
+  | 'TIME'
+  | 'MONEY'
+  | 'PERCENTAGE'
+  | 'EMAIL'
+  | 'PHONE'
+  | 'URL'
+  | 'PRODUCT'
+  | 'TECHNOLOGY'
+  | 'EVENT'
+  | 'PROJECT'
+  | 'CODE_SYMBOL'
+  | 'FILE_PATH'
+  | 'VERSION'
+  | 'CUSTOM';
 
 /** File processing result from the ingestion pipeline */
 export interface FileProcessingResult {
@@ -133,14 +207,14 @@ export interface OCRResult {
   confidence: number;
   boundingBox: { x: number; y: number; width: number; height: number };
   pageNumber?: number;
-  sceneTag?: string;  // "会议板书", "报销单据", "手写笔记"
+  sceneTag?: string; // "会议板书", "报销单据", "手写笔记"
 }
 
 /** Transcription result from audio/video */
 export interface TranscriptionResult {
   fullText: string;
   segments: {
-    startTime: number;   // seconds
+    startTime: number; // seconds
     endTime: number;
     text: string;
     speaker?: string;
@@ -186,13 +260,13 @@ export interface DocumentChunk {
 
   // Quality
   qualityLevel: QualityLevel;
-  credibilityScore: number;  // 0-1
+  credibilityScore: number; // 0-1
 }
 
 /** Search query with full options */
 export interface SearchQuery {
   text: string;
-  mode: "semantic" | "keyword" | "hybrid";
+  mode: 'semantic' | 'keyword' | 'hybrid';
 
   // Filters
   filters?: {
@@ -216,26 +290,26 @@ export interface SearchQuery {
   includeHighlights?: boolean;
   includeEntityContext?: boolean;
   includeRelated?: boolean;
-  boostRecent?: boolean;      // Boost recently accessed/modified
-  boostFrequent?: boolean;    // Boost frequently accessed (自学习)
+  boostRecent?: boolean; // Boost recently accessed/modified
+  boostFrequent?: boolean; // Boost frequently accessed (自学习)
 }
 
 /** Search result with rich metadata */
 export interface SearchResult {
   chunk: DocumentChunk;
   similarity: number;
-  relevanceScore: number;      // Combined score (semantic + keyword + recency + frequency)
+  relevanceScore: number; // Combined score (semantic + keyword + recency + frequency)
   highlights: SearchHighlight[];
   relatedChunks?: DocumentChunk[];
   entityContext?: ExtractedEntity[];
-  sourcePreview?: string;       // Preview of the surrounding content
+  sourcePreview?: string; // Preview of the surrounding content
 }
 
 export interface SearchHighlight {
   text: string;
   startOffset: number;
   endOffset: number;
-  matchType: "exact" | "semantic" | "entity";
+  matchType: 'exact' | 'semantic' | 'entity';
 }
 
 /** Knowledge brief — generated from search results */
@@ -249,7 +323,7 @@ export interface KnowledgeBrief {
     sources: { name: string; path: string; relevance: number }[];
   }[];
   generatedAt: number;
-  format: "markdown" | "html" | "plain";
+  format: 'markdown' | 'html' | 'plain';
   totalSources: number;
 }
 
@@ -261,20 +335,20 @@ export interface KnowledgeBrief {
 export interface ExternalSource {
   id: KBEntityId;
   name: string;
-  type: "api" | "rss" | "webhook" | "file_share" | "database";
+  type: 'api' | 'rss' | 'webhook' | 'file_share' | 'database';
   endpoint: string;
   auth?: {
-    type: "api_key" | "bearer" | "basic" | "oauth2";
+    type: 'api_key' | 'bearer' | 'basic' | 'oauth2';
     credentials: string; // Encrypted reference, never plain
   };
 
   // Sync schedule
-  syncSchedule: "realtime" | "hourly" | "daily" | "weekly" | "manual";
+  syncSchedule: 'realtime' | 'hourly' | 'daily' | 'weekly' | 'manual';
   lastSyncAt?: number;
   nextSyncAt?: number;
 
   // Quality & trust
-  credibility: "high" | "medium" | "low";
+  credibility: 'high' | 'medium' | 'low';
   categories: string[];
 
   enabled: boolean;
@@ -284,9 +358,9 @@ export interface ExternalSource {
 
 /** File system watch event */
 export interface FSWatchEvent {
-  type: "create" | "modify" | "delete" | "rename";
+  type: 'create' | 'modify' | 'delete' | 'rename';
   path: string;
-  oldPath?: string;  // For rename events
+  oldPath?: string; // For rename events
   timestamp: number;
   fileSize?: number;
 }
@@ -294,11 +368,11 @@ export interface FSWatchEvent {
 /** Deduplication result */
 export interface DeduplicationResult {
   duplicateGroups: {
-    canonical: KBEntityId;   // The "best" version
+    canonical: KBEntityId; // The "best" version
     duplicates: {
       id: KBEntityId;
       similarity: number;
-      reason: "exact_content" | "near_duplicate" | "superseded_version";
+      reason: 'exact_content' | 'near_duplicate' | 'superseded_version';
     }[];
   }[];
   totalDuplicatesFound: number;
@@ -312,12 +386,12 @@ export interface KnowledgeConflict {
   externalChunkId: KBEntityId;
   localContent: string;
   externalContent: string;
-  conflictType: "data_mismatch" | "version_newer" | "content_contradiction";
-  severity: "low" | "medium" | "high";
+  conflictType: 'data_mismatch' | 'version_newer' | 'content_contradiction';
+  severity: 'low' | 'medium' | 'high';
   suggestedResolution: string;
   detectedAt: number;
   resolved: boolean;
-  resolvedBy?: "user" | "auto";
+  resolvedBy?: 'user' | 'auto';
 }
 
 // ==========================================
@@ -327,7 +401,13 @@ export interface KnowledgeConflict {
 /** Material extracted for content creation */
 export interface CreationMaterial {
   id: KBEntityId;
-  type: "text_snippet" | "data_table" | "chart_data" | "quote" | "reference" | "template";
+  type:
+    | 'text_snippet'
+    | 'data_table'
+    | 'chart_data'
+    | 'quote'
+    | 'reference'
+    | 'template';
   content: string;
   source: string;
   relevanceScore: number;
@@ -340,17 +420,17 @@ export interface CreationMaterial {
 
 /** Content generation request */
 export interface ContentGenerationRequest {
-  type: "draft" | "summary" | "outline" | "continuation" | "rewrite" | "brief";
+  type: 'draft' | 'summary' | 'outline' | 'continuation' | 'rewrite' | 'brief';
   topic: string;
-  context?: string;          // Existing content to build upon
-  style?: string;            // User's writing style profile
-  format: "markdown" | "html" | "plain" | "email" | "report" | "memo";
+  context?: string; // Existing content to build upon
+  style?: string; // User's writing style profile
+  format: 'markdown' | 'html' | 'plain' | 'email' | 'report' | 'memo';
   maxLength?: number;
   includeReferences?: boolean;
   language?: string;
 
   // Material hints
-  materialHints?: string[];  // e.g., "项目A的成本数据", "2025年市场趋势"
+  materialHints?: string[]; // e.g., "项目A的成本数据", "2025年市场趋势"
   useMaterials?: KBEntityId[];
 }
 
@@ -358,9 +438,9 @@ export interface ContentGenerationRequest {
 export interface ContentGenerationResult {
   content: string;
   format: string;
-  materials: CreationMaterial[];   // Materials used in generation
+  materials: CreationMaterial[]; // Materials used in generation
   references: { source: string; snippet: string; relevance: number }[];
-  suggestions: string[];           // Further improvement suggestions
+  suggestions: string[]; // Further improvement suggestions
   duplicateWarnings?: { existingSource: string; overlap: number }[];
   generatedAt: number;
   model: string;
@@ -373,8 +453,8 @@ export interface WritingStyleProfile {
   sampleCount: number;
   avgSentenceLength: number;
   vocabularyRichness: number;
-  formalityLevel: number;       // 0-1 (casual → formal)
-  preferredStructure: string;   // "bullet_points" | "paragraphs" | "mixed"
+  formalityLevel: number; // 0-1 (casual → formal)
+  preferredStructure: string; // "bullet_points" | "paragraphs" | "mixed"
   commonPhrases: string[];
   topicPreferences: string[];
   updatedAt: number;
@@ -390,8 +470,8 @@ export interface KnowledgeSubscription {
   topic: string;
   keywords: string[];
   categories: string[];
-  schedule: "realtime" | "daily" | "weekly";
-  format: "notification" | "email_digest" | "sidebar_card";
+  schedule: 'realtime' | 'daily' | 'weekly';
+  format: 'notification' | 'email_digest' | 'sidebar_card';
   enabled: boolean;
   createdAt: number;
   lastPushedAt?: number;
@@ -407,25 +487,30 @@ export interface KnowledgePush {
 }
 
 export type PushTrigger =
-  | { type: "user_activity"; activity: string; file?: string }
-  | { type: "schedule"; subscription: KBEntityId }
-  | { type: "content_update"; source: string; changeType: string }
-  | { type: "conflict_detected"; conflict: KBEntityId };
+  | { type: 'user_activity'; activity: string; file?: string }
+  | { type: 'schedule'; subscription: KBEntityId }
+  | { type: 'content_update'; source: string; changeType: string }
+  | { type: 'conflict_detected'; conflict: KBEntityId };
 
 export interface PushRecommendation {
-  type: "related_document" | "updated_data" | "conflict_alert" | "trending_topic" | "material_suggestion";
+  type:
+    | 'related_document'
+    | 'updated_data'
+    | 'conflict_alert'
+    | 'trending_topic'
+    | 'material_suggestion';
   title: string;
   summary: string;
   source: string;
   relevanceScore: number;
   actionUrl?: string;
-  priority: "low" | "normal" | "high";
+  priority: 'low' | 'normal' | 'high';
 }
 
 /** Knowledge digest — weekly/daily compilation */
 export interface KnowledgeDigest {
   id: KBEntityId;
-  period: "daily" | "weekly";
+  period: 'daily' | 'weekly';
   startDate: number;
   endDate: number;
   sections: {
@@ -453,8 +538,8 @@ export interface GraphNode {
   label: string;
   type: EntityType;
   properties: Record<string, string | number | boolean>;
-  documentIds: KBEntityId[];    // Source documents
-  weight: number;               // Importance (based on connections + access)
+  documentIds: KBEntityId[]; // Source documents
+  weight: number; // Importance (based on connections + access)
   createdAt: number;
   updatedAt: number;
 }
@@ -468,15 +553,30 @@ export interface GraphEdge {
   label: string;
   weight: number;
   confidence: number;
-  documentId: KBEntityId;       // Source document where this was extracted
+  documentId: KBEntityId; // Source document where this was extracted
   createdAt: number;
 }
 
 export type RelationType =
-  | "RELATED_TO" | "PART_OF" | "DEPENDS_ON" | "CREATED_BY" | "LOCATED_IN"
-  | "BELONGS_TO" | "MENTIONS" | "CAUSED_BY" | "FOLLOWS" | "CONTRADICTS"
-  | "SUPERSEDES" | "REFERENCES" | "COLLABORATES_WITH" | "REPORTS_TO"
-  | "IMPLEMENTS" | "EXTENDS" | "USES" | "GENERATES" | "CUSTOM";
+  | 'RELATED_TO'
+  | 'PART_OF'
+  | 'DEPENDS_ON'
+  | 'CREATED_BY'
+  | 'LOCATED_IN'
+  | 'BELONGS_TO'
+  | 'MENTIONS'
+  | 'CAUSED_BY'
+  | 'FOLLOWS'
+  | 'CONTRADICTS'
+  | 'SUPERSEDES'
+  | 'REFERENCES'
+  | 'COLLABORATES_WITH'
+  | 'REPORTS_TO'
+  | 'IMPLEMENTS'
+  | 'EXTENDS'
+  | 'USES'
+  | 'GENERATES'
+  | 'CUSTOM';
 
 /** Extracted relation from text */
 export interface ExtractedRelation {
@@ -485,7 +585,7 @@ export interface ExtractedRelation {
   relation: RelationType;
   label: string;
   confidence: number;
-  sentence: string;    // The sentence where this was found
+  sentence: string; // The sentence where this was found
 }
 
 /** Graph query for traversal */
@@ -493,7 +593,7 @@ export interface GraphQuery {
   startNodeId?: KBEntityId;
   startLabel?: string;
   relation?: RelationType;
-  depth?: number;        // Max traversal depth
+  depth?: number; // Max traversal depth
   limit?: number;
   includeProperties?: boolean;
 }

@@ -24,52 +24,88 @@ const notImplemented = (path: string): FSOperationResult => ({
 });
 
 export const fileSystemRepository = {
-  async listDirectory(_path: string, _includeHidden?: boolean): Promise<FSNode[]> {
+  listDirectory(_path: string, _includeHidden?: boolean): FSNode[] {
     return [];
   },
-  async getTree(_path: string): Promise<FSNode[]> {
+  getTree(_path: string): FSNode[] {
     return [];
   },
-  async getStats(_path: string): Promise<{ size: number; modified: string }> {
+  getStats(_path: string): { size: number; modified: string } {
     return { size: 0, modified: '' };
   },
-  async readFile(_path: string, _encoding?: string): Promise<FSReadResult> {
-    return { success: true, path: _path, content: '', encoding: _encoding || 'utf8', size: 0, error: null };
+  readFile(_path: string, _encoding?: string): FSReadResult {
+    return {
+      success: true,
+      path: _path,
+      content: '',
+      encoding: _encoding ?? 'utf8',
+      size: 0,
+      error: null,
+    };
   },
-  async writeFile(_input: FSWriteInput): Promise<FSOperationResult> {
+  writeFile(_input: FSWriteInput): FSOperationResult {
     return notImplemented(_input.path);
   },
-  async create(_input: FSCreateInput): Promise<FSOperationResult> {
+  create(_input: FSCreateInput): FSOperationResult {
     return notImplemented(`${_input.parentPath}/${_input.name}`);
   },
-  async rename(_input: FSRenameInput): Promise<FSOperationResult> {
+  rename(_input: FSRenameInput): FSOperationResult {
     return notImplemented(_input.oldPath);
   },
-  async copy(_input: FSCopyMoveInput): Promise<FSOperationResult> {
+  copy(_input: FSCopyMoveInput): FSOperationResult {
     return notImplemented(_input.sourcePath);
   },
-  async move(_input: FSCopyMoveInput): Promise<FSOperationResult> {
+  move(_input: FSCopyMoveInput): FSOperationResult {
     return notImplemented(_input.sourcePath);
   },
-  async delete(_input: FSDeleteInput): Promise<FSOperationResult> {
+  delete(_input: FSDeleteInput): FSOperationResult {
     return notImplemented(_input.path);
   },
-  async search(_input: FSSearchInput): Promise<FSSearchResult> {
-    return { success: true, files: [], totalMatches: 0, duration: 0, error: null };
+  search(_input: FSSearchInput): FSSearchResult {
+    return {
+      success: true,
+      files: [],
+      totalMatches: 0,
+      duration: 0,
+      error: null,
+    };
   },
-  async getDirectoryStats(_path: string): Promise<FSDirectoryStats> {
-    return { path: _path, fileCount: 0, directoryCount: 0, totalSize: 0, hiddenCount: 0, maxDepth: 0 };
+  getDirectoryStats(_path: string): FSDirectoryStats {
+    return {
+      path: _path,
+      fileCount: 0,
+      directoryCount: 0,
+      totalSize: 0,
+      hiddenCount: 0,
+      maxDepth: 0,
+    };
   },
-  async upload(_input: FSUploadInput): Promise<FSOperationResult> {
+  upload(_input: FSUploadInput): FSOperationResult {
     return notImplemented(_input.targetPath);
   },
-  async download(_path: string): Promise<FSDownloadResponse> {
-    return { success: false, path: _path, fileName: '', data: '', mimeType: 'application/octet-stream', size: 0, error: 'Not implemented' };
+  download(_path: string): FSDownloadResponse {
+    return {
+      success: false,
+      path: _path,
+      fileName: '',
+      data: '',
+      mimeType: 'application/octet-stream',
+      size: 0,
+      error: 'Not implemented',
+    };
   },
-  async getGitInfo(_path: string): Promise<GitRepoInfo> {
-    return { isGitRepo: false, rootPath: '', currentBranch: '', untrackedCount: 0, modifiedCount: 0, stagedCount: 0, remoteUrl: null };
+  getGitInfo(_path: string): GitRepoInfo {
+    return {
+      isGitRepo: false,
+      rootPath: '',
+      currentBranch: '',
+      untrackedCount: 0,
+      modifiedCount: 0,
+      stagedCount: 0,
+      remoteUrl: null,
+    };
   },
-  async checkHealth(): Promise<{ healthy: boolean; message: string }> {
+  checkHealth(): { healthy: boolean; message: string } {
     return { healthy: false, message: 'Not implemented' };
   },
 };

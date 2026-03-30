@@ -78,8 +78,6 @@ export {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
-  CarouselDots,
-  CarouselDot,
 } from './carousel';
 
 // Chart
@@ -106,7 +104,6 @@ export {
   CommandItem,
   CommandShortcut,
   CommandSeparator,
-  CommandLoading,
 } from './command';
 
 // Context Menu
@@ -192,10 +189,10 @@ export { Input } from './input';
 
 // Input OTP
 export {
-  OTPInput,
-  OTPInputGroup,
-  OTPInputSlot,
-  OTPInputSeparator,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
 } from './input-otp';
 
 // Label
@@ -286,8 +283,6 @@ export { Separator } from './separator';
 // Sheet
 export {
   Sheet,
-  SheetPortal,
-  SheetOverlay,
   SheetTrigger,
   SheetClose,
   SheetContent,
@@ -330,7 +325,7 @@ export { Skeleton } from './skeleton';
 export { Slider } from './slider';
 
 // Sonner
-export { toast, Toaster, useToast } from './sonner';
+export { Toaster } from './sonner';
 
 // Switch
 export { Switch } from './switch';
@@ -348,12 +343,7 @@ export {
 } from './table';
 
 // Tabs
-export {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from './tabs';
+export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs';
 
 // Textarea
 export { Textarea } from './textarea';
@@ -362,10 +352,12 @@ export { Textarea } from './textarea';
 export { Toggle, toggleVariants } from './toggle';
 
 // Toggle Group
-export {
-  ToggleGroup,
-  ToggleGroupItem,
-} from './toggle-group';
+export { ToggleGroup, ToggleGroupItem } from './toggle-group';
 
 // Tooltip
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './tooltip';
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from './tooltip';

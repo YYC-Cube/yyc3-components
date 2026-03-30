@@ -36,8 +36,8 @@ export type {
   CommandHistoryEntry,
   TerminalShortcut,
   TerminalMetrics,
-} from "./types";
+} from './types';
 
 // Hooks
-export { useTerminal } from "./useTerminal";
-export type { UseTerminalReturn } from "./useTerminal";
+export { useTerminal } from './useTerminal';
+export type { UseTerminalReturn } from './useTerminal';

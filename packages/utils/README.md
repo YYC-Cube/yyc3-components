@@ -111,52 +111,52 @@ const result = interpolate('Hello {name}', { name: 'World' }); // "Hello World"
 
 ### 颜色处理
 
-| 函数 | 说明 | 返回值 |
-|------|------|--------|
-| `hexToRgb(hex)` | 十六进制转RGB | `string` |
-| `hexToRgba(hex, alpha)` | 十六进制转RGBA | `string` |
-| `isDarkColor(hex)` | 判断是否为深色 | `boolean` |
-| `getContrastColor(hex)` | 获取对比色 | `"#000000" \| "#ffffff"` |
+| 函数                    | 说明           | 返回值                   |
+| ----------------------- | -------------- | ------------------------ |
+| `hexToRgb(hex)`         | 十六进制转RGB  | `string`                 |
+| `hexToRgba(hex, alpha)` | 十六进制转RGBA | `string`                 |
+| `isDarkColor(hex)`      | 判断是否为深色 | `boolean`                |
+| `getContrastColor(hex)` | 获取对比色     | `"#000000" \| "#ffffff"` |
 
 ### 日期处理
 
-| 函数 | 说明 | 返回值 |
-|------|------|--------|
-| `getGreeting()` | 获取问候语 | `{ text, emoji }` |
-| `getHourlyCare(members)` | 整点关爱播报 | `{ member, message }` |
-| `formatDate(date, format)` | 格式化日期 | `string` |
-| `getRelativeTime(date)` | 相对时间 | `string` |
-| `isToday(date)` | 是否为今天 | `boolean` |
-| `isThisWeek(date)` | 是否为本周 | `boolean` |
+| 函数                       | 说明         | 返回值                |
+| -------------------------- | ------------ | --------------------- |
+| `getGreeting()`            | 获取问候语   | `{ text, emoji }`     |
+| `getHourlyCare(members)`   | 整点关爱播报 | `{ member, message }` |
+| `formatDate(date, format)` | 格式化日期   | `string`              |
+| `getRelativeTime(date)`    | 相对时间     | `string`              |
+| `isToday(date)`            | 是否为今天   | `boolean`             |
+| `isThisWeek(date)`         | 是否为本周   | `boolean`             |
 
 ### 数据处理
 
-| 函数 | 说明 | 返回值 |
-|------|------|--------|
-| `getMember(id, members)` | 根据ID查找 | `T \| undefined` |
-| `getDataSummary(members, options)` | 数据统计摘要 | `DataSummary` |
-| `deepClone<T>(obj)` | 深度克隆 | `T` |
-| `unique<T>(arr, key)` | 数组去重 | `T[]` |
-| `groupBy<T>(arr, key)` | 数组分组 | `Record<string, T[]>` |
-| `chunk<T>(arr, size)` | 数组分块 | `T[][]` |
+| 函数                               | 说明         | 返回值                |
+| ---------------------------------- | ------------ | --------------------- |
+| `getMember(id, members)`           | 根据ID查找   | `T \| undefined`      |
+| `getDataSummary(members, options)` | 数据统计摘要 | `DataSummary`         |
+| `deepClone<T>(obj)`                | 深度克隆     | `T`                   |
+| `unique<T>(arr, key)`              | 数组去重     | `T[]`                 |
+| `groupBy<T>(arr, key)`             | 数组分组     | `Record<string, T[]>` |
+| `chunk<T>(arr, size)`              | 数组分块     | `T[][]`               |
 
 ### 字符串处理
 
-| 函数 | 说明 | 返回值 |
-|------|------|--------|
-| `truncate(str, maxLength, suffix)` | 截断字符串 | `string` |
-| `capitalize(str)` | 首字母大写 | `string` |
-| `camelToKebab(str)` | 驼峰转短横线 | `string` |
-| `kebabToCamel(str)` | 短横线转驼峰 | `string` |
-| `randomString(length, chars)` | 随机字符串 | `string` |
-| `uuid()` | 生成UUID | `string` |
-| `interpolate(template, vars)` | 模板替换 | `string` |
-| `escapeHtml(str)` | 转义HTML | `string` |
-| `unescapeHtml(str)` | 反转义HTML | `string` |
-| `isBlank(str)` | 判断空白 | `boolean` |
-| `removeWhitespace(str)` | 移除空白 | `string` |
-| `truncateByWords(str, maxWords, suffix)` | 按单词截断 | `string` |
-| `slugify(str)` | 生成slug | `string` |
+| 函数                                     | 说明         | 返回值    |
+| ---------------------------------------- | ------------ | --------- |
+| `truncate(str, maxLength, suffix)`       | 截断字符串   | `string`  |
+| `capitalize(str)`                        | 首字母大写   | `string`  |
+| `camelToKebab(str)`                      | 驼峰转短横线 | `string`  |
+| `kebabToCamel(str)`                      | 短横线转驼峰 | `string`  |
+| `randomString(length, chars)`            | 随机字符串   | `string`  |
+| `uuid()`                                 | 生成UUID     | `string`  |
+| `interpolate(template, vars)`            | 模板替换     | `string`  |
+| `escapeHtml(str)`                        | 转义HTML     | `string`  |
+| `unescapeHtml(str)`                      | 反转义HTML   | `string`  |
+| `isBlank(str)`                           | 判断空白     | `boolean` |
+| `removeWhitespace(str)`                  | 移除空白     | `string`  |
+| `truncateByWords(str, maxWords, suffix)` | 按单词截断   | `string`  |
+| `slugify(str)`                           | 生成slug     | `string`  |
 
 ## 开发
 

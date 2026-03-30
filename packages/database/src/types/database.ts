@@ -1,6 +1,10 @@
 export type DatabaseType = 'mysql' | 'postgresql' | 'sqlite' | 'mongodb';
 
-export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
+export type ConnectionStatus =
+  | 'disconnected'
+  | 'connecting'
+  | 'connected'
+  | 'error';
 
 export interface DatabaseConnection {
   id: string;
@@ -146,7 +150,12 @@ export interface UseDatabaseReturn {
   loading: boolean;
   error: string | null;
   loadConnections: () => Promise<void>;
-  createConnection: (conn: Omit<DatabaseConnection, 'id' | 'createdAt' | 'lastConnectedAt' | 'status'>) => Promise<void>;
+  createConnection: (
+    conn: Omit<
+      DatabaseConnection,
+      'id' | 'createdAt' | 'lastConnectedAt' | 'status'
+    >
+  ) => Promise<void>;
   testConnection: (id: string) => Promise<void>;
   executeQuery: (input: SQLQueryInput) => Promise<SQLQueryResult>;
   getTables: (connectionId: string) => Promise<DatabaseTable[]>;
@@ -170,6 +179,12 @@ export const DEFAULT_PORTS: Record<DatabaseType, number> = {
 };
 
 export const DANGEROUS_SQL_KEYWORDS = [
-  'DROP DATABASE', 'DROP TABLE', 'TRUNCATE', 'DELETE FROM',
-  'ALTER TABLE', 'GRANT', 'REVOKE', 'CREATE USER',
+  'DROP DATABASE',
+  'DROP TABLE',
+  'TRUNCATE',
+  'DELETE FROM',
+  'ALTER TABLE',
+  'GRANT',
+  'REVOKE',
+  'CREATE USER',
 ];

@@ -7,6 +7,7 @@
 ## [1.0.0] - 2026-03-26
 
 ### 新增 / Added
+
 - ✅ `useWebSocket` Hook - 完整的 WebSocket 连接管理
 - ✅ 自动重连机制（支持最大重连次数和重连间隔配置）
 - ✅ 心跳保活（可配置心跳间隔和超时时间）
@@ -17,6 +18,7 @@
 - ✅ WebSocketManager - 非React 环境下的管理器
 
 ### 类型 / Types
+
 - ✅ `WebSocketState` - 连接状态枚举
 - ✅ `WebSocketMessageType` - 消息类型枚举
 - ✅ `WebSocketMessage<T>` - 通用消息接口
@@ -28,6 +30,7 @@
 - ✅ `WebSocketManager` - WebSocket 管理器接口
 
 ### 文档 / Documentation
+
 - ✅ 完整的 README.md（中英文）
 - ✅ 代码标头规范（YYC3 标准）
 - ✅ 使用示例和最佳实践
@@ -37,6 +40,7 @@
 ## [Unreleased]
 
 ### 计划中 / Planned
+
 - [ ] WebSocket 管理器完整实现
 - [ ] 支持多个 WebSocket 连接
 - [ ] 消息队列（离线消息缓存）
@@ -60,8 +64,8 @@
 
 <div align="center">
 
-> 「***YanYuCloudCube***」
-> 「***Words Initiate Quadrants, Language Serves as Core for Future***」
-> 「***All things converge in cloud pivot; Deep stacks ignite a new era of intelligence***」
+> 「**_YanYuCloudCube_**」
+> 「**_Words Initiate Quadrants, Language Serves as Core for Future_**」
+> 「**_All things converge in cloud pivot; Deep stacks ignite a new era of intelligence_**」
 
 </div>

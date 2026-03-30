@@ -10,7 +10,7 @@
  * - 支持类型推断
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from 'react';
 
 export function useLocalStorage<T>(
   key: string,
@@ -18,7 +18,7 @@ export function useLocalStorage<T>(
 ): [T, (value: T | ((prev: T) => T)) => void, () => void] {
   // 初始化状态
   const [value, setValue] = useState<T>(() => {
-    if (typeof window === "undefined") return defaultValue;
+    if (typeof window === 'undefined') return defaultValue;
     try {
       const item = window.localStorage.getItem(key);
       return item ? (JSON.parse(item) as T) : defaultValue;
@@ -35,24 +35,28 @@ export function useLocalStorage<T>(
         try {
           setValue(JSON.parse(e.newValue) as T);
         } catch (error) {
-          console.error(`Error parsing localStorage value for key "${key}":`, error);
+          console.error(
+            `Error parsing localStorage value for key "${key}":`,
+            error
+          );
         }
       }
     };
 
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [key]);
 
   // 更新 localStorage
   const setStoredValue = useCallback(
     (valueOrFn: T | ((prev: T) => T)) => {
       try {
-        const valueToStore = typeof valueOrFn === 'function' 
-          ? (valueOrFn as (prev: T) => T)(value) 
-          : valueOrFn;
+        const valueToStore =
+          typeof valueOrFn === 'function'
+            ? (valueOrFn as (prev: T) => T)(value)
+            : valueOrFn;
         setValue(valueToStore);
-        if (typeof window !== "undefined") {
+        if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
       } catch (error) {
@@ -66,7 +70,7 @@ export function useLocalStorage<T>(
   const removeValue = useCallback(() => {
     try {
       setValue(defaultValue);
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         window.localStorage.removeItem(key);
       }
     } catch (error) {

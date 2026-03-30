@@ -10,7 +10,7 @@ export interface GitCheckoutOptions {
 
 export interface GitFileChange {
   path: string;
-  status: 'modified' | 'added' | 'deleted' | 'renamed' | 'copied' | 'untracked';
+  status: 'modified' | 'added' | 'deleted' | 'renamed' | 'copied' | 'untracked' | 'unmerged';
   linesAdded?: number;
   linesDeleted?: number;
   oldPath?: string;

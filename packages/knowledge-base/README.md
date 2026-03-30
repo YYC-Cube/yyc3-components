@@ -20,7 +20,7 @@ const kb = new KnowledgeBase();
 await kb.addDocument({
   title: 'React Best Practices',
   content: '...',
-  tags: ['react', 'best-practices']
+  tags: ['react', 'best-practices'],
 });
 ```
 

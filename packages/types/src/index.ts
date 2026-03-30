@@ -5,7 +5,14 @@
 
 // ═══ 错误处理类型 ═══
 
-export type ErrorCategory = 'network' | 'parse' | 'auth' | 'runtime' | 'validation' | 'storage' | 'unknown';
+export type ErrorCategory =
+  | 'network'
+  | 'parse'
+  | 'auth'
+  | 'runtime'
+  | 'validation'
+  | 'storage'
+  | 'unknown';
 
 export type ErrorSeverity = 'info' | 'warning' | 'error' | 'critical';
 
@@ -158,7 +165,14 @@ export interface ThemeContextValue {
   resolvedTheme: 'light' | 'dark';
 }
 
-export type ColorScheme = 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'cyan' | 'pink';
+export type ColorScheme =
+  | 'blue'
+  | 'green'
+  | 'purple'
+  | 'orange'
+  | 'red'
+  | 'cyan'
+  | 'pink';
 
 export interface ColorPalette {
   primary: string;
@@ -173,7 +187,12 @@ export interface ColorPalette {
 // ═══ 动画类型 ═══
 
 export type AnimationDuration = 'fast' | 'normal' | 'slow';
-export type AnimationEasing = 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out';
+export type AnimationEasing =
+  | 'linear'
+  | 'ease'
+  | 'ease-in'
+  | 'ease-out'
+  | 'ease-in-out';
 
 export interface AnimationOptions {
   duration?: AnimationDuration | number;
@@ -224,7 +243,13 @@ export interface RouteMatch {
 
 // ═══ 文件类型 ═══
 
-export type FileType = 'image' | 'video' | 'audio' | 'document' | 'archive' | 'other';
+export type FileType =
+  | 'image'
+  | 'video'
+  | 'audio'
+  | 'document'
+  | 'archive'
+  | 'other';
 
 export interface FileInfo {
   name: string;
@@ -268,12 +293,19 @@ export interface PerformanceStats {
 
 export type ComponentSize = 'sm' | 'default' | 'lg' | 'xl';
 
-export type ComponentVariant = 'default' | 'primary' | 'secondary' | 'destructive' | 'outline' | 'ghost';
+export type ComponentVariant =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'destructive'
+  | 'outline'
+  | 'ghost';
 
 export interface BaseComponentProps {
   className?: string;
   id?: string;
   'data-testid'?: string;
+  style?: React.CSSProperties;
 }
 
 export interface PolymorphicComponentProps<E extends React.ElementType> {

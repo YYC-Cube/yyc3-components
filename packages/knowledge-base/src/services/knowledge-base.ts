@@ -1,8 +1,8 @@
 /**
  * YYC³ AI Knowledge Base — Core Orchestrator (知识长河·万象归元)
- * 
+ *
  * "从被动存储到主动服务的知识管理范式升级"
- * 
+ *
  * Integrates all 6 knowledge base modules:
  *   M1: FileProcessor    — 本地文件智能管理 (20+格式, OCR, 转写, 智能分类)
  *   M2: VectorSearch     — 语义穿透检索 (混合检索, 知识简报, 溯源)
@@ -10,21 +10,35 @@
  *   M4: CreationEngine   — 创作加速引擎 (素材提取, 风格生成, RAG增强)
  *   M5: PushService      — 主动知识推送 (场景推荐, 订阅, 冲突预警)
  *   M6: KnowledgeGraph   — 知识图谱 (实体识别, 关系抽取, 可视化)
- * 
+ *
  * The Knowledge Base enriches every agent_call with contextual information,
  * making family members aware of project docs, codebase, and history.
  */
 
-import { kb as kbConfig, llm as llmConfig } from "./config";
-import { FileProcessor, smartChunkDocument, detectFormat, detectModality } from "./kb-file-processor";
-import { KnowledgeGraph } from "./kb-knowledge-graph";
-import { SyncEngine } from "./kb-sync-engine";
+import { readdir, stat } from 'fs/promises';
+import { join } from 'path';
+import { kb as kbConfig, llm as llmConfig } from './config';
+import {
+  FileProcessor,
+  smartChunkDocument,
+  detectFormat,
+  detectModality,
+} from './kb-file-processor';
+import { KnowledgeGraph } from './kb-knowledge-graph';
+import { SyncEngine } from './kb-sync-engine';
 import type {
-  KBEntityId, DocumentChunk, SearchResult, SearchQuery,
-  KnowledgeBrief, KBFullStats, FileProcessingResult,
-  ContentGenerationRequest, ContentGenerationResult,
-  GraphVisualization, GraphQuery,
-} from "./kb-types";
+  KBEntityId,
+  DocumentChunk,
+  SearchResult,
+  SearchQuery,
+  KnowledgeBrief,
+  KBFullStats,
+  FileProcessingResult,
+  ContentGenerationRequest,
+  ContentGenerationResult,
+  GraphVisualization,
+  GraphQuery,
+} from './kb-types';
 
 // ==========================================
 // In-Memory Vector Store (enhanced)
@@ -34,8 +48,8 @@ class VectorStore {
   private searchCount = 0;
   private totalSearchLatency = 0;
 
-  async upsert(chunk: DocumentChunk): Promise<void> {
-    const existing = this.chunks.findIndex(c => c.id === chunk.id);
+  upsert(chunk: DocumentChunk): void {
+    const existing = this.chunks.findIndex((c) => c.id === chunk.id);
     if (existing >= 0) {
       this.chunks[existing] = chunk;
     } else {
@@ -43,7 +57,11 @@ class VectorStore {
     }
   }
 
-  async search(queryEmbedding: number[], topK: number, threshold: number): Promise<SearchResult[]> {
+  search(
+    queryEmbedding: number[],
+    topK: number,
+    threshold: number
+  ): SearchResult[] {
     const start = Date.now();
     const results: SearchResult[] = [];
 
@@ -60,7 +78,9 @@ class VectorStore {
       }
     }
 
-    const sorted = results.sort((a, b) => b.similarity - a.similarity).slice(0, topK);
+    const sorted = results
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, topK);
 
     this.searchCount++;
     this.totalSearchLatency += Date.now() - start;
@@ -68,16 +88,19 @@ class VectorStore {
     return sorted;
   }
 
-  async hybridSearch(
+  hybridSearch(
     queryEmbedding: number[],
     queryText: string,
     topK: number,
     threshold: number,
     boostRecent: boolean = false,
-    boostFrequent: boolean = false,
-  ): Promise<SearchResult[]> {
+    boostFrequent: boolean = false
+  ): SearchResult[] {
     const start = Date.now();
-    const queryTerms = queryText.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+    const queryTerms = queryText
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((t) => t.length > 1);
     const results: SearchResult[] = [];
 
     for (const chunk of this.chunks) {
@@ -90,7 +113,7 @@ class VectorStore {
       // Keyword score (BM25-like)
       const contentLower = chunk.content.toLowerCase();
       let keywordHits = 0;
-      const highlights: SearchResult["highlights"] = [];
+      const highlights: SearchResult['highlights'] = [];
 
       for (const term of queryTerms) {
         const idx = contentLower.indexOf(term);
@@ -100,11 +123,12 @@ class VectorStore {
             text: chunk.content.substring(idx, idx + term.length),
             startOffset: idx,
             endOffset: idx + term.length,
-            matchType: "exact",
+            matchType: 'exact',
           });
         }
       }
-      const keywordScore = queryTerms.length > 0 ? keywordHits / queryTerms.length : 0;
+      const keywordScore =
+        queryTerms.length > 0 ? keywordHits / queryTerms.length : 0;
 
       // Combined score (70% semantic + 30% keyword)
       let relevanceScore = semanticScore * 0.7 + keywordScore * 0.3;
@@ -116,18 +140,23 @@ class VectorStore {
         relevanceScore += recencyBoost * 0.1;
       }
 
-      if (relevanceScore >= threshold * 0.7) { // Lower threshold for hybrid
+      if (relevanceScore >= threshold * 0.7) {
+        // Lower threshold for hybrid
         results.push({
           chunk,
           similarity: semanticScore,
           relevanceScore,
           highlights,
-          sourcePreview: chunk.content.substring(0, 200) + (chunk.content.length > 200 ? "..." : ""),
+          sourcePreview:
+            chunk.content.substring(0, 200) +
+            (chunk.content.length > 200 ? '...' : ''),
         });
       }
     }
 
-    const sorted = results.sort((a, b) => b.relevanceScore - a.relevanceScore).slice(0, topK);
+    const sorted = results
+      .sort((a, b) => b.relevanceScore - a.relevanceScore)
+      .slice(0, topK);
 
     this.searchCount++;
     this.totalSearchLatency += Date.now() - start;
@@ -139,8 +168,8 @@ class VectorStore {
     return [...this.chunks];
   }
 
-  async remove(chunkId: KBEntityId): Promise<boolean> {
-    const idx = this.chunks.findIndex(c => c.id === chunkId);
+  remove(chunkId: KBEntityId): boolean {
+    const idx = this.chunks.findIndex((c) => c.id === chunkId);
     if (idx >= 0) {
       this.chunks.splice(idx, 1);
       return true;
@@ -148,21 +177,29 @@ class VectorStore {
     return false;
   }
 
-  async clear(): Promise<void> {
+  clear(): void {
     this.chunks = [];
   }
 
-  get size(): number { return this.chunks.length; }
-
-  get avgSearchLatency(): number {
-    return this.searchCount > 0 ? this.totalSearchLatency / this.searchCount : 0;
+  get size(): number {
+    return this.chunks.length;
   }
 
-  get totalSearches(): number { return this.searchCount; }
+  get avgSearchLatency(): number {
+    return this.searchCount > 0
+      ? this.totalSearchLatency / this.searchCount
+      : 0;
+  }
+
+  get totalSearches(): number {
+    return this.searchCount;
+  }
 
   private cosineSimilarity(a: number[], b: number[]): number {
     if (a.length !== b.length) return 0;
-    let dot = 0, normA = 0, normB = 0;
+    let dot = 0,
+      normA = 0,
+      normB = 0;
     for (let i = 0; i < a.length; i++) {
       dot += a[i] * b[i];
       normA += a[i] * a[i];
@@ -182,7 +219,7 @@ const embeddingState = {
   /** Actually resolved dimensions (auto-detected on first call) */
   resolvedDimensions: 0,
   /** Provider that was used to generate current embeddings */
-  activeProvider: "" as string,
+  activeProvider: '' as string,
   /** Total embedding calls made */
   callCount: 0,
   /** Total embedding errors */
@@ -190,7 +227,7 @@ const embeddingState = {
   /** Whether Ollama embedding model is confirmed available */
   ollamaModelVerified: false,
   /** Ollama API version: "new" = /api/embed, "legacy" = /api/embeddings */
-  ollamaApiVersion: "new" as "new" | "legacy",
+  ollamaApiVersion: 'new' as 'new' | 'legacy',
 };
 
 /**
@@ -199,9 +236,12 @@ const embeddingState = {
  * Otherwise, use per-provider defaults.
  */
 function getEffectiveDimensions(): number {
-  if (embeddingState.resolvedDimensions > 0) return embeddingState.resolvedDimensions;
+  if (embeddingState.resolvedDimensions > 0)
+    return embeddingState.resolvedDimensions;
   if (kbConfig.embedding.dimensions > 0) return kbConfig.embedding.dimensions;
-  return kbConfig.embedding.defaultDimensions[kbConfig.embedding.provider] ?? 512;
+  return (
+    kbConfig.embedding.defaultDimensions[kbConfig.embedding.provider] ?? 512
+  );
 }
 
 /**
@@ -215,8 +255,8 @@ async function validateOllamaEmbeddingModel(): Promise<boolean> {
   try {
     // Check if model exists via Ollama API
     const res = await fetch(`${baseUrl}/api/show`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: model }),
       signal: AbortSignal.timeout(5000),
     });
@@ -227,10 +267,14 @@ async function validateOllamaEmbeddingModel(): Promise<boolean> {
       return true;
     }
 
-    console.warn(`[KB:Embed] ✗ Ollama model "${model}" not found! Run: ollama pull ${model}`);
+    console.warn(
+      `[KB:Embed] ✗ Ollama model "${model}" not found! Run: ollama pull ${model}`
+    );
     return false;
   } catch (err: any) {
-    console.warn(`[KB:Embed] ✗ Cannot reach Ollama at ${baseUrl}: ${err.message}`);
+    console.warn(
+      `[KB:Embed] ✗ Cannot reach Ollama at ${baseUrl}: ${err.message}`
+    );
     console.warn(`[KB:Embed]   Falling back to local TF-IDF embedding`);
     return false;
   }
@@ -245,11 +289,11 @@ async function callOllamaEmbed(text: string): Promise<number[] | null> {
   const input = text.substring(0, 8192); // nomic-embed-text max context
 
   // Try new API first (/api/embed — Ollama >= 0.1.44)
-  if (embeddingState.ollamaApiVersion === "new") {
+  if (embeddingState.ollamaApiVersion === 'new') {
     try {
       const res = await fetch(`${baseUrl}/api/embed`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model, input }),
         signal: AbortSignal.timeout(10000),
       });
@@ -263,20 +307,22 @@ async function callOllamaEmbed(text: string): Promise<number[] | null> {
 
       // If new API returns 404, fallback to legacy
       if (res.status === 404) {
-        console.log(`[KB:Embed] Ollama /api/embed not available, using legacy /api/embeddings`);
-        embeddingState.ollamaApiVersion = "legacy";
+        console.log(
+          `[KB:Embed] Ollama /api/embed not available, using legacy /api/embeddings`
+        );
+        embeddingState.ollamaApiVersion = 'legacy';
       }
     } catch {
       // Network error on new API, try legacy
-      embeddingState.ollamaApiVersion = "legacy";
+      embeddingState.ollamaApiVersion = 'legacy';
     }
   }
 
   // Legacy API fallback (/api/embeddings)
   try {
     const res = await fetch(`${baseUrl}/api/embeddings`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model, prompt: input }),
       signal: AbortSignal.timeout(10000),
     });
@@ -305,16 +351,19 @@ async function generateEmbedding(text: string): Promise<number[]> {
   embeddingState.callCount++;
 
   switch (provider) {
-    case "openai": {
+    case 'openai': {
       if (!llmConfig.openai.apiKey) return simpleHashEmbedding(text, dims);
       try {
         const response = await fetch(`${llmConfig.openai.baseUrl}/embeddings`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${llmConfig.openai.apiKey}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${llmConfig.openai.apiKey}`,
           },
-          body: JSON.stringify({ input: text.substring(0, 8000), model: kbConfig.embedding.model }),
+          body: JSON.stringify({
+            input: text.substring(0, 8000),
+            model: kbConfig.embedding.model,
+          }),
         });
         const data: any = await response.json();
         const embedding = data.data?.[0]?.embedding;
@@ -322,8 +371,10 @@ async function generateEmbedding(text: string): Promise<number[]> {
           // Auto-detect dimensions from first successful call
           if (embeddingState.resolvedDimensions === 0) {
             embeddingState.resolvedDimensions = embedding.length;
-            embeddingState.activeProvider = "openai";
-            console.log(`[KB:Embed] OpenAI dimensions auto-detected: ${embedding.length}`);
+            embeddingState.activeProvider = 'openai';
+            console.log(
+              `[KB:Embed] OpenAI dimensions auto-detected: ${embedding.length}`
+            );
           }
           return embedding;
         }
@@ -334,13 +385,15 @@ async function generateEmbedding(text: string): Promise<number[]> {
       }
     }
 
-    case "ollama": {
+    case 'ollama': {
       // Validate model on first call if not yet verified
       if (!embeddingState.ollamaModelVerified) {
         const available = await validateOllamaEmbeddingModel();
         if (!available) {
           // Permanent fallback to local for this session
-          console.warn(`[KB:Embed] Ollama embedding unavailable — using local TF-IDF for this session`);
+          console.warn(
+            `[KB:Embed] Ollama embedding unavailable — using local TF-IDF for this session`
+          );
           return simpleHashEmbedding(text, dims);
         }
       }
@@ -350,8 +403,10 @@ async function generateEmbedding(text: string): Promise<number[]> {
         // Auto-detect dimensions from first successful call
         if (embeddingState.resolvedDimensions === 0) {
           embeddingState.resolvedDimensions = embedding.length;
-          embeddingState.activeProvider = "ollama";
-          console.log(`[KB:Embed] Ollama (${kbConfig.embedding.ollamaModel}) dimensions auto-detected: ${embedding.length}`);
+          embeddingState.activeProvider = 'ollama';
+          console.log(
+            `[KB:Embed] Ollama (${kbConfig.embedding.ollamaModel}) dimensions auto-detected: ${embedding.length}`
+          );
         }
         return embedding;
       }
@@ -364,7 +419,7 @@ async function generateEmbedding(text: string): Promise<number[]> {
       // "local" provider — deterministic TF-IDF hash embedding
       if (embeddingState.resolvedDimensions === 0) {
         embeddingState.resolvedDimensions = dims;
-        embeddingState.activeProvider = "local";
+        embeddingState.activeProvider = 'local';
       }
       return simpleHashEmbedding(text, dims);
   }
@@ -375,18 +430,25 @@ async function generateEmbedding(text: string): Promise<number[]> {
  * For Ollama, uses single-call batch via /api/embed.
  * For others, runs in parallel with concurrency limit.
  */
-async function generateEmbeddingBatch(texts: string[], concurrency: number = 5): Promise<number[][]> {
+async function generateEmbeddingBatch(
+  texts: string[],
+  concurrency: number = 5
+): Promise<number[][]> {
   const provider = kbConfig.embedding.provider;
 
   // Ollama new API supports batch natively
-  if (provider === "ollama" && embeddingState.ollamaApiVersion === "new" && embeddingState.ollamaModelVerified) {
+  if (
+    provider === 'ollama' &&
+    embeddingState.ollamaApiVersion === 'new' &&
+    embeddingState.ollamaModelVerified
+  ) {
     try {
       const res = await fetch(`${llmConfig.ollama.baseUrl}/api/embed`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: kbConfig.embedding.ollamaModel,
-          input: texts.map(t => t.substring(0, 8192)),
+          input: texts.map((t) => t.substring(0, 8192)),
         }),
         signal: AbortSignal.timeout(60000), // Longer timeout for batch
       });
@@ -396,8 +458,10 @@ async function generateEmbeddingBatch(texts: string[], concurrency: number = 5):
         if (data.embeddings?.length === texts.length) {
           if (embeddingState.resolvedDimensions === 0) {
             embeddingState.resolvedDimensions = data.embeddings[0].length;
-            embeddingState.activeProvider = "ollama";
-            console.log(`[KB:Embed] Ollama batch dimensions: ${data.embeddings[0].length}`);
+            embeddingState.activeProvider = 'ollama';
+            console.log(
+              `[KB:Embed] Ollama batch dimensions: ${data.embeddings[0].length}`
+            );
           }
           return data.embeddings;
         }
@@ -411,7 +475,9 @@ async function generateEmbeddingBatch(texts: string[], concurrency: number = 5):
   const results: number[][] = [];
   for (let i = 0; i < texts.length; i += concurrency) {
     const batch = texts.slice(i, i + concurrency);
-    const embeddings = await Promise.all(batch.map(t => generateEmbedding(t)));
+    const embeddings = await Promise.all(
+      batch.map((t) => generateEmbedding(t))
+    );
     results.push(...embeddings);
   }
   return results;
@@ -419,33 +485,40 @@ async function generateEmbeddingBatch(texts: string[], concurrency: number = 5):
 
 function simpleHashEmbedding(text: string, dimensions: number): number[] {
   const vec = new Array(dimensions).fill(0);
-  const normalized = text.toLowerCase().replace(/\s+/g, " ");
+  const normalized = text.toLowerCase().replace(/\s+/g, ' ');
   for (let i = 0; i < normalized.length; i++) {
     const code = normalized.charCodeAt(i);
     vec[(code * (i + 1) * 31) % dimensions] += 1;
   }
   const mag = Math.sqrt(vec.reduce((s, v) => s + v * v, 0));
-  return mag > 0 ? vec.map(v => v / mag) : vec;
+  return mag > 0 ? vec.map((v) => v / mag) : vec;
 }
 
 /** Get current embedding provider status (for /api/kb/stats) */
 export function getEmbeddingStatus() {
   return {
     provider: kbConfig.embedding.provider,
-    activeProvider: embeddingState.activeProvider || kbConfig.embedding.provider,
-    model: kbConfig.embedding.provider === "ollama"
-      ? kbConfig.embedding.ollamaModel
-      : kbConfig.embedding.model,
+    activeProvider:
+      embeddingState.activeProvider || kbConfig.embedding.provider,
+    model:
+      kbConfig.embedding.provider === 'ollama'
+        ? kbConfig.embedding.ollamaModel
+        : kbConfig.embedding.model,
     dimensions: embeddingState.resolvedDimensions || getEffectiveDimensions(),
     autoDetected: embeddingState.resolvedDimensions > 0,
     totalCalls: embeddingState.callCount,
     totalErrors: embeddingState.errorCount,
-    errorRate: embeddingState.callCount > 0
-      ? (embeddingState.errorCount / embeddingState.callCount * 100).toFixed(1) + "%"
-      : "0%",
-    ollamaModelVerified: kbConfig.embedding.provider === "ollama"
-      ? embeddingState.ollamaModelVerified
-      : undefined,
+    errorRate:
+      embeddingState.callCount > 0
+        ? (
+            (embeddingState.errorCount / embeddingState.callCount) *
+            100
+          ).toFixed(1) + '%'
+        : '0%',
+    ollamaModelVerified:
+      kbConfig.embedding.provider === 'ollama'
+        ? embeddingState.ollamaModelVerified
+        : undefined,
   };
 }
 
@@ -460,12 +533,19 @@ export class KnowledgeBase {
 
   // Core storage
   private store: VectorStore;
-  private indexedSources: Map<string, { chunks: number; lastModified: number; fileId?: KBEntityId }> = new Map();
+  private indexedSources: Map<
+    string,
+    { chunks: number; lastModified: number; fileId?: KBEntityId }
+  > = new Map();
   private fileMetadata: Map<KBEntityId, FileProcessingResult> = new Map();
   private indexTimer: ReturnType<typeof setInterval> | null = null;
 
   // Search analytics (自学习)
-  private searchQueryLog: { query: string; count: number; lastSearched: number }[] = [];
+  private searchQueryLog: {
+    query: string;
+    count: number;
+    lastSearched: number;
+  }[] = [];
 
   constructor() {
     this.store = new VectorStore();
@@ -474,16 +554,20 @@ export class KnowledgeBase {
     this.sync = new SyncEngine();
 
     if (!kbConfig.enabled) {
-      console.log("[KB] Knowledge base disabled");
+      console.log('[KB] Knowledge base disabled');
       return;
     }
 
-    console.log(`[KB] Initialized: vectorDb=${kbConfig.vectorDb} | embedding=${kbConfig.embedding.provider}(${kbConfig.embedding.model}) | chunkSize=${kbConfig.rag.chunkSize}`);
-    console.log(`[KB] Modules: FileProcessor + VectorSearch + SyncEngine + KnowledgeGraph + PushService`);
+    console.log(
+      `[KB] Initialized: vectorDb=${kbConfig.vectorDb} | embedding=${kbConfig.embedding.provider}(${kbConfig.embedding.model}) | chunkSize=${kbConfig.rag.chunkSize}`
+    );
+    console.log(
+      `[KB] Modules: FileProcessor + VectorSearch + SyncEngine + KnowledgeGraph + PushService`
+    );
 
     // Wire up file watcher → auto-ingest
     this.sync.fileWatcher.onFileChange(async (event) => {
-      if (event.type === "delete") {
+      if (event.type === 'delete') {
         await this.removeSource(event.path);
       } else {
         await this.indexFile(event.path);
@@ -528,9 +612,13 @@ export class KnowledgeBase {
       // Ingest entities & relations into knowledge graph
       if (result.entities.length > 0 || result.relations.length > 0) {
         const graphResult = this.graph.ingestFromExtraction(
-          result.entities, result.relations, result.fileId,
+          result.entities,
+          result.relations,
+          result.fileId
         );
-        console.log(`[KB] Graph enriched: +${graphResult.nodesCreated} nodes, +${graphResult.edgesCreated} edges`);
+        console.log(
+          `[KB] Graph enriched: +${graphResult.nodesCreated} nodes, +${graphResult.edgesCreated} edges`
+        );
       }
 
       // Record access for push service
@@ -542,9 +630,10 @@ export class KnowledgeBase {
         fileId: result.fileId,
       });
 
-      console.log(`[KB] Indexed: ${filePath} → ${result.chunks.length} chunks, ${result.entities.length} entities (${result.processingTimeMs}ms)`);
+      console.log(
+        `[KB] Indexed: ${filePath} → ${result.chunks.length} chunks, ${result.entities.length} entities (${result.processingTimeMs}ms)`
+      );
       return result.chunks.length;
-
     } catch (err: any) {
       console.warn(`[KB] Failed to index ${filePath}: ${err.message}`);
       return 0;
@@ -554,9 +643,19 @@ export class KnowledgeBase {
   /**
    * Index raw text content (for manual input, clipboard, API data)
    */
-  async indexDocument(source: string, content: string, sourceType: string = "manual_input"): Promise<number> {
+  async indexDocument(
+    source: string,
+    content: string,
+    sourceType: string = 'manual_input'
+  ): Promise<number> {
     const format = detectFormat(source);
-    const chunks = smartChunkDocument(content, source, format, kbConfig.rag.chunkSize, kbConfig.rag.chunkOverlap);
+    const chunks = smartChunkDocument(
+      content,
+      source,
+      format,
+      kbConfig.rag.chunkSize,
+      kbConfig.rag.chunkOverlap
+    );
 
     for (const chunk of chunks) {
       chunk.sourceType = sourceType as any;
@@ -566,7 +665,10 @@ export class KnowledgeBase {
       await this.store.upsert(chunk);
     }
 
-    this.indexedSources.set(source, { chunks: chunks.length, lastModified: Date.now() });
+    this.indexedSources.set(source, {
+      chunks: chunks.length,
+      lastModified: Date.now(),
+    });
     console.log(`[KB] Indexed document: ${source} → ${chunks.length} chunks`);
     return chunks.length;
   }
@@ -576,19 +678,58 @@ export class KnowledgeBase {
    */
   async indexDirectory(dirPath: string): Promise<number> {
     let totalChunks = 0;
-    const extensions = [".md", ".txt", ".ts", ".tsx", ".js", ".json", ".py", ".yaml", ".html", ".css", ".sql"];
+    const extensions = [
+      '.md',
+      '.txt',
+      '.ts',
+      '.tsx',
+      '.js',
+      '.json',
+      '.py',
+      '.yaml',
+      '.html',
+      '.css',
+      '.sql',
+    ];
+    // Need to reference this in nested async function
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const self = this;
 
-    try {
-      const glob = new Bun.Glob(`**/*{${extensions.join(",")}}`);
-      for await (const file of glob.scan({ cwd: dirPath, absolute: true })) {
-        // Skip ignored paths
-        if (file.includes("node_modules") || file.includes(".git") || file.includes("dist")) continue;
-        totalChunks += await this.indexFile(file);
+    async function scanDirectory(currentPath: string): Promise<void> {
+      try {
+        const entries = await readdir(currentPath, { withFileTypes: true });
+
+        for (const entry of entries) {
+          const fullPath = join(currentPath, entry.name);
+
+          // Skip ignored paths
+          if (
+            fullPath.includes('node_modules') ||
+            fullPath.includes('.git') ||
+            fullPath.includes('dist')
+          ) {
+            continue;
+          }
+
+          if (entry.isDirectory()) {
+            await scanDirectory(fullPath);
+          } else if (entry.isFile()) {
+            const ext = '.' + entry.name.split('.').pop()?.toLowerCase();
+            if (extensions.includes(ext)) {
+              totalChunks += await self.indexFile(fullPath);
+            }
+          }
+        }
+      } catch (err: unknown) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Unknown error';
+        console.warn(
+          `[KB] Failed to scan directory ${currentPath}: ${errorMessage}`
+        );
       }
-    } catch (err: any) {
-      console.warn(`[KB] Failed to scan directory ${dirPath}: ${err.message}`);
     }
 
+    await scanDirectory(dirPath);
     return totalChunks;
   }
 
@@ -605,7 +746,8 @@ export class KnowledgeBase {
       }
     }
     this.indexedSources.delete(source);
-    if (removed > 0) console.log(`[KB] Removed source: ${source} (${removed} chunks)`);
+    if (removed > 0)
+      console.log(`[KB] Removed source: ${source} (${removed} chunks)`);
     return removed;
   }
 
@@ -616,13 +758,17 @@ export class KnowledgeBase {
   /**
    * Basic semantic search
    */
-  async search(query: string, topK?: number, threshold?: number): Promise<SearchResult[]> {
+  async search(
+    query: string,
+    topK?: number,
+    threshold?: number
+  ): Promise<SearchResult[]> {
     const queryEmbedding = await generateEmbedding(query);
     this.logSearchQuery(query);
     return this.store.search(
       queryEmbedding,
       topK ?? kbConfig.rag.topK,
-      threshold ?? kbConfig.rag.similarityThreshold,
+      threshold ?? kbConfig.rag.similarityThreshold
     );
   }
 
@@ -648,19 +794,39 @@ export class KnowledgeBase {
       query.topK ?? kbConfig.rag.topK,
       query.similarityThreshold ?? kbConfig.rag.similarityThreshold,
       query.boostRecent,
-      query.boostFrequent,
+      query.boostFrequent
     );
 
     // Apply filters
     if (query.filters) {
-      results = results.filter(r => {
-        if (query.filters!.formats && !query.filters!.formats.includes(r.chunk.metadata.format as any)) return false;
-        if (query.filters!.sourceTypes && !query.filters!.sourceTypes.includes(r.chunk.sourceType)) return false;
+      results = results.filter((r) => {
+        if (
+          query.filters!.formats &&
+          !query.filters!.formats.includes(r.chunk.metadata.format as any)
+        )
+          return false;
+        if (
+          query.filters!.sourceTypes &&
+          !query.filters!.sourceTypes.includes(r.chunk.sourceType)
+        )
+          return false;
         if (query.filters!.dateRange) {
-          if (query.filters!.dateRange.from && r.chunk.metadata.updatedAt < query.filters!.dateRange.from) return false;
-          if (query.filters!.dateRange.to && r.chunk.metadata.updatedAt > query.filters!.dateRange.to) return false;
+          if (
+            query.filters!.dateRange.from &&
+            r.chunk.metadata.updatedAt < query.filters!.dateRange.from
+          )
+            return false;
+          if (
+            query.filters!.dateRange.to &&
+            r.chunk.metadata.updatedAt > query.filters!.dateRange.to
+          )
+            return false;
         }
-        if (query.filters!.qualityLevels && !query.filters!.qualityLevels.includes(r.chunk.qualityLevel)) return false;
+        if (
+          query.filters!.qualityLevels &&
+          !query.filters!.qualityLevels.includes(r.chunk.qualityLevel)
+        )
+          return false;
         return true;
       });
     }
@@ -688,17 +854,22 @@ export class KnowledgeBase {
    * Generate a Knowledge Brief from search results
    * "一键生成知识简报"
    */
-  async generateBrief(query: string, maxSections: number = 5): Promise<KnowledgeBrief> {
+  async generateBrief(
+    query: string,
+    maxSections: number = 5
+  ): Promise<KnowledgeBrief> {
     const results = await this.search(query, maxSections * 2);
 
     const sections = results.slice(0, maxSections).map((r, i) => ({
       heading: r.chunk.metadata.section || `相关知识 #${i + 1}`,
       content: r.chunk.content.substring(0, 500),
-      sources: [{
-        name: r.chunk.source.split("/").pop() || r.chunk.source,
-        path: r.chunk.source,
-        relevance: r.similarity,
-      }],
+      sources: [
+        {
+          name: r.chunk.source.split('/').pop() || r.chunk.source,
+          path: r.chunk.source,
+          relevance: r.similarity,
+        },
+      ],
     }));
 
     return {
@@ -707,7 +878,7 @@ export class KnowledgeBase {
       summary: `基于"${query}"在知识库中检索到${results.length}条相关知识，整理为${sections.length}个部分。`,
       sections,
       generatedAt: Date.now(),
-      format: "markdown",
+      format: 'markdown',
       totalSources: results.length,
     };
   }
@@ -727,8 +898,11 @@ export class KnowledgeBase {
     if (results.length === 0) return prompt;
 
     const context = results
-      .map((r, i) => `[知识库 ${i + 1}] (${r.chunk.source.split("/").pop()}, 相似度: ${(r.similarity * 100).toFixed(1)}%)\n${r.chunk.content.substring(0, 300)}`)
-      .join("\n\n");
+      .map(
+        (r, i) =>
+          `[知识库 ${i + 1}] (${r.chunk.source.split('/').pop()}, 相似度: ${(r.similarity * 100).toFixed(1)}%)\n${r.chunk.content.substring(0, 300)}`
+      )
+      .join('\n\n');
 
     return `以下是从知识库中检索到的相关上下文：\n\n${context}\n\n---\n\n用户问题：${prompt}`;
   }
@@ -737,14 +911,25 @@ export class KnowledgeBase {
    * Extract materials for content creation
    * "素材一键提取"
    */
-  async extractMaterials(topic: string, maxMaterials: number = 10): Promise<{
-    materials: { type: string; content: string; source: string; relevance: number }[];
+  async extractMaterials(
+    topic: string,
+    maxMaterials: number = 10
+  ): Promise<{
+    materials: {
+      type: string;
+      content: string;
+      source: string;
+      relevance: number;
+    }[];
     graph: GraphVisualization;
   }> {
     const results = await this.search(topic, maxMaterials);
 
-    const materials = results.map(r => ({
-      type: r.chunk.metadata.format === "xlsx" || r.chunk.metadata.format === "csv" ? "data_table" : "text_snippet",
+    const materials = results.map((r) => ({
+      type:
+        r.chunk.metadata.format === 'xlsx' || r.chunk.metadata.format === 'csv'
+          ? 'data_table'
+          : 'text_snippet',
       content: r.chunk.content.substring(0, 500),
       source: r.chunk.source,
       relevance: r.similarity,
@@ -760,16 +945,18 @@ export class KnowledgeBase {
    * Generate content with RAG enhancement
    * "创作加速引擎"
    */
-  async generateContent(request: ContentGenerationRequest): Promise<ContentGenerationResult> {
+  async generateContent(
+    request: ContentGenerationRequest
+  ): Promise<ContentGenerationResult> {
     const start = Date.now();
 
     // 1. Find relevant materials
-    const searchQuery = request.materialHints?.join(" ") || request.topic;
+    const searchQuery = request.materialHints?.join(' ') || request.topic;
     const results = await this.search(searchQuery, 5);
 
-    const materials = results.map(r => ({
+    const materials = results.map((r) => ({
       id: r.chunk.id,
-      type: "text_snippet" as const,
+      type: 'text_snippet' as const,
       content: r.chunk.content.substring(0, 300),
       source: r.chunk.source,
       relevanceScore: r.similarity,
@@ -778,16 +965,16 @@ export class KnowledgeBase {
       },
     }));
 
-    const references = results.map(r => ({
+    const references = results.map((r) => ({
       source: r.chunk.source,
       snippet: r.chunk.content.substring(0, 100),
       relevance: r.similarity,
     }));
 
     // 2. Build augmented prompt (would call LLM in production)
-    let content = "";
+    let content: string;
     switch (request.type) {
-      case "summary":
+      case 'summary':
         content = `## ${request.topic} 摘要\n\n`;
         for (const m of materials.slice(0, 3)) {
           content += `- ${m.content.substring(0, 150)}\n`;
@@ -795,37 +982,42 @@ export class KnowledgeBase {
         content += `\n来源: ${materials.length}个相关文档`;
         break;
 
-      case "outline":
+      case 'outline':
         content = `## ${request.topic} 大纲\n\n`;
         content += `1. 背景概述\n2. 核心内容\n3. 关键数据\n4. 分析与建议\n5. 总结\n\n`;
         content += `[基于${materials.length}个知识库文档生成]`;
         break;
 
-      case "continuation":
-        content = request.context || "";
+      case 'continuation':
+        content = request.context || '';
         content += `\n\n基于知识库分析，以下是可能的延续内容：\n`;
         for (const m of materials.slice(0, 2)) {
           content += `\n${m.content.substring(0, 200)}`;
         }
         break;
 
-      case "brief":
+      case 'brief': {
         const brief = await this.generateBrief(request.topic);
         content = `# ${brief.title}\n\n${brief.summary}\n\n`;
         for (const section of brief.sections) {
           content += `## ${section.heading}\n${section.content}\n\n`;
         }
         break;
+      }
 
       default:
         content = `## ${request.topic}\n\n[Draft generated from ${materials.length} knowledge base sources]`;
     }
 
     // 3. Check for duplicate content
-    const duplicateWarnings: ContentGenerationResult["duplicateWarnings"] = [];
-    const nearDups = this.sync.dedup.findNearDuplicates(content, this.store.getAllChunks().slice(0, 100), 0.6);
+    const duplicateWarnings: ContentGenerationResult['duplicateWarnings'] = [];
+    const nearDups = this.sync.dedup.findNearDuplicates(
+      content,
+      this.store.getAllChunks().slice(0, 100),
+      0.6
+    );
     for (const dup of nearDups.slice(0, 3)) {
-      const chunk = this.store.getAllChunks().find(c => c.id === dup.chunkId);
+      const chunk = this.store.getAllChunks().find((c) => c.id === dup.chunkId);
       if (chunk) {
         duplicateWarnings.push({
           existingSource: chunk.source,
@@ -840,13 +1032,14 @@ export class KnowledgeBase {
       materials,
       references,
       suggestions: [
-        "可以添加具体数据支撑论点",
-        "建议引用知识图谱中的关联实体丰富内容",
-        "检查是否有更新的外部知识源可供参考",
+        '可以添加具体数据支撑论点',
+        '建议引用知识图谱中的关联实体丰富内容',
+        '检查是否有更新的外部知识源可供参考',
       ],
-      duplicateWarnings: duplicateWarnings.length > 0 ? duplicateWarnings : undefined,
+      duplicateWarnings:
+        duplicateWarnings.length > 0 ? duplicateWarnings : undefined,
       generatedAt: Date.now(),
-      model: "local-rag",
+      model: 'local-rag',
       tokenUsage: undefined,
     };
   }
@@ -855,7 +1048,11 @@ export class KnowledgeBase {
   // M6: Knowledge Graph (delegated)
   // ==========================================
 
-  getGraphVisualization(centerNodeId?: KBEntityId, depth?: number, limit?: number): GraphVisualization {
+  getGraphVisualization(
+    centerNodeId?: KBEntityId,
+    depth?: number,
+    limit?: number
+  ): GraphVisualization {
     return this.graph.getVisualization(centerNodeId, depth, limit);
   }
 
@@ -867,12 +1064,18 @@ export class KnowledgeBase {
   // M5: Recommendations & Push (delegated)
   // ==========================================
 
-  getRecommendations(currentActivity: string): ReturnType<typeof this.sync.push.generateRecommendations> {
+  getRecommendations(
+    currentActivity: string
+  ): ReturnType<typeof this.sync.push.generateRecommendations> {
     const recentChunks = this.store.getAllChunks().slice(-20);
-    return this.sync.push.generateRecommendations(currentActivity, recentChunks, this.store.getAllChunks());
+    return this.sync.push.generateRecommendations(
+      currentActivity,
+      recentChunks,
+      this.store.getAllChunks()
+    );
   }
 
-  generateDigest(period: "daily" | "weekly") {
+  generateDigest(period: 'daily' | 'weekly') {
     return this.sync.push.generateDigest(period, this.store.getAllChunks());
   }
 
@@ -890,10 +1093,13 @@ export class KnowledgeBase {
     let totalSize = 0;
 
     for (const chunk of allChunks) {
-      const mod = chunk.metadata.format ? detectModality(chunk.metadata.format as any) : "text";
+      const mod = chunk.metadata.format
+        ? detectModality(chunk.metadata.format as any)
+        : 'text';
       byModality[mod] = (byModality[mod] || 0) + 1;
       if (chunk.metadata.format) {
-        byFormat[chunk.metadata.format] = (byFormat[chunk.metadata.format] || 0) + 1;
+        byFormat[chunk.metadata.format] =
+          (byFormat[chunk.metadata.format] || 0) + 1;
       }
       totalSize += chunk.content.length;
     }
@@ -902,7 +1108,8 @@ export class KnowledgeBase {
       totalDocuments: this.indexedSources.size,
       totalChunks: this.store.size,
       totalSizeBytes: totalSize,
-      vectorDimensions: embeddingState.resolvedDimensions || getEffectiveDimensions(),
+      vectorDimensions:
+        embeddingState.resolvedDimensions || getEffectiveDimensions(),
       byModality: byModality as any,
       byFormat: byFormat as any,
       totalSearches: this.store.totalSearches,
@@ -911,21 +1118,38 @@ export class KnowledgeBase {
       graphEdges: graphStats.totalEdges,
       graphDensity: graphStats.density,
       externalSources: this.sync.listExternalSources().length,
-      lastSyncAt: Math.max(...this.sync.listExternalSources().map(s => s.lastSyncAt || 0), 0),
+      lastSyncAt: Math.max(
+        ...this.sync.listExternalSources().map((s) => s.lastSyncAt || 0),
+        0
+      ),
       conflictsUnresolved: this.sync.conflicts.getUnresolvedConflicts().length,
-      duplicatesDetected: this.sync.dedup.runDeduplication().totalDuplicatesFound,
-      avgQualityScore: allChunks.length > 0
-        ? allChunks.reduce((sum, c) => sum + (c.credibilityScore || 0.5), 0) / allChunks.length
-        : 0,
-      topAccessedDocuments: this.sync.push.getUserPreferences().slice(0, 10).map(p => ({
-        source: p.source, count: p.count,
-      })),
+      duplicatesDetected:
+        this.sync.dedup.runDeduplication().totalDuplicatesFound,
+      avgQualityScore:
+        allChunks.length > 0
+          ? allChunks.reduce((sum, c) => sum + (c.credibilityScore || 0.5), 0) /
+            allChunks.length
+          : 0,
+      topAccessedDocuments: this.sync.push
+        .getUserPreferences()
+        .slice(0, 10)
+        .map((p) => ({
+          source: p.source,
+          count: p.count,
+        })),
       topSearchQueries: this.searchQueryLog.slice(0, 10),
       userPreferences: [],
-      lastIndexedAt: Math.max(...Array.from(this.indexedSources.values()).map(s => s.lastModified), 0),
-      indexedSources: Array.from(this.indexedSources.entries()).map(([path, info]) => ({
-        path, chunks: info.chunks, lastModified: info.lastModified,
-      })),
+      lastIndexedAt: Math.max(
+        ...Array.from(this.indexedSources.values()).map((s) => s.lastModified),
+        0
+      ),
+      indexedSources: Array.from(this.indexedSources.entries()).map(
+        ([path, info]) => ({
+          path,
+          chunks: info.chunks,
+          lastModified: info.lastModified,
+        })
+      ),
       uptime: process.uptime ? process.uptime() * 1000 : 0,
     };
   }
@@ -936,20 +1160,28 @@ export class KnowledgeBase {
 
   private startAutoIndex(): void {
     setTimeout(() => this.runAutoIndex(), 2000);
-    this.indexTimer = setInterval(() => this.runAutoIndex(), kbConfig.autoIndex.interval);
+    this.indexTimer = setInterval(
+      () => this.runAutoIndex(),
+      kbConfig.autoIndex.interval
+    );
   }
 
   private async runAutoIndex(): Promise<void> {
     let totalChunks = 0;
     for (const source of kbConfig.docSources) {
       try {
-        const path = require("path").resolve(source);
-        const fileExists = await import('fs').then(fs => fs.promises.access(path).then(() => true).catch(() => false));
+        const resolvedPath = await import('path').then((p) => p.resolve(source));
+        const fileExists = await import('fs').then((fs) =>
+          fs.promises
+            .access(resolvedPath)
+            .then(() => true)
+            .catch(() => false)
+        );
 
         if (fileExists) {
-          totalChunks += await this.indexFile(path);
+          totalChunks += await this.indexFile(resolvedPath);
         } else {
-          totalChunks += await this.indexDirectory(path);
+          totalChunks += await this.indexDirectory(resolvedPath);
         }
       } catch {
         // Silent fail for non-existent sources
@@ -957,12 +1189,14 @@ export class KnowledgeBase {
     }
 
     if (totalChunks > 0) {
-      console.log(`[KB] Auto-index: ${totalChunks} chunks across ${this.indexedSources.size} sources`);
+      console.log(
+        `[KB] Auto-index: ${totalChunks} chunks across ${this.indexedSources.size} sources`
+      );
     }
   }
 
   private logSearchQuery(query: string): void {
-    const existing = this.searchQueryLog.find(q => q.query === query);
+    const existing = this.searchQueryLog.find((q) => q.query === query);
     if (existing) {
       existing.count++;
       existing.lastSearched = Date.now();
@@ -981,7 +1215,10 @@ export class KnowledgeBase {
     const suggestions: string[] = [];
     const queryLower = query.toLowerCase();
     for (const log of this.searchQueryLog) {
-      if (log.query.toLowerCase() !== queryLower && log.query.toLowerCase().includes(queryLower.split(" ")[0])) {
+      if (
+        log.query.toLowerCase() !== queryLower &&
+        log.query.toLowerCase().includes(queryLower.split(' ')[0])
+      ) {
         suggestions.push(log.query);
       }
     }
@@ -990,12 +1227,18 @@ export class KnowledgeBase {
 
   private async hashContent(content: string): Promise<string> {
     const data = new TextEncoder().encode(content);
-    const hash = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("").substring(0, 16);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('')
+      .substring(0, 16);
   }
 
   destroy(): void {
-    if (this.indexTimer) { clearInterval(this.indexTimer); this.indexTimer = null; }
+    if (this.indexTimer) {
+      clearInterval(this.indexTimer);
+      this.indexTimer = null;
+    }
     this.sync.destroy();
   }
 }
@@ -1003,6 +1246,8 @@ export class KnowledgeBase {
 // Singleton
 let _kb: KnowledgeBase | null = null;
 export function getKnowledgeBase(): KnowledgeBase {
-  if (!_kb) { _kb = new KnowledgeBase(); }
+  if (!_kb) {
+    _kb = new KnowledgeBase();
+  }
   return _kb;
 }

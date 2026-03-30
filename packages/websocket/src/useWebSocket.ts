@@ -57,7 +57,7 @@ export interface UseWebSocketReturn {
   isFallbackActive: boolean;
   /** 最后错误 / Last error */
   lastError: string | null;
-  
+
   // 控制函数 / Control functions
   /** 连接 / Connect */
   connect: () => void;
@@ -101,21 +101,21 @@ const DEFAULT_FALLBACK: FallbackStrategyConfig = {
 
 /**
  * WebSocket Hook
- * 
+ *
  * 管理 WebSocket 连接，提供消息订阅和自动降级功能
  * Manages WebSocket connection with message subscription and auto fallback
- * 
+ *
  * @param {string} url - WebSocket URL
  * @param {Partial<WebSocketConfig>} config - 配置选项 / Configuration options
  * @returns {UseWebSocketReturn} WebSocket 状态和控制函数 / WebSocket state and control functions
- * 
+ *
  * @example
  * ```tsx
  * const { state, send, subscribe, isConnected } = useWebSocket('ws://localhost:8080', {
  *   autoReconnect: true,
  *   maxReconnectAttempts: 3
  * });
- * 
+ *
  * useEffect(() => {
  *   const unsubscribe = subscribe((message) => {
  *     console.log('Received:', message);
@@ -129,27 +129,34 @@ export function useWebSocket(
   config: Partial<WebSocketConfig> = {}
 ): UseWebSocketReturn {
   const fullConfig = { ...DEFAULT_CONFIG, ...config };
-  
+
   // WebSocket 实例 / WebSocket instance
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const heartbeatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+
   // 订阅列表 / Subscription list
-  const subscriptionsRef = useRef<Map<string, {
-    callback: (message: WebSocketMessage) => void;
-    options?: WebSocketSubscriptionOptions;
-  }>>(new Map());
-  
+  const subscriptionsRef = useRef<
+    Map<
+      string,
+      {
+        callback: (message: WebSocketMessage) => void;
+        options?: WebSocketSubscriptionOptions;
+      }
+    >
+  >(new Map());
+
   // 状态 / State
   const [state, setState] = useState<WebSocketState>('disconnected');
-  const [connectionInfo, setConnectionInfo] = useState<WebSocketConnectionInfo>({
-    state: 'disconnected',
-    connectedDuration: 0,
-    reconnectAttempts: 0,
-    serverUrl: url,
-  });
+  const [connectionInfo, setConnectionInfo] = useState<WebSocketConnectionInfo>(
+    {
+      state: 'disconnected',
+      connectedDuration: 0,
+      reconnectAttempts: 0,
+      serverUrl: url,
+    }
+  );
   const [statistics, setStatistics] = useState<WebSocketStatistics>({
     messagesSent: 0,
     messagesReceived: 0,
@@ -161,7 +168,7 @@ export function useWebSocket(
   });
   const [isFallbackActive, setIsFallbackActive] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
-  
+
   /**
    * 发送心跳 / Send heartbeat
    */
@@ -176,7 +183,7 @@ export function useWebSocket(
       wsRef.current.send(JSON.stringify(message));
     }
   }, []);
-  
+
   /**
    * 启动心跳 / Start heartbeat
    */
@@ -184,13 +191,13 @@ export function useWebSocket(
     if (heartbeatTimerRef.current) {
       clearInterval(heartbeatTimerRef.current);
     }
-    
+
     heartbeatTimerRef.current = setInterval(
       sendHeartbeat,
       fullConfig.heartbeatInterval
     );
   }, [sendHeartbeat, fullConfig.heartbeatInterval]);
-  
+
   /**
    * 停止心跳 / Stop heartbeat
    */
@@ -200,15 +207,17 @@ export function useWebSocket(
       heartbeatTimerRef.current = null;
     }
   }, []);
-  
+
   /**
    * 启动降级模式 / Start fallback mode
    */
   const startFallback = useCallback(() => {
-    if (!DEFAULT_FALLBACK.enabled) {return;}
-    
+    if (!DEFAULT_FALLBACK.enabled) {
+      return;
+    }
+
     setIsFallbackActive(true);
-    
+
     // 使用 polling 模式 / Use polling mode
     if (DEFAULT_FALLBACK.mode === 'polling') {
       fallbackTimerRef.current = setInterval(() => {
@@ -217,48 +226,59 @@ export function useWebSocket(
       }, DEFAULT_FALLBACK.pollingInterval);
     }
   }, []);
-  
+
   /**
    * 停止降级模式 / Stop fallback mode
    */
   const stopFallback = useCallback(() => {
     setIsFallbackActive(false);
-    
+
     if (fallbackTimerRef.current) {
       clearInterval(fallbackTimerRef.current);
       fallbackTimerRef.current = null;
     }
   }, []);
-  
+
   /**
    * 处理消息 / Handle message
    */
   const handleMessage = useCallback((message: WebSocketMessage) => {
     // 更新统计 / Update statistics
-    setStatistics(prev => ({
+    setStatistics((prev) => ({
       ...prev,
       messagesReceived: prev.messagesReceived + 1,
       bytesReceived: prev.bytesReceived + JSON.stringify(message).length,
       lastActivityAt: new Date(),
     }));
-    
+
     // 分发给订阅者 / Dispatch to subscribers
     subscriptionsRef.current.forEach(({ callback, options }) => {
       // 检查过滤条件 / Check filter conditions
-      if (options?.messageTypes && !options.messageTypes.includes(message.type)) {
+      if (
+        options?.messageTypes &&
+        !options.messageTypes.includes(message.type)
+      ) {
         return;
       }
-      if (options?.sources && message.source && !options.sources.includes(message.source)) {
+      if (
+        options?.sources &&
+        message.source &&
+        !options.sources.includes(message.source)
+      ) {
         return;
       }
-      if (options?.priorities && message.priority && !options.priorities.includes(message.priority)) {
+      if (
+        options?.priorities &&
+        message.priority &&
+        !options.priorities.includes(message.priority)
+      ) {
         return;
       }
-      
+
       callback(message);
     });
   }, []);
-  
+
   /**
    * 连接 WebSocket / Connect WebSocket
    */
@@ -266,19 +286,19 @@ export function useWebSocket(
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       return; // 已连接 / Already connected
     }
-    
+
     setState('connecting');
-    setConnectionInfo(prev => ({
+    setConnectionInfo((prev) => ({
       ...prev,
       state: 'connecting',
     }));
-    
+
     try {
       const ws = new WebSocket(url, fullConfig.protocols);
-      
+
       ws.onopen = () => {
         setState('connected');
-        setConnectionInfo(prev => ({
+        setConnectionInfo((prev) => ({
           ...prev,
           state: 'connected',
           reconnectAttempts: 0,
@@ -288,69 +308,84 @@ export function useWebSocket(
         stopFallback();
         startHeartbeat();
       };
-      
+
       ws.onmessage = (event) => {
         try {
           const message: WebSocketMessage = JSON.parse(event.data);
           handleMessage(message);
         } catch (error) {
           // 处理解析错误 / Handle parsing error
-          setStatistics(prev => ({
+          setStatistics((prev) => ({
             ...prev,
             errorCount: prev.errorCount + 1,
           }));
         }
       };
-      
+
       ws.onerror = () => {
         setLastError('WebSocket error occurred');
-        setStatistics(prev => ({
+        setStatistics((prev) => ({
           ...prev,
           errorCount: prev.errorCount + 1,
         }));
       };
-      
+
       ws.onclose = () => {
         setState('disconnected');
-        setConnectionInfo(prev => ({
+        setConnectionInfo((prev) => ({
           ...prev,
           state: 'disconnected',
           lastDisconnectedAt: new Date(),
         }));
         stopHeartbeat();
-        
+
         // 自动重连 / Auto reconnect
-        if (fullConfig.autoReconnect && 
-            connectionInfo.reconnectAttempts < (fullConfig.maxReconnectAttempts || 5)) {
+        if (
+          fullConfig.autoReconnect &&
+          connectionInfo.reconnectAttempts <
+            (fullConfig.maxReconnectAttempts || 5)
+        ) {
           setState('reconnecting');
-          setConnectionInfo(prev => ({
+          setConnectionInfo((prev) => ({
             ...prev,
             state: 'reconnecting',
             reconnectAttempts: prev.reconnectAttempts + 1,
           }));
-          
+
           reconnectTimerRef.current = setTimeout(() => {
             connect();
           }, fullConfig.reconnectInterval);
-        } else if (connectionInfo.reconnectAttempts >= (fullConfig.maxReconnectAttempts || 5)) {
+        } else if (
+          connectionInfo.reconnectAttempts >=
+          (fullConfig.maxReconnectAttempts || 5)
+        ) {
           // 启动降级模式 / Start fallback mode
           startFallback();
         }
       };
-      
+
       wsRef.current = ws;
     } catch (error) {
       setState('failed');
-      setConnectionInfo(prev => ({
+      setConnectionInfo((prev) => ({
         ...prev,
         state: 'failed',
         lastError: error instanceof Error ? error.message : 'Connection failed',
       }));
-      setLastError(error instanceof Error ? error.message : 'Connection failed');
+      setLastError(
+        error instanceof Error ? error.message : 'Connection failed'
+      );
       startFallback();
     }
-  }, [url, fullConfig, connectionInfo.reconnectAttempts, handleMessage, stopFallback, startHeartbeat]);
-  
+  }, [
+    url,
+    fullConfig,
+    connectionInfo.reconnectAttempts,
+    handleMessage,
+    stopFallback,
+    startHeartbeat,
+  ]);
+
   /**
    * 断开连接 / Disconnect
    */
@@ -359,23 +394,23 @@ export function useWebSocket(
       clearTimeout(reconnectTimerRef.current);
       reconnectTimerRef.current = null;
     }
-    
+
     stopHeartbeat();
     stopFallback();
-    
+
     if (wsRef.current) {
       wsRef.current.close();
       wsRef.current = null;
     }
-    
+
     setState('disconnected');
-    setConnectionInfo(prev => ({
+    setConnectionInfo((prev) => ({
       ...prev,
       state: 'disconnected',
       reconnectAttempts: 0,
     }));
   }, [stopHeartbeat, stopFallback]);
-  
+
   /**
    * 重连 / Reconnect
    */
@@ -383,60 +418,66 @@ export function useWebSocket(
     disconnect();
     setTimeout(() => connect(), 100);
   }, [connect, disconnect]);
-  
+
   /**
    * 发送消息 / Send message
    */
-  const send = useCallback(<T = unknown>(type: WebSocketMessageType, data: T) => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      const message: WebSocketMessage<T> = {
-        id: `msg_${Date.now()}`,
-        type,
-        data,
-        timestamp: new Date(),
-      };
-      
-      const messageStr = JSON.stringify(message);
-      wsRef.current.send(messageStr);
-      
-      setStatistics(prev => ({
-        ...prev,
-        messagesSent: prev.messagesSent + 1,
-        bytesSent: prev.bytesSent + messageStr.length,
-        lastActivityAt: new Date(),
-      }));
-    }
-  }, []);
-  
+  const send = useCallback(
+    <T = unknown>(type: WebSocketMessageType, data: T) => {
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        const message: WebSocketMessage<T> = {
+          id: `msg_${Date.now()}`,
+          type,
+          data,
+          timestamp: new Date(),
+        };
+
+        const messageStr = JSON.stringify(message);
+        wsRef.current.send(messageStr);
+
+        setStatistics((prev) => ({
+          ...prev,
+          messagesSent: prev.messagesSent + 1,
+          bytesSent: prev.bytesSent + messageStr.length,
+          lastActivityAt: new Date(),
+        }));
+      }
+    },
+    []
+  );
+
   /**
    * 订阅消息 / Subscribe to messages
    */
-  const subscribe = useCallback(<T = unknown>(
-    callback: (message: WebSocketMessage<T>) => void,
-    options?: WebSocketSubscriptionOptions
-  ): (() => void) => {
-    const subscriptionId = `sub_${Date.now()}_${Math.random()}`;
-    
-    subscriptionsRef.current.set(subscriptionId, {
-      callback: callback as (message: WebSocketMessage) => void,
-      options,
-    });
-    
-    // 返回取消订阅函数 / Return unsubscribe function
-    return () => {
-      subscriptionsRef.current.delete(subscriptionId);
-    };
-  }, []);
-  
+  const subscribe = useCallback(
+    <T = unknown>(
+      callback: (message: WebSocketMessage<T>) => void,
+      options?: WebSocketSubscriptionOptions
+    ): (() => void) => {
+      const subscriptionId = `sub_${Date.now()}_${Math.random()}`;
+
+      subscriptionsRef.current.set(subscriptionId, {
+        callback: callback as (message: WebSocketMessage) => void,
+        options,
+      });
+
+      // 返回取消订阅函数 / Return unsubscribe function
+      return () => {
+        subscriptionsRef.current.delete(subscriptionId);
+      };
+    },
+    []
+  );
+
   // 自动连接 / Auto connect
   useEffect(() => {
     connect();
-    
+
     return () => {
       disconnect();
     };
   }, [url]); // 仅在 URL 变化时重连 / Only reconnect when URL changes
-  
+
   return {
     state,
     connectionInfo,

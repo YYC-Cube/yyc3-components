@@ -27,14 +27,14 @@
 /**
  * AI 提供商 / AI Provider
  */
-export type AIProvider = 
-  | 'openai'        // OpenAI
-  | 'anthropic'     // Anthropic (Claude)
-  | 'ollama'        // Ollama (Local LLM)
-  | 'zhipu'         // Zhipu AI (GLM)
-  | 'qwen'          // Alibaba Qwen
-  | 'deepseek'      // DeepSeek
-  | 'custom';       // Custom Provider
+export type AIProvider =
+  | 'openai' // OpenAI
+  | 'anthropic' // Anthropic (Claude)
+  | 'ollama' // Ollama (Local LLM)
+  | 'zhipu' // Zhipu AI (GLM)
+  | 'qwen' // Alibaba Qwen
+  | 'deepseek' // DeepSeek
+  | 'custom'; // Custom Provider
 
 /**
  * AI 配置 / AI Configuration

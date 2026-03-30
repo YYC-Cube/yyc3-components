@@ -38,13 +38,13 @@ function DockerDashboard() {
     containerOperation,
     createContainer,
     getContainerLogs,
-    metrics
+    metrics,
   } = useDocker();
 
   return (
     <div>
       <h1>Docker Containers</h1>
-      {containers.map(container => (
+      {containers.map((container) => (
         <div key={container.id}>
           <h2>{container.name}</h2>
           <p>Status: {container.state}</p>
@@ -74,17 +74,13 @@ const handleCreate = async () => {
   const containerId = await createContainer({
     name: 'my-container',
     image: 'nginx:latest',
-    ports: [
-      { host: 8080, container: 80 }
-    ],
-    volumes: [
-      { host: '/host/path', container: '/container/path' }
-    ],
+    ports: [{ host: 8080, container: 80 }],
+    volumes: [{ host: '/host/path', container: '/container/path' }],
     environment: {
-      ENV_VAR: 'value'
-    }
+      ENV_VAR: 'value',
+    },
   });
-  
+
   if (containerId) {
     console.log('Container created:', containerId);
   }
@@ -96,7 +92,7 @@ const handleCreate = async () => {
 ```tsx
 const handleViewLogs = async (containerId: string) => {
   const logs = await getContainerLogs(containerId, 100);
-  logs.forEach(log => {
+  logs.forEach((log) => {
     console.log(log.timestamp, log.message);
   });
 };
@@ -111,9 +107,15 @@ interface UseDockerReturn {
   // Containers
   containers: DockerContainer[];
   getContainer: (containerId: string) => DockerContainer | null;
-  containerOperation: (containerId: string, operation: ContainerOperationType) => Promise<ContainerOperationResult>;
+  containerOperation: (
+    containerId: string,
+    operation: ContainerOperationType
+  ) => Promise<ContainerOperationResult>;
   createContainer: (config: ContainerCreateConfig) => Promise<string | null>;
-  getContainerLogs: (containerId: string, tail?: number) => Promise<DockerLogEntry[]>;
+  getContainerLogs: (
+    containerId: string,
+    tail?: number
+  ) => Promise<DockerLogEntry[]>;
   isOperating: boolean;
   lastOperationResult: ContainerOperationResult | null;
 
@@ -121,17 +123,17 @@ interface UseDockerReturn {
   images: DockerImage[];
   pullImage: (imageName: string, tag?: string) => Promise<boolean>;
   removeImage: (imageId: string) => Promise<boolean>;
-  
+
   // Networks
   networks: DockerNetwork[];
   createNetwork: (name: string) => Promise<string | null>;
   removeNetwork: (networkId: string) => Promise<boolean>;
-  
+
   // Volumes
   volumes: DockerVolume[];
   createVolume: (name: string) => Promise<string | null>;
   removeVolume: (volumeId: string) => Promise<boolean>;
-  
+
   // Metrics
   metrics: DockerMetrics;
 }
@@ -140,6 +142,7 @@ interface UseDockerReturn {
 ## 📚 类型定义
 
 ### DockerContainer
+
 ```typescript
 interface DockerContainer {
   id: string;
@@ -154,6 +157,7 @@ interface DockerContainer {
 ```
 
 ### DockerMetrics
+
 ```typescript
 interface DockerMetrics {
   containerCount: number;
@@ -187,9 +191,9 @@ useEffect(() => {
 
 ```tsx
 const handleStopAll = async () => {
-  const runningContainers = containers.filter(c => c.state === 'running');
+  const runningContainers = containers.filter((c) => c.state === 'running');
   await Promise.all(
-    runningContainers.map(c => containerOperation(c.id, 'stop'))
+    runningContainers.map((c) => containerOperation(c.id, 'stop'))
   );
 };
 ```

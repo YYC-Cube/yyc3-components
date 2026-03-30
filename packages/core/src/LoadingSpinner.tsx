@@ -9,8 +9,8 @@
  * - 完全可访问
  */
 
-import React from "react";
-import type { BaseComponentProps, ComponentSize } from "@yyc3/types";
+import React from 'react';
+import type { BaseComponentProps, ComponentSize } from '@yyc3/types';
 
 export interface LoadingSpinnerProps extends BaseComponentProps {
   /** 尺寸 */
@@ -18,36 +18,40 @@ export interface LoadingSpinnerProps extends BaseComponentProps {
   /** 颜色 */
   color?: string;
   /** 动画类型 */
-  variant?: "default" | "dots" | "bars" | "pulse";
+  variant?: 'default' | 'dots' | 'bars' | 'pulse';
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  size = "default",
-  color = "currentColor",
-  variant = "default",
-  className = "",
+  size = 'default',
+  color = 'currentColor',
+  variant = 'default',
+  className = '',
   ...rest
 }) => {
   const getSize = (): string => {
-    if (typeof size === "number") return `${size}px`;
+    if (typeof size === 'number') return `${size}px`;
     const sizes: Record<ComponentSize, string> = {
-      sm: "16px",
-      default: "24px",
-      lg: "32px",
-      xl: "48px",
+      sm: '16px',
+      default: '24px',
+      lg: '32px',
+      xl: '48px',
     };
     return sizes[size] || sizes.default;
   };
 
   const sizeValue = getSize();
 
-  if (variant === "dots") {
+  if (variant === 'dots') {
     return (
-      <div className={`flex items-center gap-1 ${className}`} {...rest} style={rest.style}>
+      <div
+        className={`flex items-center gap-1 ${className}`}
+        {...rest}
+        style={rest.style}
+      >
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="rounded-full animate-bounce"
+            className="animate-bounce rounded-full"
             style={{
               width: `calc(${sizeValue} * 0.4)`,
               height: `calc(${sizeValue} * 0.4)`,
@@ -60,13 +64,17 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     );
   }
 
-  if (variant === "bars") {
+  if (variant === 'bars') {
     return (
-      <div className={`flex items-center gap-1 ${className}`} {...rest} style={rest.style}>
+      <div
+        className={`flex items-center gap-1 ${className}`}
+        {...rest}
+        style={rest.style}
+      >
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className="rounded-sm animate-pulse"
+            className="animate-pulse rounded-sm"
             style={{
               width: `calc(${sizeValue} * 0.15)`,
               height: sizeValue,
@@ -79,7 +87,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     );
   }
 
-  if (variant === "pulse") {
+  if (variant === 'pulse') {
     return (
       <div
         className={`animate-pulse rounded-full ${className}`}

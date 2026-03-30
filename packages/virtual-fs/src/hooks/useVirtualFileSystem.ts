@@ -1,19 +1,19 @@
 /**
  * useVirtualFileSystem - 虚拟文件系统 Hook
- * 
+ *
  * 职责：
  * - 管理内存中的多文件项目结构
  * - 文件内容读写（CRUD）
  * - 模块解析（import/export 依赖分析）
  * - SandboxPreview 多文件打包支持
  * - 文件变更事件通知
- * 
+ *
  * Step 7a: 支持多文件项目虚拟文件系统预览
- * 
+ *
  * @file hooks/useVirtualFileSystem.ts
  */
 
-import { useState, useCallback, useRef, useMemo } from 'react'
+import { useState, useCallback, useRef, useMemo } from 'react';
 
 // ==========================================
 // Types
@@ -22,72 +22,72 @@ import { useState, useCallback, useRef, useMemo } from 'react'
 /** 虚拟文件 */
 export interface VirtualFile {
   /** 文件路径（如 '/src/App.tsx'） */
-  path: string
+  path: string;
   /** 文件内容 */
-  content: string
+  content: string;
   /** 语言 */
-  language: string
+  language: string;
   /** 最后修改时间 */
-  lastModified: number
+  lastModified: number;
   /** 是否有未保存的变更 */
-  isDirty: boolean
+  isDirty: boolean;
 }
 
 /** 虚拟文件系统状态 */
 export interface VFSState {
-  files: Map<string, VirtualFile>
-  entryPoint: string
+  files: Map<string, VirtualFile>;
+  entryPoint: string;
 }
 
 /** 打包结果 */
 export interface BundleResult {
   /** 打包后的 HTML */
-  html: string
+  html: string;
   /** 入口组件名 */
-  entryComponent: string
+  entryComponent: string;
   /** 依赖文件列表 */
-  dependencies: string[]
+  dependencies: string[];
   /** 打包耗时 (ms) */
-  buildTime: number
+  buildTime: number;
   /** 错误（如果有） */
-  errors: BundleError[]
+  errors: BundleError[];
 }
 
 export interface BundleError {
-  file: string
-  message: string
-  line?: number
+  file: string;
+  message: string;
+  line?: number;
 }
 
 export interface UseVirtualFileSystemReturn {
   /** 所有文件 */
-  files: VirtualFile[]
+  files: VirtualFile[];
   /** 获取单个文件 */
-  getFile: (path: string) => VirtualFile | undefined
+  getFile: (path: string) => VirtualFile | undefined;
   /** 读取文件内容 */
-  readFile: (path: string) => string | null
+  readFile: (path: string) => string | null;
   /** 写入文件（创建或更新） */
-  writeFile: (path: string, content: string, language?: string) => void
+  writeFile: (path: string, content: string, language?: string) => void;
   /** 删除文件 */
-  deleteFile: (path: string) => void
+  deleteFile: (path: string) => void;
   /** 重命名文件 */
-  renameFile: (oldPath: string, newPath: string) => void
+  renameFile: (oldPath: string, newPath: string) => void;
   /** 检查文件是否存在 */
-  exists: (path: string) => boolean
+  exists: (path: string) => boolean;
   /** 列出目录下的文件 */
-  listDir: (dirPath: string) => string[]
+  listDir: (dirPath: string) => string[];
   /** 入口点 */
-  entryPoint: string
+  entryPoint: string;
   /** 设置入口点 */
-  setEntryPoint: (path: string) => void
+  setEntryPoint: (path: string) => void;
   /** 打包为预览 HTML */
-  bundle: () => BundleResult
+  bundle: () => BundleResult;
   /** 标记文件为已保存 */
-  markSaved: (path: string) => void
+  markSaved: (path: string) => void;
   /** 获取所有已变更文件 */
-  getDirtyFiles: () => VirtualFile[]
+  getDirtyFiles: () => VirtualFile[];
   /** 重置为初始状态 */
-  reset: () => void
+  reset: () => void;
 }
 
 // ==========================================
@@ -226,39 +226,49 @@ body {
 `,
     language: 'css',
   },
-}
+};
 
 // ==========================================
 // 多文件打包器
 // ==========================================
 
 function stripTypeScript(code: string): string {
-  return code
-    // 移除 import 语句
-    .replace(/^import\s+.*$/gm, '')
-    // 移除 export 语句中的 type/interface
-    .replace(/^export\s+(interface|type)\s+\w+[\s\S]*?^}/gm, '')
-    // 移除 standalone interface/type
-    .replace(/^(interface|type)\s+\w+[\s\S]*?^}/gm, '')
-    // 移除类型参数 <T extends ...>
-    .replace(/<[A-Z]\w*(?:\s+extends\s+\w+)?(?:\[\])?>/g, '')
-    // 移除参数类型标注
-    .replace(/:\s*(?:string|number|boolean|any|void|React\.\w+|[A-Z]\w+(?:\[\])?)(\s*(?=[,)\]=;{]))/g, '$1')
-    // 移除 as const / as Type
-    .replace(/\s+as\s+(?:const|[A-Z]\w+)/g, '')
-    // 移除 export default
-    .replace(/^export\s+default\s+/gm, '')
-    // 移除 export
-    .replace(/^export\s+(?:function|const|let|var|class)/gm, (match) => match.replace('export ', ''))
-    .trim()
+  return (
+    code
+      // 移除 import 语句
+      .replace(/^import\s+.*$/gm, '')
+      // 移除 export 语句中的 type/interface
+      .replace(/^export\s+(interface|type)\s+\w+[\s\S]*?^}/gm, '')
+      // 移除 standalone interface/type
+      .replace(/^(interface|type)\s+\w+[\s\S]*?^}/gm, '')
+      // 移除类型参数 <T extends ...>
+      .replace(/<[A-Z]\w*(?:\s+extends\s+\w+)?(?:\[\])?>/g, '')
+      // 移除参数类型标注
+      .replace(
+        /:\s*(?:string|number|boolean|any|void|React\.\w+|[A-Z]\w+(?:\[\])?)(\s*(?=[,)\]=;{]))/g,
+        '$1'
+      )
+      // 移除 as const / as Type
+      .replace(/\s+as\s+(?:const|[A-Z]\w+)/g, '')
+      // 移除 export default
+      .replace(/^export\s+default\s+/gm, '')
+      // 移除 export
+      .replace(/^export\s+(?:function|const|let|var|class)/gm, (match) =>
+        match.replace('export ', '')
+      )
+      .trim()
+  );
 }
 
-function bundleFiles(files: Map<string, VirtualFile>, entryPoint: string): BundleResult {
-  const startTime = performance.now()
-  const errors: BundleError[] = []
-  const dependencies: string[] = []
-  
-  const entryFile = files.get(entryPoint)
+function bundleFiles(
+  files: Map<string, VirtualFile>,
+  entryPoint: string
+): BundleResult {
+  const startTime = performance.now();
+  const errors: BundleError[] = [];
+  const dependencies: string[] = [];
+
+  const entryFile = files.get(entryPoint);
   if (!entryFile) {
     return {
       html: '',
@@ -266,56 +276,62 @@ function bundleFiles(files: Map<string, VirtualFile>, entryPoint: string): Bundl
       dependencies: [],
       buildTime: 0,
       errors: [{ file: entryPoint, message: `入口文件不存在: ${entryPoint}` }],
-    }
+    };
   }
 
   // 提取入口组件名
   const defaultExportMatch = entryFile.content.match(
     /export\s+default\s+function\s+(\w+)/
-  )
-  const namedExportMatch = entryFile.content.match(
-    /export\s+function\s+(\w+)/
-  )
-  const entryComponent = defaultExportMatch?.[1] || namedExportMatch?.[1] || 'App'
+  );
+  const namedExportMatch = entryFile.content.match(/export\s+function\s+(\w+)/);
+  const entryComponent =
+    defaultExportMatch?.[1] || namedExportMatch?.[1] || 'App';
 
   // 收集所有 CSS
-  let allCSS = ''
+  let allCSS = '';
   files.forEach((file, path) => {
     if (path.endsWith('.css')) {
-      allCSS += `/* ${path} */\n${file.content}\n`
-      dependencies.push(path)
+      allCSS += `/* ${path} */\n${file.content}\n`;
+      dependencies.push(path);
     }
-  })
+  });
 
   // 收集所有 TS/TSX/JS 文件代码（扁平化）
-  const codeBlocks: string[] = []
-  
+  const codeBlocks: string[] = [];
+
   // 先处理非入口文件
   files.forEach((file, path) => {
-    if (path === entryPoint) {return}
-    if (path.endsWith('.ts') || path.endsWith('.tsx') || path.endsWith('.js') || path.endsWith('.jsx')) {
+    if (path === entryPoint) {
+      return;
+    }
+    if (
+      path.endsWith('.ts') ||
+      path.endsWith('.tsx') ||
+      path.endsWith('.js') ||
+      path.endsWith('.jsx')
+    ) {
       try {
-        const stripped = stripTypeScript(file.content)
+        const stripped = stripTypeScript(file.content);
         if (stripped.trim()) {
-          codeBlocks.push(`// === ${path} ===\n${stripped}`)
-          dependencies.push(path)
+          codeBlocks.push(`// === ${path} ===\n${stripped}`);
+          dependencies.push(path);
         }
       } catch (err: any) {
-        errors.push({ file: path, message: err.message })
+        errors.push({ file: path, message: err.message });
       }
     }
-  })
+  });
 
   // 最后处理入口文件
   try {
-    const entryStripped = stripTypeScript(entryFile.content)
-    codeBlocks.push(`// === ${entryPoint} (entry) ===\n${entryStripped}`)
-    dependencies.push(entryPoint)
+    const entryStripped = stripTypeScript(entryFile.content);
+    codeBlocks.push(`// === ${entryPoint} (entry) ===\n${entryStripped}`);
+    dependencies.push(entryPoint);
   } catch (err: any) {
-    errors.push({ file: entryPoint, message: err.message })
+    errors.push({ file: entryPoint, message: err.message });
   }
 
-  const allCode = codeBlocks.join('\n\n')
+  const allCode = codeBlocks.join('\n\n');
 
   const html = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -398,7 +414,7 @@ function bundleFiles(files: Map<string, VirtualFile>, entryPoint: string): Bundl
     });
   </script>
 </body>
-</html>`
+</html>`;
 
   return {
     html,
@@ -406,7 +422,7 @@ function bundleFiles(files: Map<string, VirtualFile>, entryPoint: string): Bundl
     dependencies,
     buildTime: performance.now() - startTime,
     errors,
-  }
+  };
 }
 
 // ==========================================
@@ -417,11 +433,11 @@ export function useVirtualFileSystem(
   initialFiles?: Record<string, { content: string; language: string }>,
   initialEntryPoint?: string
 ): UseVirtualFileSystemReturn {
-  const defaultEntry = initialEntryPoint || '/src/App.tsx'
-  
+  const defaultEntry = initialEntryPoint || '/src/App.tsx';
+
   const initFiles = (): Map<string, VirtualFile> => {
-    const map = new Map<string, VirtualFile>()
-    const source = initialFiles || DEFAULT_FILES
+    const map = new Map<string, VirtualFile>();
+    const source = initialFiles || DEFAULT_FILES;
     for (const [path, { content, language }] of Object.entries(source)) {
       map.set(path, {
         path,
@@ -429,112 +445,130 @@ export function useVirtualFileSystem(
         language,
         lastModified: Date.now(),
         isDirty: false,
-      })
+      });
     }
-    return map
-  }
+    return map;
+  };
 
   const [state, setState] = useState<VFSState>({
     files: initFiles(),
     entryPoint: defaultEntry,
-  })
+  });
 
-  const files = useMemo(() => Array.from(state.files.values()), [state.files])
+  const files = useMemo(() => Array.from(state.files.values()), [state.files]);
 
-  const getFile = useCallback((path: string) => state.files.get(path), [state.files])
+  const getFile = useCallback(
+    (path: string) => state.files.get(path),
+    [state.files]
+  );
 
-  const readFile = useCallback((path: string) => {
-    const file = state.files.get(path)
-    return file ? file.content : null
-  }, [state.files])
+  const readFile = useCallback(
+    (path: string) => {
+      const file = state.files.get(path);
+      return file ? file.content : null;
+    },
+    [state.files]
+  );
 
-  const writeFile = useCallback((path: string, content: string, language?: string) => {
-    setState(prev => {
-      const newFiles = new Map(prev.files)
-      const existing = newFiles.get(path)
-      newFiles.set(path, {
-        path,
-        content,
-        language: language || existing?.language || detectLanguage(path),
-        lastModified: Date.now(),
-        isDirty: true,
-      })
-      return { ...prev, files: newFiles }
-    })
-  }, [])
+  const writeFile = useCallback(
+    (path: string, content: string, language?: string) => {
+      setState((prev) => {
+        const newFiles = new Map(prev.files);
+        const existing = newFiles.get(path);
+        newFiles.set(path, {
+          path,
+          content,
+          language: language || existing?.language || detectLanguage(path),
+          lastModified: Date.now(),
+          isDirty: true,
+        });
+        return { ...prev, files: newFiles };
+      });
+    },
+    []
+  );
 
   const deleteFile = useCallback((path: string) => {
-    setState(prev => {
-      const newFiles = new Map(prev.files)
-      newFiles.delete(path)
-      const newEntry = prev.entryPoint === path
-        ? (newFiles.keys().next().value || '/src/App.tsx')
-        : prev.entryPoint
-      return { ...prev, files: newFiles, entryPoint: newEntry }
-    })
-  }, [])
+    setState((prev) => {
+      const newFiles = new Map(prev.files);
+      newFiles.delete(path);
+      const newEntry =
+        prev.entryPoint === path
+          ? newFiles.keys().next().value || '/src/App.tsx'
+          : prev.entryPoint;
+      return { ...prev, files: newFiles, entryPoint: newEntry };
+    });
+  }, []);
 
   const renameFile = useCallback((oldPath: string, newPath: string) => {
-    setState(prev => {
-      const newFiles = new Map(prev.files)
-      const file = newFiles.get(oldPath)
-      if (!file) {return prev}
-      newFiles.delete(oldPath)
+    setState((prev) => {
+      const newFiles = new Map(prev.files);
+      const file = newFiles.get(oldPath);
+      if (!file) {
+        return prev;
+      }
+      newFiles.delete(oldPath);
       newFiles.set(newPath, {
         ...file,
         path: newPath,
         language: detectLanguage(newPath),
         lastModified: Date.now(),
         isDirty: true,
-      })
-      const newEntry = prev.entryPoint === oldPath ? newPath : prev.entryPoint
-      return { ...prev, files: newFiles, entryPoint: newEntry }
-    })
-  }, [])
+      });
+      const newEntry = prev.entryPoint === oldPath ? newPath : prev.entryPoint;
+      return { ...prev, files: newFiles, entryPoint: newEntry };
+    });
+  }, []);
 
-  const exists = useCallback((path: string) => state.files.has(path), [state.files])
+  const exists = useCallback(
+    (path: string) => state.files.has(path),
+    [state.files]
+  );
 
-  const listDir = useCallback((dirPath: string) => {
-    const prefix = dirPath.endsWith('/') ? dirPath : dirPath + '/'
-    const result: string[] = []
-    state.files.forEach((_, path) => {
-      if (path.startsWith(prefix)) {
-        const rest = path.slice(prefix.length)
-        const firstSegment = rest.split('/')[0]
-        if (!result.includes(firstSegment)) {
-          result.push(firstSegment)
+  const listDir = useCallback(
+    (dirPath: string) => {
+      const prefix = dirPath.endsWith('/') ? dirPath : dirPath + '/';
+      const result: string[] = [];
+      state.files.forEach((_, path) => {
+        if (path.startsWith(prefix)) {
+          const rest = path.slice(prefix.length);
+          const firstSegment = rest.split('/')[0];
+          if (!result.includes(firstSegment)) {
+            result.push(firstSegment);
+          }
         }
-      }
-    })
-    return result
-  }, [state.files])
+      });
+      return result;
+    },
+    [state.files]
+  );
 
   const setEntryPoint = useCallback((path: string) => {
-    setState(prev => ({ ...prev, entryPoint: path }))
-  }, [])
+    setState((prev) => ({ ...prev, entryPoint: path }));
+  }, []);
 
   const bundle = useCallback((): BundleResult => {
-    return bundleFiles(state.files, state.entryPoint)
-  }, [state.files, state.entryPoint])
+    return bundleFiles(state.files, state.entryPoint);
+  }, [state.files, state.entryPoint]);
 
   const markSaved = useCallback((path: string) => {
-    setState(prev => {
-      const newFiles = new Map(prev.files)
-      const file = newFiles.get(path)
+    setState((prev) => {
+      const newFiles = new Map(prev.files);
+      const file = newFiles.get(path);
       if (file) {
-        newFiles.set(path, { ...file, isDirty: false })
+        newFiles.set(path, { ...file, isDirty: false });
       }
-      return { ...prev, files: newFiles }
-    })
-  }, [])
+      return { ...prev, files: newFiles };
+    });
+  }, []);
 
   const getDirtyFiles = useCallback(() => {
-    return Array.from(state.files.values()).filter(f => f.isDirty)
-  }, [state.files])
+    return Array.from(state.files.values()).filter((f) => f.isDirty);
+  }, [state.files]);
 
   const reset = useCallback(() => {
-    setState({ files: initFiles(), entryPoint: defaultEntry })
-  }, [])  
+    setState({ files: initFiles(), entryPoint: defaultEntry });
+  }, []);
 
   return {
     files,
@@ -551,7 +585,7 @@ export function useVirtualFileSystem(
     markSaved,
     getDirtyFiles,
     reset,
-  }
+  };
 }
 
 // ==========================================
@@ -559,12 +593,18 @@ export function useVirtualFileSystem(
 // ==========================================
 
 function detectLanguage(path: string): string {
-  const ext = path.split('.').pop()?.toLowerCase()
+  const ext = path.split('.').pop()?.toLowerCase();
   const map: Record<string, string> = {
-    ts: 'typescript', tsx: 'typescriptreact',
-    js: 'javascript', jsx: 'javascriptreact',
-    json: 'json', md: 'markdown', css: 'css',
-    html: 'html', py: 'python', sql: 'sql',
-  }
-  return map[ext || ''] || 'plaintext'
+    ts: 'typescript',
+    tsx: 'typescriptreact',
+    js: 'javascript',
+    jsx: 'javascriptreact',
+    json: 'json',
+    md: 'markdown',
+    css: 'css',
+    html: 'html',
+    py: 'python',
+    sql: 'sql',
+  };
+  return map[ext || ''] || 'plaintext';
 }

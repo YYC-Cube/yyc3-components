@@ -24,6 +24,7 @@ YYC3可复用组件库 - 国际化系统
 创建类型安全的翻译函数。
 
 **功能**:
+
 - 嵌套key支持
 - 模板变量替换
 - 类型安全
@@ -60,6 +61,7 @@ console.log(t('nav.settings')); // "设置"
 合并基础翻译和自定义翻译。
 
 **功能**:
+
 - 深度合并
 - 保留基础翻译
 - 覆盖自定义翻译
@@ -100,6 +102,7 @@ const merged = mergeMessages(baseMessages, customMessages);
 验证翻译消息的完整性。
 
 **功能**:
+
 - 检查必需键是否存在
 - 验证值类型
 
@@ -131,6 +134,7 @@ const result2 = validateMessages(incomplete, ['welcome', 'greeting']);
 提取所有翻译键。
 
 **功能**:
+
 - 递归提取所有键
 - 支持前缀过滤
 - 保持嵌套结构
@@ -163,6 +167,7 @@ const navKeys = extractKeys(messages, 'nav');
 比较两个翻译消息的一致性。
 
 **功能**:
+
 - 找出仅在一个翻译中存在的键
 - 找出共有的键
 
@@ -322,15 +327,15 @@ if (result.onlyIn2.length > 0) {
 
 ## 📊 API 参考
 
-| 函数 | 参数 | 返回类型 | 说明 |
-|------|------|----------|------|
-| `createTranslator(messages)` | `I18nMessages` | `(key, vars?) => string` | 创建翻译函数 |
-| `mergeMessages(base, override)` | `T, Partial<T>` | `T` | 合并翻译 |
-| `validateMessages(messages, requiredKeys)` | `T, string[]` | `{valid, missing}` | 验证翻译 |
-| `extractKeys(messages, prefix?)` | `T, string` | `string[]` | 提取所有键 |
-| `compareMessages(messages1, messages2)` | `T, T` | `{onlyIn1, onlyIn2, common}` | 比较翻译 |
-| `getNestedValue(messages, path)` | `T, string` | `string` | 获取嵌套值 |
-| `interpolate(template, vars)` | `string, Record<string, string\|number>` | `string` | 替换模板变量 |
+| 函数                                       | 参数                                     | 返回类型                     | 说明         |
+| ------------------------------------------ | ---------------------------------------- | ---------------------------- | ------------ |
+| `createTranslator(messages)`               | `I18nMessages`                           | `(key, vars?) => string`     | 创建翻译函数 |
+| `mergeMessages(base, override)`            | `T, Partial<T>`                          | `T`                          | 合并翻译     |
+| `validateMessages(messages, requiredKeys)` | `T, string[]`                            | `{valid, missing}`           | 验证翻译     |
+| `extractKeys(messages, prefix?)`           | `T, string`                              | `string[]`                   | 提取所有键   |
+| `compareMessages(messages1, messages2)`    | `T, T`                                   | `{onlyIn1, onlyIn2, common}` | 比较翻译     |
+| `getNestedValue(messages, path)`           | `T, string`                              | `string`                     | 获取嵌套值   |
+| `interpolate(template, vars)`              | `string, Record<string, string\|number>` | `string`                     | 替换模板变量 |
 
 ## 🎨 最佳实践
 
@@ -430,7 +435,7 @@ npm run dev
 
 ## 📄 依赖
 
-- `@yyc3/types`: workspace:* (dependency)
+- `@yyc3/types`: workspace:\* (dependency)
 
 ## 📝 许可证
 

@@ -70,14 +70,18 @@ export function isArray(value: unknown): value is unknown[] {
  * 验证日期 / Validate date
  */
 export function isDate(value: unknown): value is Date {
-  return value instanceof Date || (isString(value) && !isNaN(Date.parse(value)));
+  return (
+    value instanceof Date || (isString(value) && !isNaN(Date.parse(value)))
+  );
 }
 
 /**
  * 验证邮箱 / Validate email
  */
 export function isEmail(value: unknown): boolean {
-  if (!isString(value)) {return false;}
+  if (!isString(value)) {
+    return false;
+  }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(value);
 }
@@ -86,7 +90,9 @@ export function isEmail(value: unknown): boolean {
  * 验证 URL / Validate URL
  */
 export function isURL(value: unknown): boolean {
-  if (!isString(value)) {return false;}
+  if (!isString(value)) {
+    return false;
+  }
   try {
     new URL(value);
     return true;
@@ -102,17 +108,22 @@ export function validateConfig(
   value: unknown,
   requiredFields: string[]
 ): boolean {
-  if (!isObject(value)) {return false;}
-  
-  return requiredFields.every(field => field in value);
+  if (!isObject(value)) {
+    return false;
+  }
+
+  return requiredFields.every((field) => field in value);
 }
 
 /**
  * 深度合并对象 / Deep merge objects
  */
-export function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
+export function deepMerge<T extends Record<string, unknown>>(
+  target: T,
+  source: Partial<T>
+): T {
   const result = { ...target };
-  
+
   for (const key in source) {
     if (source[key] !== undefined) {
       if (isObject(result[key]) && isObject(source[key])) {
@@ -125,21 +136,23 @@ export function deepMerge<T extends Record<string, unknown>>(target: T, source: 
       }
     }
   }
-  
+
   return result;
 }
 
 /**
  * 清理对象 / Clean object (remove undefined values)
  */
-export function cleanObject<T extends Record<string, unknown>>(obj: T): Partial<T> {
+export function cleanObject<T extends Record<string, unknown>>(
+  obj: T
+): Partial<T> {
   const result: Partial<T> = {};
-  
+
   for (const key in obj) {
     if (obj[key] !== undefined) {
       result[key] = obj[key];
     }
   }
-  
+
   return result;
 }

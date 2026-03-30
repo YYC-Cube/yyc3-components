@@ -22,8 +22,8 @@ const workflow = engine.createWorkflow({
   steps: [
     { name: 'Build', action: 'build' },
     { name: 'Test', action: 'test' },
-    { name: 'Deploy', action: 'deploy' }
-  ]
+    { name: 'Deploy', action: 'deploy' },
+  ],
 });
 ```
 

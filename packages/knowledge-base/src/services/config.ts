@@ -1,15 +1,17 @@
+export type EmbeddingProvider = 'ollama' | 'openai';
+
 export const kb = {
   enabled: true,
   vectorDb: 'memory',
   embedding: {
-    provider: 'ollama',
+    provider: 'ollama' as EmbeddingProvider,
     model: 'nomic-embed-text',
     ollamaModel: 'nomic-embed-text',
     dimensions: 0,
     defaultDimensions: {
       ollama: 768,
       openai: 1536,
-    },
+    } as Record<EmbeddingProvider, number>,
   },
   rag: {
     chunkSize: 512,

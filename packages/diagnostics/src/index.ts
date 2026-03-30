@@ -28,7 +28,7 @@
  */
 
 // Types
-export type { DiagnosticResult, DiagnosticReport } from "./types";
+export type { DiagnosticResult, DiagnosticReport } from './types';
 
 // Functions
 export {
@@ -36,4 +36,4 @@ export {
   clearAllData,
   repairConfigData,
   formatDiagnosticReport,
-} from "./diagnostics";
+} from './diagnostics';

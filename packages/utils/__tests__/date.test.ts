@@ -1,10 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import {
-  formatDate,
-  getRelativeTime,
-  isToday,
-  isThisWeek,
-} from '../src/date';
+import { formatDate, getRelativeTime, isToday, isThisWeek } from '../src/date';
 
 describe('Date Utilities', () => {
   beforeEach(() => {

@@ -89,7 +89,9 @@ export class PlatformErrorFilter {
       const patterns = Array.isArray(rule.messagePattern)
         ? rule.messagePattern
         : [rule.messagePattern];
-      if (patterns.some((p) => message.toLowerCase().includes(p.toLowerCase()))) {
+      if (
+        patterns.some((p) => message.toLowerCase().includes(p.toLowerCase()))
+      ) {
         return true;
       }
     }
@@ -99,7 +101,9 @@ export class PlatformErrorFilter {
       const patterns = Array.isArray(rule.sourcePattern)
         ? rule.sourcePattern
         : [rule.sourcePattern];
-      if (patterns.some((p) => source.toLowerCase().includes(p.toLowerCase()))) {
+      if (
+        patterns.some((p) => source.toLowerCase().includes(p.toLowerCase()))
+      ) {
         return true;
       }
     }
@@ -124,11 +128,11 @@ export class PlatformErrorFilter {
 export function createFigmaErrorFilter(): PlatformErrorFilter {
   const filter = new PlatformErrorFilter([
     {
-      namePattern: ["iframe", "abort", "iframemessage"],
-      messagePattern: ["message aborted", "message port", "iframe"],
+      namePattern: ['iframe', 'abort', 'iframemessage'],
+      messagePattern: ['message aborted', 'message port', 'iframe'],
     },
     {
-      sourcePattern: ["figma.com", "webpack-artifacts", "figma_app"],
+      sourcePattern: ['figma.com', 'webpack-artifacts', 'figma_app'],
     },
   ]);
 

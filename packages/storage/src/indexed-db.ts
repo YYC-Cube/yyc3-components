@@ -80,13 +80,10 @@ export class IndexedDB {
         // 创建存储
         for (const storeDef of this.config.stores) {
           if (!database.objectStoreNames.contains(storeDef.name)) {
-            const store = database.createObjectStore(
-              storeDef.name,
-              {
-                keyPath: storeDef.keyPath || "id",
-                autoIncrement: storeDef.autoIncrement || false,
-              }
-            );
+            const store = database.createObjectStore(storeDef.name, {
+              keyPath: storeDef.keyPath || 'id',
+              autoIncrement: storeDef.autoIncrement || false,
+            });
           }
         }
       };
@@ -111,7 +108,7 @@ export class IndexedDB {
   ): Promise<void> {
     try {
       const database = await this.getDatabase();
-      const transaction = database.transaction([storeName], "readwrite");
+      const transaction = database.transaction([storeName], 'readwrite');
       const store = transaction.objectStore(storeName);
       store.put(data);
 
@@ -128,13 +125,10 @@ export class IndexedDB {
   /**
    * 从指定存储获取单条数据
    */
-  async get<T>(
-    storeName: StoreName,
-    key: string
-  ): Promise<T | undefined> {
+  async get<T>(storeName: StoreName, key: string): Promise<T | undefined> {
     try {
       const database = await this.getDatabase();
-      const transaction = database.transaction([storeName], "readonly");
+      const transaction = database.transaction([storeName], 'readonly');
       const store = transaction.objectStore(storeName);
       const request = store.get(key);
 
@@ -154,7 +148,7 @@ export class IndexedDB {
   async getAll<T>(storeName: StoreName): Promise<T[]> {
     try {
       const database = await this.getDatabase();
-      const transaction = database.transaction([storeName], "readonly");
+      const transaction = database.transaction([storeName], 'readonly');
       const store = transaction.objectStore(storeName);
       const request = store.getAll();
 
@@ -174,7 +168,7 @@ export class IndexedDB {
   async delete(storeName: StoreName, key: string): Promise<void> {
     try {
       const database = await this.getDatabase();
-      const transaction = database.transaction([storeName], "readwrite");
+      const transaction = database.transaction([storeName], 'readwrite');
       const store = transaction.objectStore(storeName);
       store.delete(key);
 
@@ -194,7 +188,7 @@ export class IndexedDB {
   async clear(storeName: StoreName): Promise<void> {
     try {
       const database = await this.getDatabase();
-      const transaction = database.transaction([storeName], "readwrite");
+      const transaction = database.transaction([storeName], 'readwrite');
       const store = transaction.objectStore(storeName);
       store.clear();
 
@@ -235,11 +229,7 @@ export function createIndexedDB(config: DBConfig): IndexedDB {
  * 简化的IndexedDB操作（使用默认配置）
  */
 export class SimpleIndexedDB extends IndexedDB {
-  constructor(
-    name: string,
-    stores: StoreName[],
-    version = 1
-  ) {
+  constructor(name: string, stores: StoreName[], version = 1) {
     super({
       name,
       version,

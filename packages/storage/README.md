@@ -22,6 +22,7 @@ YYC3可复用组件库 - 存储系统
 提供简单易用的IndexedDB操作接口。
 
 **功能**:
+
 - 自动初始化数据库
 - 支持自定义存储定义
 - 完整的CRUD操作
@@ -69,6 +70,7 @@ await simpleDB.put('users', { id: '2', name: 'Jane' });
 提供跨标签页和跨窗口的通信能力。
 
 **功能**:
+
 - 跨标签页通信
 - 跨窗口通信
 - 自动降级到localStorage
@@ -107,9 +109,13 @@ await sendMessage('notification', {
 });
 
 // 方式4: 监听一次性消息
-const cleanup = onMessage('response', (data) => {
-  console.log('收到响应:', data);
-}, 5000); // 5秒超时
+const cleanup = onMessage(
+  'response',
+  (data) => {
+    console.log('收到响应:', data);
+  },
+  5000
+); // 5秒超时
 
 // 清理
 cleanup();
@@ -238,25 +244,25 @@ function ComponentB() {
 
 ### IndexedDB
 
-| 方法 | 返回类型 | 说明 |
-|------|----------|------|
-| `constructor(config)` | - | 创建IndexedDB实例 |
-| `getDatabase()` | `Promise<IDBDatabase>` | 获取数据库实例 |
-| `put(storeName, data)` | `Promise<void>` | 添加或更新数据 |
-| `get(storeName, key)` | `Promise<T \| undefined>` | 获取单条数据 |
-| `getAll(storeName)` | `Promise<T[]>` | 获取所有数据 |
-| `delete(storeName, key)` | `Promise<void>` | 删除单条数据 |
-| `clear(storeName)` | `Promise<void>` | 清空存储 |
-| `close()` | `void` | 关闭数据库 |
+| 方法                     | 返回类型                  | 说明              |
+| ------------------------ | ------------------------- | ----------------- |
+| `constructor(config)`    | -                         | 创建IndexedDB实例 |
+| `getDatabase()`          | `Promise<IDBDatabase>`    | 获取数据库实例    |
+| `put(storeName, data)`   | `Promise<void>`           | 添加或更新数据    |
+| `get(storeName, key)`    | `Promise<T \| undefined>` | 获取单条数据      |
+| `getAll(storeName)`      | `Promise<T[]>`            | 获取所有数据      |
+| `delete(storeName, key)` | `Promise<void>`           | 删除单条数据      |
+| `clear(storeName)`       | `Promise<void>`           | 清空存储          |
+| `close()`                | `void`                    | 关闭数据库        |
 
 ### BroadcastChannel
 
-| 方法 | 返回类型 | 说明 |
-|------|----------|------|
-| `constructor(config)` | - | 创建BroadcastChannel实例 |
-| `open()` | `void` | 打开频道 |
-| `send(data)` | `void` | 发送消息 |
-| `close()` | `void` | 关闭频道 |
+| 方法                  | 返回类型 | 说明                     |
+| --------------------- | -------- | ------------------------ |
+| `constructor(config)` | -        | 创建BroadcastChannel实例 |
+| `open()`              | `void`   | 打开频道                 |
+| `send(data)`          | `void`   | 发送消息                 |
+| `close()`             | `void`   | 关闭频道                 |
 
 ## 🎨 使用场景
 
@@ -268,9 +274,7 @@ import { createIndexedDB } from '@yyc3/storage';
 const cacheDB = createIndexedDB({
   name: 'offlineCache',
   version: 1,
-  stores: [
-    { name: 'apiCache', keyPath: 'url' },
-  ],
+  stores: [{ name: 'apiCache', keyPath: 'url' }],
 });
 
 async function getCachedData<T>(url: string): Promise<T | null> {
@@ -278,7 +282,11 @@ async function getCachedData<T>(url: string): Promise<T | null> {
   return record?.data || null;
 }
 
-async function cacheData(url: string, data: unknown, ttl = 3600000): Promise<void> {
+async function cacheData(
+  url: string,
+  data: unknown,
+  ttl = 3600000
+): Promise<void> {
   await cacheDB.put('apiCache', {
     url,
     data,
@@ -287,7 +295,10 @@ async function cacheData(url: string, data: unknown, ttl = 3600000): Promise<voi
   });
 }
 
-async function getWithCache<T>(url: string, fetcher: () => Promise<T>): Promise<T> {
+async function getWithCache<T>(
+  url: string,
+  fetcher: () => Promise<T>
+): Promise<T> {
   // 先查缓存
   const cached = await getCachedData<T>(url);
   if (cached) {

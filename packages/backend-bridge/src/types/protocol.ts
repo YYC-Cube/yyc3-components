@@ -3,7 +3,7 @@
  * 通信协议类型定义
  */
 
-export type SignalType = 
+export type SignalType =
   | 'heartbeat'
   | 'message'
   | 'command'

@@ -1,19 +1,37 @@
-export interface ConnectionState {
-  connected: boolean;
-  url: string | null;
-  reconnecting: boolean;
-}
+export type ConnectionState =
+  | 'MOCK_MODE'
+  | 'CONNECTED'
+  | 'DISCONNECTED'
+  | 'RECONNECTING'
+  | 'ERROR';
+
+export type ConnectionStatus = {
+  state: ConnectionState;
+  latency: number;
+};
 
 export function getBackendBridge(): {
+  connect: () => Promise<void>;
+  disconnect: () => Promise<void>;
   send: (data: unknown) => void;
-  on: (event: string, callback: (...args: unknown[]) => void) => void;
+  dispatchSignal: (signal: unknown) => void;
+  on: (event: string, callback: (...args: unknown[]) => void) => () => void;
   off: (event: string, callback: (...args: unknown[]) => void) => void;
   getState: () => ConnectionState;
+  status: ConnectionStatus;
+  isConnected: boolean;
+  isMockMode: boolean;
 } {
   return {
+    connect: async () => {},
+    disconnect: async () => {},
     send: () => {},
-    on: () => {},
+    dispatchSignal: () => {},
+    on: () => () => {},
     off: () => {},
-    getState: () => ({ connected: false, url: null, reconnecting: false }),
+    getState: () => 'DISCONNECTED',
+    status: { state: 'DISCONNECTED', latency: 0 },
+    isConnected: false,
+    isMockMode: false,
   };
 }

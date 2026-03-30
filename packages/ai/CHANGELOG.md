@@ -7,6 +7,7 @@
 ## [1.0.0] - 2026-03-26
 
 ### 新增 / Added
+
 - ✅ `useAI` Hook - 完整的 AI 对话功能
 - ✅ 流式响应支持（SSE）
 - ✅ 多提供商支持（OpenAI, Anthropic, Ollama, Zhipu, Qwen, DeepSeek）
@@ -17,6 +18,7 @@
 - ✅ `createAIStreamParser` - 流式响应解析工具
 
 ### 类型 / Types
+
 - ✅ `AIProvider` - AI 提供商枚举
 - ✅ `AIConfig` - AI 配置接口
 - ✅ `AIMessage` - AI 消息接口
@@ -25,6 +27,7 @@
 - ✅ `UseAIReturn` - Hook 返回类型
 
 ### 文档 / Documentation
+
 - ✅ 完整的 README.md（中英文）
 - ✅ 代码标头规范（YYC3 标准）
 - ✅ 使用示例和最佳实践
@@ -34,6 +37,7 @@
 ## [Unreleased]
 
 ### 计划中 / Planned
+
 - [ ] 支持多轮对话上下文
 - [ ] 消息历史管理
 - [ ] Token 计数和限制
@@ -57,8 +61,8 @@
 
 <div align="center">
 
-> 「***YanYuCloudCube***」
-> 「***Words Initiate Quadrants, Language Serves as Core for Future***」
-> 「***All things converge in cloud pivot; Deep stacks ignite a new era of intelligence***」
+> 「**_YanYuCloudCube_**」
+> 「**_Words Initiate Quadrants, Language Serves as Core for Future_**」
+> 「**_All things converge in cloud pivot; Deep stacks ignite a new era of intelligence_**」
 
 </div>

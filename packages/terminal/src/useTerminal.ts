@@ -27,7 +27,7 @@
  * notes: Hook 使用单例模式管理 TerminalService
  */
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type {
   TerminalSession,
   TerminalSessionConfig,
@@ -35,21 +35,32 @@ import type {
   CommandHistoryEntry,
   TerminalShortcut,
   TerminalMetrics,
-} from "./types";
+} from './types';
 
 export interface UseTerminalReturn {
   sessions: TerminalSession[];
-  createSession: (name: string, config?: Partial<TerminalSessionConfig>) => TerminalSession;
+  createSession: (
+    name: string,
+    config?: Partial<TerminalSessionConfig>
+  ) => TerminalSession;
   getSession: (sessionId: string) => TerminalSession | null;
   closeSession: (sessionId: string) => boolean;
   clearAllSessions: () => void;
-  executeCommand: (sessionId: string, command: string) => Promise<CommandExecutionResult>;
-  getCommandHistory: (sessionId: string, limit?: number) => CommandHistoryEntry[];
+  executeCommand: (
+    sessionId: string,
+    command: string
+  ) => Promise<CommandExecutionResult>;
+  getCommandHistory: (
+    sessionId: string,
+    limit?: number
+  ) => CommandHistoryEntry[];
   clearCommandHistory: (sessionId: string) => void;
   isExecuting: boolean;
   lastResult: CommandExecutionResult | null;
   shortcuts: TerminalShortcut[];
-  addShortcut: (shortcut: Omit<TerminalShortcut, "id" | "createdAt">) => TerminalShortcut;
+  addShortcut: (
+    shortcut: Omit<TerminalShortcut, 'id' | 'createdAt'>
+  ) => TerminalShortcut;
   deleteShortcut: (shortcutId: string) => void;
   metrics: TerminalMetrics;
   resetMetrics: () => void;
@@ -79,9 +90,15 @@ class TerminalService {
   private shortcuts: TerminalShortcut[] = [];
   private subscribers: Array<() => void> = [];
 
-  getSessions() { return this.sessions; }
-  getMetrics() { return this.metrics; }
-  getShortcuts() { return this.shortcuts; }
+  getSessions() {
+    return this.sessions;
+  }
+  getMetrics() {
+    return this.metrics;
+  }
+  getShortcuts() {
+    return this.shortcuts;
+  }
 
   subscribe(callback: () => void): () => void {
     this.subscribers.push(callback);
@@ -94,7 +111,10 @@ class TerminalService {
     this.subscribers.forEach((cb) => cb());
   }
 
-  createSession(name: string, config?: Partial<TerminalSessionConfig>): TerminalSession {
+  createSession(
+    name: string,
+    config?: Partial<TerminalSessionConfig>
+  ): TerminalSession {
     const session: TerminalSession = {
       id: `session_${Date.now()}`,
       name,
@@ -115,11 +135,11 @@ class TerminalService {
   }
 
   getSession(sessionId: string): TerminalSession | null {
-    return this.sessions.find(s => s.id === sessionId) || null;
+    return this.sessions.find((s) => s.id === sessionId) || null;
   }
 
   closeSession(sessionId: string): boolean {
-    const index = this.sessions.findIndex(s => s.id === sessionId);
+    const index = this.sessions.findIndex((s) => s.id === sessionId);
     if (index >= 0) {
       const session = this.sessions[index];
       if (session.status === 'active') {
@@ -138,7 +158,7 @@ class TerminalService {
     this.notify();
   }
 
-  async executeCommand(sessionId: string, command: string): Promise<CommandExecutionResult> {
+  executeCommand(sessionId: string, command: string): CommandExecutionResult {
     const session = this.getSession(sessionId);
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
@@ -171,7 +191,9 @@ class TerminalService {
     this.notify();
   }
 
-  addShortcut(shortcut: Omit<TerminalShortcut, "id" | "createdAt">): TerminalShortcut {
+  addShortcut(
+    shortcut: Omit<TerminalShortcut, 'id' | 'createdAt'>
+  ): TerminalShortcut {
     const newShortcut: TerminalShortcut = {
       ...shortcut,
       id: `shortcut_${Date.now()}`,
@@ -183,7 +205,7 @@ class TerminalService {
   }
 
   deleteShortcut(shortcutId: string) {
-    this.shortcuts = this.shortcuts.filter(s => s.id !== shortcutId);
+    this.shortcuts = this.shortcuts.filter((s) => s.id !== shortcutId);
     this.notify();
   }
 
@@ -205,9 +227,13 @@ const terminalService = new TerminalService();
 export function useTerminal(): UseTerminalReturn {
   const [sessions, setSessions] = useState<TerminalSession[]>([]);
   const [shortcuts, setShortcuts] = useState<TerminalShortcut[]>([]);
-  const [metrics, setMetrics] = useState<TerminalMetrics>(terminalService.getMetrics());
+  const [metrics, setMetrics] = useState<TerminalMetrics>(
+    terminalService.getMetrics()
+  );
   const [isExecuting, setIsExecuting] = useState(false);
-  const [lastResult, setLastResult] = useState<CommandExecutionResult | null>(null);
+  const [lastResult, setLastResult] = useState<CommandExecutionResult | null>(
+    null
+  );
 
   const mountedRef = useRef(true);
 
@@ -282,7 +308,7 @@ export function useTerminal(): UseTerminalReturn {
   );
 
   const addShortcut = useCallback(
-    (shortcut: Omit<TerminalShortcut, "id" | "createdAt">) => {
+    (shortcut: Omit<TerminalShortcut, 'id' | 'createdAt'>) => {
       const newShortcut = terminalService.addShortcut(shortcut);
       refresh();
       return newShortcut;

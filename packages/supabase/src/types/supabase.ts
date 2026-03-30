@@ -4,7 +4,12 @@ export interface SupabaseConfig {
   serverUrl: string;
 }
 
-export type SupabaseSyncStatus = 'idle' | 'syncing' | 'synced' | 'error' | 'offline';
+export type SupabaseSyncStatus =
+  | 'idle'
+  | 'syncing'
+  | 'synced'
+  | 'error'
+  | 'offline';
 
 export interface SupabaseSyncResult {
   success: boolean;

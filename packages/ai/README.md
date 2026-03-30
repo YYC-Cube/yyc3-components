@@ -34,10 +34,8 @@ function ChatComponent() {
   const { chat, isStreaming, config, saveConfig } = useAI();
 
   const handleSend = async (message: string) => {
-    const messages = [
-      { role: 'user' as const, content: message }
-    ];
-    
+    const messages = [{ role: 'user' as const, content: message }];
+
     await chat(messages, (chunk) => {
       console.log('Streaming:', chunk);
     });
@@ -45,10 +43,7 @@ function ChatComponent() {
 
   return (
     <div>
-      <button 
-        onClick={() => handleSend('Hello AI!')} 
-        disabled={isStreaming}
-      >
+      <button onClick={() => handleSend('Hello AI!')} disabled={isStreaming}>
         {isStreaming ? 'Thinking...' : 'Send'}
       </button>
     </div>
@@ -81,14 +76,14 @@ interface UseAIReturn {
 ## 支持的提供商 / Supported Providers
 
 ```typescript
-type AIProvider = 
-  | 'openai'        // OpenAI
-  | 'anthropic'     // Anthropic (Claude)
-  | 'ollama'        // Ollama (Local LLM)
-  | 'zhipu'         // Zhipu AI (GLM)
-  | 'qwen'          // Alibaba Qwen
-  | 'deepseek'      // DeepSeek
-  | 'custom';       // Custom Provider
+type AIProvider =
+  | 'openai' // OpenAI
+  | 'anthropic' // Anthropic (Claude)
+  | 'ollama' // Ollama (Local LLM)
+  | 'zhipu' // Zhipu AI (GLM)
+  | 'qwen' // Alibaba Qwen
+  | 'deepseek' // DeepSeek
+  | 'custom'; // Custom Provider
 ```
 
 ---
@@ -107,7 +102,7 @@ saveConfig({
   model: 'gpt-4',
   temperature: 0.7,
   maxTokens: 2000,
-  version: 1
+  version: 1,
 });
 ```
 
@@ -120,7 +115,7 @@ saveConfig({
   baseUrl: 'http://localhost:11434/v1',
   model: 'llama3',
   temperature: 0.7,
-  version: 1
+  version: 1,
 });
 ```
 
@@ -133,7 +128,7 @@ saveConfig({
   baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
   model: 'glm-4',
   temperature: 0.7,
-  version: 1
+  version: 1,
 });
 ```
 
@@ -148,13 +143,10 @@ const [streamContent, setStreamContent] = useState('');
 
 const handleSend = async (message: string) => {
   setStreamContent('');
-  
-  await chat(
-    [{ role: 'user', content: message }],
-    (chunk) => {
-      setStreamContent(prev => prev + chunk);
-    }
-  );
+
+  await chat([{ role: 'user', content: message }], (chunk) => {
+    setStreamContent((prev) => prev + chunk);
+  });
 };
 
 return (
@@ -179,12 +171,9 @@ useEffect(() => {
 ```tsx
 const handleSend = async (message: string) => {
   try {
-    await chat(
-      [{ role: 'user', content: message }],
-      (chunk) => {
-        console.log(chunk);
-      }
-    );
+    await chat([{ role: 'user', content: message }], (chunk) => {
+      console.log(chunk);
+    });
   } catch (error) {
     console.error('AI Error:', error);
     // 显示错误提示 / Show error notification
@@ -218,9 +207,9 @@ MIT License
 
 <div align="center">
 
-> 「***YanYuCloudCube***」
-> 「***<admin@0379.email>***」
-> 「***Words Initiate Quadrants, Language Serves as Core for Future***」
-> 「***All things converge in cloud pivot; Deep stacks ignite a new era of intelligence***」
+> 「**_YanYuCloudCube_**」
+> 「**_<admin@0379.email>_**」
+> 「**_Words Initiate Quadrants, Language Serves as Core for Future_**」
+> 「**_All things converge in cloud pivot; Deep stacks ignite a new era of intelligence_**」
 
 </div>

@@ -44,7 +44,7 @@ export class BroadcastChannelManager<T = unknown> {
    */
   open(): void {
     if (this.closed) {
-      throw new Error("Channel has been closed");
+      throw new Error('Channel has been closed');
     }
 
     if (this.channel) {
@@ -61,7 +61,7 @@ export class BroadcastChannelManager<T = unknown> {
         };
       }
     } catch (error) {
-      console.error("Failed to open BroadcastChannel:", error);
+      console.error('Failed to open BroadcastChannel:', error);
       // 降级到localStorage
       this.useLocalStorageFallback();
     }
@@ -72,7 +72,7 @@ export class BroadcastChannelManager<T = unknown> {
    */
   send(data: T): void {
     if (this.closed) {
-      throw new Error("Channel has been closed");
+      throw new Error('Channel has been closed');
     }
 
     if (this.channel) {
@@ -117,15 +117,15 @@ export class BroadcastChannelManager<T = unknown> {
       this.storageListener = (event) => {
         if (event.key === this.localStorageKey) {
           try {
-            const data = JSON.parse(event.newValue || "");
+            const data = JSON.parse(event.newValue || '');
             this.config.onMessage!(data as T);
           } catch (error) {
-            console.error("Failed to parse localStorage message:", error);
+            console.error('Failed to parse localStorage message:', error);
           }
         }
       };
 
-      window.addEventListener("storage", this.storageListener);
+      window.addEventListener('storage', this.storageListener);
     }
   }
 
@@ -137,13 +137,13 @@ export class BroadcastChannelManager<T = unknown> {
         localStorage.removeItem(this.localStorageKey);
       }, 0);
     } catch (error) {
-      console.error("Failed to send via localStorage:", error);
+      console.error('Failed to send via localStorage:', error);
     }
   }
 
   private cleanupLocalStorageFallback(): void {
     if (this.storageListener) {
-      window.removeEventListener("storage", this.storageListener);
+      window.removeEventListener('storage', this.storageListener);
       this.storageListener = null;
     }
 

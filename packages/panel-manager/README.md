@@ -22,9 +22,7 @@ function App() {
 
   return (
     <div>
-      <button onClick={() => openPanel('settings')}>
-        Open Settings
-      </button>
+      <button onClick={() => openPanel('settings')}>Open Settings</button>
       {isPanelOpen('settings') && (
         <SettingsPanel onClose={() => closePanel('settings')} />
       )}

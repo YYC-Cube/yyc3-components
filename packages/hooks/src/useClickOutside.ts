@@ -9,7 +9,7 @@
  * - 支持自定义事件
  */
 
-import { useEffect, useRef, RefObject } from "react";
+import { useEffect, useRef, RefObject } from 'react';
 
 type Handler = (event: MouseEvent | TouchEvent) => void;
 
@@ -39,12 +39,12 @@ export function useClickOutside(
       }
     };
 
-    document.addEventListener("mousedown", listener as EventListener);
-    document.addEventListener("touchstart", listener as EventListener);
+    document.addEventListener('mousedown', listener as EventListener);
+    document.addEventListener('touchstart', listener as EventListener);
 
     return () => {
-      document.removeEventListener("mousedown", listener as EventListener);
-      document.removeEventListener("touchstart", listener as EventListener);
+      document.removeEventListener('mousedown', listener as EventListener);
+      document.removeEventListener('touchstart', listener as EventListener);
     };
   }, [ref, active]);
 }

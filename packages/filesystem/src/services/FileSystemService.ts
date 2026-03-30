@@ -12,7 +12,7 @@
  * - 错误处理和降级
  */
 
-import { fileSystemRepository } from "../repositories/FileSystemRepository";
+import { fileSystemRepository } from '../repositories/FileSystemRepository';
 import type {
   FSNode,
   FSOperationResult,
@@ -29,17 +29,20 @@ import type {
   FSDownloadResponse,
   GitRepoInfo,
   PathWhitelistConfig,
-} from "../types/filesystem";
-import { TEXT_FILE_EXTENSIONS, DANGEROUS_FILE_EXTENSIONS, FILE_SIZE_LIMITS } from "../types/filesystem";
+} from '../types/filesystem';
+import {
+  DANGEROUS_FILE_EXTENSIONS,
+  FILE_SIZE_LIMITS,
+} from '../types/filesystem';
 
 /* ══════════════════════════════════════════════════════════════════
  *  常量配置 / Constants Configuration
  * ══════════════════════════════════════════════════════════════════ */
 
 const STORAGE_KEYS = {
-  CURRENT_PATH: "yyc3_fs_current_path",
-  RECENT_PATHS: "yyc3_fs_recent_paths",
-  WHITELIST_CONFIG: "yyc3_fs_whitelist_config",
+  CURRENT_PATH: 'yyc3_fs_current_path',
+  RECENT_PATHS: 'yyc3_fs_recent_paths',
+  WHITELIST_CONFIG: 'yyc3_fs_whitelist_config',
 } as const;
 
 const DEFAULT_WHITELIST_CONFIG: PathWhitelistConfig = {
@@ -57,7 +60,7 @@ const DEFAULT_WHITELIST_CONFIG: PathWhitelistConfig = {
  * 规范化路径 / Normalize path
  */
 function normalizePath(path: string): string {
-  return path.replace(/\\/g, "/").replace(/\/+/g, "/");
+  return path.replace(/\\/g, '/').replace(/\/+/g, '/');
 }
 
 /**
@@ -65,47 +68,48 @@ function normalizePath(path: string): string {
  */
 function isPathAllowed(path: string, config: PathWhitelistConfig): boolean {
   const normalizedPath = normalizePath(path);
-  
+
   // 检查自定义路径
   for (const allowed of config.customPaths) {
     if (normalizedPath.startsWith(normalizePath(allowed))) {
       return true;
     }
   }
-  
-  // 检查主目录（简化判断）
-  if (config.allowHome && normalizedPath.includes("/home/")) {
-    return true;
-  }
-  
-  // 检查项目目录（简化判断）
-  if (config.allowProject && (normalizedPath.includes("/projects/") || normalizedPath.includes("/workspace/"))) {
-    return true;
-  }
-  
-  return false;
-}
 
-/**
- * 检查文件扩展名是否为文本文件 / Check if extension is text file
- */
-function isTextFile(extension: string): boolean {
-  return TEXT_FILE_EXTENSIONS.includes(extension as typeof TEXT_FILE_EXTENSIONS[number]);
+  // 检查主目录（简化判断）
+  if (config.allowHome && normalizedPath.includes('/home/')) {
+    return true;
+  }
+
+  // 检查项目目录（简化判断）
+  if (
+    config.allowProject &&
+    (normalizedPath.includes('/projects/') ||
+      normalizedPath.includes('/workspace/'))
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
  * 检查文件扩展名是否危险 / Check if extension is dangerous
  */
 function isDangerousFile(extension: string): boolean {
-  return DANGEROUS_FILE_EXTENSIONS.includes(extension as typeof DANGEROUS_FILE_EXTENSIONS[number]);
+  return DANGEROUS_FILE_EXTENSIONS.includes(
+    extension as (typeof DANGEROUS_FILE_EXTENSIONS)[number]
+  );
 }
 
 /**
  * 格式化文件大小 / Format file size
  */
 function formatFileSize(bytes: number): string {
-  if (bytes === 0) {return "0 B";}
-  const units = ["B", "KB", "MB", "GB", "TB"];
+  if (bytes === 0) {
+    return '0 B';
+  }
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${units[i]}`;
 }
@@ -114,31 +118,35 @@ function formatFileSize(bytes: number): string {
  * 获取文件图标类型 / Get file icon type
  */
 function getFileIconType(node: FSNode): string {
-  if (node.type === "directory") {return "folder";}
-  if (node.type === "symlink") {return "link";}
-  
+  if (node.type === 'directory') {
+    return 'folder';
+  }
+  if (node.type === 'symlink') {
+    return 'link';
+  }
+
   const ext = node.extension.toLowerCase();
   const iconMap: Record<string, string> = {
-    ".js": "javascript",
-    ".ts": "typescript",
-    ".jsx": "react",
-    ".tsx": "react",
-    ".json": "json",
-    ".md": "markdown",
-    ".css": "css",
-    ".html": "html",
-    ".png": "image",
-    ".jpg": "image",
-    ".jpeg": "image",
-    ".gif": "image",
-    ".svg": "image",
-    ".pdf": "pdf",
-    ".zip": "archive",
-    ".tar": "archive",
-    ".gz": "archive",
+    '.js': 'javascript',
+    '.ts': 'typescript',
+    '.jsx': 'react',
+    '.tsx': 'react',
+    '.json': 'json',
+    '.md': 'markdown',
+    '.css': 'css',
+    '.html': 'html',
+    '.png': 'image',
+    '.jpg': 'image',
+    '.jpeg': 'image',
+    '.gif': 'image',
+    '.svg': 'image',
+    '.pdf': 'pdf',
+    '.zip': 'archive',
+    '.tar': 'archive',
+    '.gz': 'archive',
   };
-  
-  return iconMap[ext] || "file";
+
+  return iconMap[ext] ?? 'file';
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -151,7 +159,9 @@ class FileSystemService {
   constructor() {
     // 从 localStorage 加载白名单配置
     const stored = localStorage.getItem(STORAGE_KEYS.WHITELIST_CONFIG);
-    this.whitelistConfig = stored ? JSON.parse(stored) : DEFAULT_WHITELIST_CONFIG;
+    this.whitelistConfig = stored
+      ? (JSON.parse(stored) as PathWhitelistConfig)
+      : DEFAULT_WHITELIST_CONFIG;
   }
 
   /* ──────────── 路径管理 / Path Management ──────────── */
@@ -160,7 +170,7 @@ class FileSystemService {
    * 获取当前路径 / Get current path
    */
   getCurrentPath(): string {
-    return localStorage.getItem(STORAGE_KEYS.CURRENT_PATH) || "/home/user";
+    return localStorage.getItem(STORAGE_KEYS.CURRENT_PATH) ?? '/home/user';
   }
 
   /**
@@ -176,10 +186,10 @@ class FileSystemService {
    */
   private addRecentPath(path: string): void {
     const stored = localStorage.getItem(STORAGE_KEYS.RECENT_PATHS);
-    const recent: string[] = stored ? JSON.parse(stored) : [];
-    
+    const recent: string[] = stored ? (JSON.parse(stored) as string[]) : [];
+
     // 去重并限制最多 10 条
-    const updated = [path, ...recent.filter(p => p !== path)].slice(0, 10);
+    const updated = [path, ...recent.filter((p) => p !== path)].slice(0, 10);
     localStorage.setItem(STORAGE_KEYS.RECENT_PATHS, JSON.stringify(updated));
   }
 
@@ -188,7 +198,7 @@ class FileSystemService {
    */
   getRecentPaths(): string[] {
     const stored = localStorage.getItem(STORAGE_KEYS.RECENT_PATHS);
-    return stored ? JSON.parse(stored) : [];
+    return stored ? (JSON.parse(stored) as string[]) : [];
   }
 
   /* ──────────── 白名单管理 / Whitelist Management ──────────── */
@@ -205,7 +215,10 @@ class FileSystemService {
    */
   updateWhitelistConfig(config: Partial<PathWhitelistConfig>): void {
     this.whitelistConfig = { ...this.whitelistConfig, ...config };
-    localStorage.setItem(STORAGE_KEYS.WHITELIST_CONFIG, JSON.stringify(this.whitelistConfig));
+    localStorage.setItem(
+      STORAGE_KEYS.WHITELIST_CONFIG,
+      JSON.stringify(this.whitelistConfig)
+    );
   }
 
   /**
@@ -213,17 +226,20 @@ class FileSystemService {
    */
   validatePath(path: string): { valid: boolean; error: string | null } {
     const normalizedPath = normalizePath(path);
-    
+
     // 检查路径遍历攻击
-    if (normalizedPath.includes("..")) {
-      return { valid: false, error: "PATH_TRAVERSAL_DETECTED / 检测到路径遍历攻击" };
+    if (normalizedPath.includes('..')) {
+      return {
+        valid: false,
+        error: 'PATH_TRAVERSAL_DETECTED / 检测到路径遍历攻击',
+      };
     }
-    
+
     // 检查白名单
     if (!isPathAllowed(normalizedPath, this.whitelistConfig)) {
-      return { valid: false, error: "PATH_NOT_ALLOWED / 路径不在白名单内" };
+      return { valid: false, error: 'PATH_NOT_ALLOWED / 路径不在白名单内' };
     }
-    
+
     return { valid: true, error: null };
   }
 
@@ -232,37 +248,34 @@ class FileSystemService {
   /**
    * 浏览目录 / Browse directory
    */
-  async browseDirectory(path: string, includeHidden: boolean = false): Promise<FSNode[]> {
+  browseDirectory(path: string, includeHidden: boolean = false): FSNode[] {
     // 验证路径
     const validation = this.validatePath(path);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
-    try {
-      const nodes = await fileSystemRepository.listDirectory(path, includeHidden);
-      
-      // 增强节点信息
-      return nodes.map(node => ({
-        ...node,
-        // 添加格式化信息（前端显示用）
-        formattedSize: formatFileSize(node.size),
-        iconType: getFileIconType(node),
-      } as FSNode));
-    } catch (error) {
-      throw new Error(
-        error instanceof Error ? error.message : "BROWSE_DIRECTORY_FAILED / 浏览目录失败"
-      );
-    }
+    const nodes = fileSystemRepository.listDirectory(path, includeHidden);
+
+    // 增强节点信息
+    return nodes.map(
+      (node) =>
+        ({
+          ...node,
+          // 添加格式化信息（前端显示用）
+          formattedSize: formatFileSize(node.size),
+          iconType: getFileIconType(node),
+        }) as FSNode
+    );
   }
 
   /**
    * 获取目录树 / Get directory tree
    */
-  async getTree(path: string): Promise<FSNode[]> {
+  getTree(path: string): FSNode[] {
     const validation = this.validatePath(path);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     return fileSystemRepository.getTree(path);
@@ -273,16 +286,16 @@ class FileSystemService {
   /**
    * 读取文件 / Read file
    */
-  async readFile(path: string, encoding: string = "utf8"): Promise<FSReadResult> {
+  readFile(path: string, encoding: string = 'utf8'): FSReadResult {
     const validation = this.validatePath(path);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     // 检查文件大小限制
-    const stats = await fileSystemRepository.getStats(path);
+    const stats = fileSystemRepository.getStats(path);
     if (stats.size > FILE_SIZE_LIMITS.MAX_PREVIEW_SIZE) {
-      throw new Error("FILE_TOO_LARGE / 文件过大，无法预览");
+      throw new Error('FILE_TOO_LARGE / 文件过大，无法预览');
     }
 
     return fileSystemRepository.readFile(path, encoding);
@@ -291,16 +304,16 @@ class FileSystemService {
   /**
    * 写入文件 / Write file
    */
-  async writeFile(input: FSWriteInput): Promise<FSOperationResult> {
+  writeFile(input: FSWriteInput): FSOperationResult {
     const validation = this.validatePath(input.path);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     // 检查文件扩展名
-    const extension = input.path.substring(input.path.lastIndexOf("."));
+    const extension = input.path.substring(input.path.lastIndexOf('.'));
     if (isDangerousFile(extension)) {
-      throw new Error("DANGEROUS_FILE_EXTENSION / 危险的文件扩展名");
+      throw new Error('DANGEROUS_FILE_EXTENSION / 危险的文件扩展名');
     }
 
     return fileSystemRepository.writeFile(input);
@@ -311,11 +324,11 @@ class FileSystemService {
   /**
    * 创建文件或目录 / Create file or directory
    */
-  async create(input: FSCreateInput): Promise<FSOperationResult> {
+  create(input: FSCreateInput): FSOperationResult {
     const fullPath = `${input.parentPath}/${input.name}`;
     const validation = this.validatePath(fullPath);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     return fileSystemRepository.create(input);
@@ -324,10 +337,10 @@ class FileSystemService {
   /**
    * 重命名 / Rename
    */
-  async rename(input: FSRenameInput): Promise<FSOperationResult> {
+  rename(input: FSRenameInput): FSOperationResult {
     const validation = this.validatePath(input.oldPath);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     return fileSystemRepository.rename(input);
@@ -336,15 +349,19 @@ class FileSystemService {
   /**
    * 复制 / Copy
    */
-  async copy(input: FSCopyMoveInput): Promise<FSOperationResult> {
+  copy(input: FSCopyMoveInput): FSOperationResult {
     const sourceValidation = this.validatePath(input.sourcePath);
     const destValidation = this.validatePath(input.destinationPath);
-    
+
     if (!sourceValidation.valid) {
-      throw new Error(sourceValidation.error || "INVALID_SOURCE_PATH / 无效的源路径");
+      throw new Error(
+        sourceValidation.error ?? 'INVALID_SOURCE_PATH / 无效的源路径'
+      );
     }
     if (!destValidation.valid) {
-      throw new Error(destValidation.error || "INVALID_DESTINATION_PATH / 无效的目标路径");
+      throw new Error(
+        destValidation.error ?? 'INVALID_DESTINATION_PATH / 无效的目标路径'
+      );
     }
 
     return fileSystemRepository.copy(input);
@@ -353,15 +370,19 @@ class FileSystemService {
   /**
    * 移动 / Move
    */
-  async move(input: FSCopyMoveInput): Promise<FSOperationResult> {
+  move(input: FSCopyMoveInput): FSOperationResult {
     const sourceValidation = this.validatePath(input.sourcePath);
     const destValidation = this.validatePath(input.destinationPath);
-    
+
     if (!sourceValidation.valid) {
-      throw new Error(sourceValidation.error || "INVALID_SOURCE_PATH / 无效的源路径");
+      throw new Error(
+        sourceValidation.error ?? 'INVALID_SOURCE_PATH / 无效的源路径'
+      );
     }
     if (!destValidation.valid) {
-      throw new Error(destValidation.error || "INVALID_DESTINATION_PATH / ��效的目标路径");
+      throw new Error(
+        destValidation.error ?? 'INVALID_DESTINATION_PATH / 无效的目标路径'
+      );
     }
 
     return fileSystemRepository.move(input);
@@ -370,10 +391,10 @@ class FileSystemService {
   /**
    * 删除 / Delete
    */
-  async delete(input: FSDeleteInput): Promise<FSOperationResult> {
+  delete(input: FSDeleteInput): FSOperationResult {
     const validation = this.validatePath(input.path);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     return fileSystemRepository.delete(input);
@@ -384,10 +405,10 @@ class FileSystemService {
   /**
    * 搜索文件 / Search files
    */
-  async search(input: FSSearchInput): Promise<FSSearchResult> {
+  search(input: FSSearchInput): FSSearchResult {
     const validation = this.validatePath(input.rootPath);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     return fileSystemRepository.search(input);
@@ -396,10 +417,10 @@ class FileSystemService {
   /**
    * 获取目录统计 / Get directory statistics
    */
-  async getDirectoryStats(path: string): Promise<FSDirectoryStats> {
+  getDirectoryStats(path: string): FSDirectoryStats {
     const validation = this.validatePath(path);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     return fileSystemRepository.getDirectoryStats(path);
@@ -410,16 +431,16 @@ class FileSystemService {
   /**
    * 上传文件 / Upload file
    */
-  async upload(input: FSUploadInput): Promise<FSOperationResult> {
+  upload(input: FSUploadInput): FSOperationResult {
     const validation = this.validatePath(input.targetPath);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     // 检查文件大小（Base64 解码后约为原大小的 3/4）
     const estimatedSize = (input.data.length * 3) / 4;
     if (estimatedSize > FILE_SIZE_LIMITS.MAX_UPLOAD_SIZE) {
-      throw new Error("FILE_TOO_LARGE / 文件过大，上传失败");
+      throw new Error('FILE_TOO_LARGE / 文件过大，上传失败');
     }
 
     return fileSystemRepository.upload(input);
@@ -428,10 +449,10 @@ class FileSystemService {
   /**
    * 下载文件 / Download file
    */
-  async download(path: string): Promise<FSDownloadResponse> {
+  download(path: string): FSDownloadResponse {
     const validation = this.validatePath(path);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     return fileSystemRepository.download(path);
@@ -442,21 +463,21 @@ class FileSystemService {
   /**
    * 获取 Git 信息 / Get Git info
    */
-  async getGitInfo(path: string): Promise<GitRepoInfo> {
+  getGitInfo(path: string): GitRepoInfo {
     const validation = this.validatePath(path);
     if (!validation.valid) {
-      throw new Error(validation.error || "INVALID_PATH / 无效路径");
+      throw new Error(validation.error ?? 'INVALID_PATH / 无效路径');
     }
 
     return fileSystemRepository.getGitInfo(path);
   }
 
-  /* ──────────── 健康检查 / Health Check ──────��───── */
+  /* ──────────── 健康检查 / Health Check ──────────── */
 
   /**
    * 检查文件系统服务健康 / Check filesystem service health
    */
-  async checkHealth(): Promise<{ healthy: boolean; message: string }> {
+  checkHealth(): { healthy: boolean; message: string } {
     return fileSystemRepository.checkHealth();
   }
 }

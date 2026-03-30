@@ -9,4 +9,4 @@ export {
   validateMessages,
   extractKeys,
   checkConsistency,
-} from "./translator";
+} from './translator';

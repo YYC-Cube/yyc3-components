@@ -10,7 +10,13 @@
  * - t() 函数支持嵌套 key 和模板变量
  */
 
-import React, { useState, useCallback, useMemo, createContext, useContext } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  createContext,
+  useContext,
+} from 'react';
 
 // Type definitions
 export type Locale = 'zh-CN' | 'en-US';
@@ -55,7 +61,10 @@ function getNestedValue(obj: Record<string, any>, path: string): string {
 /**
  * 替换模板变量 e.g. "{n} 分钟前" + { n: 5 } → "5 分钟前"
  */
-function interpolate(template: string, vars?: Record<string, string | number>): string {
+function interpolate(
+  template: string,
+  vars?: Record<string, string | number>
+): string {
   if (!vars) return template;
   return template.replace(/\{(\w+)\}/g, (_, key) =>
     vars[key] !== null ? String(vars[key]) : `{${key}}`
@@ -104,14 +113,17 @@ export function I18nProvider({
     return defaultLocale;
   });
 
-  const setLocale = useCallback((newLocale: Locale) => {
-    setLocaleState(newLocale);
-    try {
-      localStorage.setItem(storageKey, newLocale);
-    } catch {
-      // storage unavailable
-    }
-  }, [storageKey]);
+  const setLocale = useCallback(
+    (newLocale: Locale) => {
+      setLocaleState(newLocale);
+      try {
+        localStorage.setItem(storageKey, newLocale);
+      } catch {
+        // storage unavailable
+      }
+    },
+    [storageKey]
+  );
 
   const translations = useMemo(() => messages[locale], [messages, locale]);
 

@@ -1,6 +1,6 @@
 /**
  * useCRDTSync - CRDT 服务端同步 Hook
- * 
+ *
  * 职责：
  * - 将 useCollaborativeEditing 的 CRDT 操作同步到 BackendBridge WebSocket
  * - 管理服务端同步状态（pending queue, ack tracking, retry）
@@ -8,21 +8,24 @@
  * - 离线操作缓冲与重连后批量同步
  * - 版本向量（Version Vector）管理
  * - 心跳同步（定期全量校验）
- * 
+ *
  * Step 6c: 接入 BackendBridge 真实 WebSocket，CRDT 服务端同步
- * 
+ *
  * @file hooks/useCRDTSync.ts
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react'
-import { getBackendBridge, type ConnectionState } from '../services/backend-bridge'
+import { useState, useCallback, useRef, useEffect } from 'react';
+import {
+  getBackendBridge,
+  type ConnectionState,
+} from '../services/backend-bridge';
 import type {
   TextOperation,
   CollaborationParticipant,
   CollabMessage,
   CRDTDocumentState,
   CollaborationSession,
-} from '../types/collaboration'
+} from '../types/collaboration';
 
 // ==========================================
 // Types
@@ -30,76 +33,85 @@ import type {
 
 export interface CRDTSyncConfig {
   /** 文档 ID */
-  documentId: string
+  documentId: string;
   /** 用户 ID */
-  userId: string
+  userId: string;
   /** 用户名 */
-  userName: string
+  userName: string;
   /** 心跳同步间隔 (ms) */
-  heartbeatInterval?: number
+  heartbeatInterval?: number;
   /** 操作批量发送延迟 (ms) */
-  batchDelay?: number
+  batchDelay?: number;
   /** 最大重试次数 */
-  maxRetries?: number
+  maxRetries?: number;
   /** 冲突解决策略 */
-  conflictStrategy?: 'last-writer-wins' | 'ot-merge'
+  conflictStrategy?: 'last-writer-wins' | 'ot-merge';
   /** 离线缓冲区大小限制 */
-  offlineBufferSize?: number
+  offlineBufferSize?: number;
 }
 
 export interface CRDTSyncState {
   /** 同步连接状态 */
-  connectionState: ConnectionState
+  connectionState: ConnectionState;
   /** 是否正在同步 */
-  isSyncing: boolean
+  isSyncing: boolean;
   /** 待确认操作数 */
-  pendingOpsCount: number
+  pendingOpsCount: number;
   /** 离线缓冲操作数 */
-  offlineBufferCount: number
+  offlineBufferCount: number;
   /** 服务端版本号 */
-  serverVersion: number
+  serverVersion: number;
   /** 本地版本号 */
-  localVersion: number
+  localVersion: number;
   /** 冲突数量 */
-  conflictCount: number
+  conflictCount: number;
   /** 上次同步时间 */
-  lastSyncTime: number | null
+  lastSyncTime: number | null;
   /** 同步延迟 (ms) */
-  syncLatency: number
+  syncLatency: number;
   /** 错误信息 */
-  error: string | null
+  error: string | null;
 }
 
 export interface UseCRDTSyncReturn {
   /** 同步状态 */
-  syncState: CRDTSyncState
-  
+  syncState: CRDTSyncState;
+
   /** 发送本地操作到服务端 */
-  sendOperation: (op: TextOperation) => void
-  
+  sendOperation: (op: TextOperation) => void;
+
   /** 批量发送操作 */
-  sendOperationBatch: (ops: TextOperation[]) => void
-  
+  sendOperationBatch: (ops: TextOperation[]) => void;
+
   /** 发送 Presence 更新 */
-  sendPresence: (participant: CollaborationParticipant) => void
-  
+  sendPresence: (participant: CollaborationParticipant) => void;
+
   /** 请求全量同步 */
-  requestFullSync: () => void
-  
+  requestFullSync: () => void;
+
   /** 重连并同步 */
-  reconnectAndSync: () => Promise<void>
-  
+  reconnectAndSync: () => Promise<void>;
+
   /** 注册远程操作接收回调 */
-  onRemoteOperation: (callback: (op: TextOperation) => void) => () => void
-  
+  onRemoteOperation: (callback: (op: TextOperation) => void) => () => void;
+
   /** 注册 Presence 更新回调 */
-  onRemotePresence: (callback: (participant: CollaborationParticipant) => void) => () => void
-  
+  onRemotePresence: (
+    callback: (participant: CollaborationParticipant) => void
+  ) => () => void;
+
   /** 注册全量同步回调 */
-  onFullSync: (callback: (doc: CRDTDocumentState, participants: CollaborationParticipant[]) => void) => () => void
-  
+  onFullSync: (
+    callback: (
+      doc: CRDTDocumentState,
+      participants: CollaborationParticipant[]
+    ) => void
+  ) => () => void;
+
   /** 注册冲突回调 */
-  onConflict: (callback: (localOp: TextOperation, remoteOp: TextOperation) => void) => () => void
+  onConflict: (
+    callback: (localOp: TextOperation, remoteOp: TextOperation) => void
+  ) => () => void;
 }
 
 // ==========================================
@@ -107,11 +119,11 @@ export interface UseCRDTSyncReturn {
 // ==========================================
 
 interface PendingOperation {
-  id: string
-  operation: TextOperation
-  sentAt: number
-  retries: number
-  acked: boolean
+  id: string;
+  operation: TextOperation;
+  sentAt: number;
+  retries: number;
+  acked: boolean;
 }
 
 // ==========================================
@@ -128,7 +140,7 @@ export function useCRDTSync(config: CRDTSyncConfig): UseCRDTSyncReturn {
     maxRetries = 3,
     conflictStrategy = 'ot-merge',
     offlineBufferSize = 1000,
-  } = config
+  } = config;
 
   // State
   const [syncState, setSyncState] = useState<CRDTSyncState>({
@@ -142,69 +154,81 @@ export function useCRDTSync(config: CRDTSyncConfig): UseCRDTSyncReturn {
     lastSyncTime: null,
     syncLatency: 0,
     error: null,
-  })
+  });
 
   // Refs for callback storage
-  const operationCallbacksRef = useRef<Set<(op: TextOperation) => void>>(new Set())
-  const presenceCallbacksRef = useRef<Set<(p: CollaborationParticipant) => void>>(new Set())
-  const fullSyncCallbacksRef = useRef<Set<(doc: CRDTDocumentState, participants: CollaborationParticipant[]) => void>>(new Set())
-  const conflictCallbacksRef = useRef<Set<(local: TextOperation, remote: TextOperation) => void>>(new Set())
+  const operationCallbacksRef = useRef<Set<(op: TextOperation) => void>>(
+    new Set()
+  );
+  const presenceCallbacksRef = useRef<
+    Set<(p: CollaborationParticipant) => void>
+  >(new Set());
+  const fullSyncCallbacksRef = useRef<
+    Set<
+      (doc: CRDTDocumentState, participants: CollaborationParticipant[]) => void
+    >
+  >(new Set());
+  const conflictCallbacksRef = useRef<
+    Set<(local: TextOperation, remote: TextOperation) => void>
+  >(new Set());
 
   // Operation queues
-  const pendingOpsRef = useRef<PendingOperation[]>([])
-  const offlineBufferRef = useRef<TextOperation[]>([])
-  const batchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const batchQueueRef = useRef<TextOperation[]>([])
-  const serverVersionRef = useRef(0)
-  const localVersionRef = useRef(0)
+  const pendingOpsRef = useRef<PendingOperation[]>([]);
+  const offlineBufferRef = useRef<TextOperation[]>([]);
+  const batchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const batchQueueRef = useRef<TextOperation[]>([]);
+  const serverVersionRef = useRef(0);
+  const localVersionRef = useRef(0);
 
   // ---- Bridge Connection Listener ----
   useEffect(() => {
-    const bridge = getBackendBridge()
+    const bridge = getBackendBridge();
 
     // Listen for connection state changes
-    const unsubConnection = bridge.on('connection_change', (status) => {
-      setSyncState(prev => ({
+    const unsubConnection = bridge.on('connection_change', (status: unknown) => {
+      const connStatus = status as { state: ConnectionState; latency: number };
+      setSyncState((prev) => ({
         ...prev,
-        connectionState: status.state,
-        syncLatency: status.latency,
-      }))
+        connectionState: connStatus.state,
+        syncLatency: connStatus.latency,
+      }));
 
       // On reconnect, flush offline buffer
-      if (status.state === 'CONNECTED' && offlineBufferRef.current.length > 0) {
-        flushOfflineBuffer()
+      if (connStatus.state === 'CONNECTED' && offlineBufferRef.current.length > 0) {
+        flushOfflineBuffer();
       }
-    })
+    });
 
     // Listen for incoming signals (CRDT messages)
-    const unsubSignal = bridge.on('signal_received', (signal) => {
+    const unsubSignal = bridge.on('signal_received', (signal: unknown) => {
       try {
-        const content = signal.payload?.content
-        if (!content) return
-        const msg = JSON.parse(content) as CollabMessage
+        const signalData = signal as { payload?: { content?: string } };
+        const content = signalData.payload?.content;
+        if (!content) return;
+        const msg = JSON.parse(content) as CollabMessage;
 
-        handleIncomingMessage(msg)
+        handleIncomingMessage(msg);
       } catch {
         // Not a CRDT message, ignore
       }
-    })
+    });
 
     // Initialize connection state
-    setSyncState(prev => ({
+    setSyncState((prev) => ({
       ...prev,
       connectionState: bridge.status.state,
-    }))
+    }));
 
     return () => {
-      unsubConnection()
-      unsubSignal()
-    }
-  }, [documentId]) // eslint-disable-line react-hooks/exhaustive-deps
+      unsubConnection();
+      unsubSignal();
+    };
+  }, [documentId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- Heartbeat Sync ----
   useEffect(() => {
     const interval = setInterval(() => {
-      const bridge = getBackendBridge()
+      const bridge = getBackendBridge();
       if (bridge.isConnected) {
         // Send version check
         bridge.dispatchSignal({
@@ -225,180 +249,202 @@ export function useCRDTSync(config: CRDTSyncConfig): UseCRDTSyncReturn {
             modelSource: bridge.isMockMode ? 'MOCK' : 'REAL',
           },
           metadata: { version: '1.0.0' },
-        })
+        });
       }
 
       // Retry pending operations
-      retryPendingOps()
-    }, heartbeatInterval)
+      retryPendingOps();
+    }, heartbeatInterval);
 
-    return () => clearInterval(interval)
-  }, [heartbeatInterval, documentId, userId])
+    return () => clearInterval(interval);
+  }, [heartbeatInterval, documentId, userId]);
 
   // ---- Handle Incoming CRDT Messages ----
   const handleIncomingMessage = useCallback((msg: CollabMessage) => {
     switch (msg.type) {
       case 'collab:operation': {
-        const remoteOp = msg.operation
+        const remoteOp = msg.operation;
 
         // Check for conflicts with pending local ops
         const conflicting = pendingOpsRef.current.find(
-          p => !p.acked && p.operation.version === remoteOp.version
-        )
+          (p) => !p.acked && p.operation.version === remoteOp.version
+        );
 
         if (conflicting) {
-          setSyncState(prev => ({ ...prev, conflictCount: prev.conflictCount + 1 }))
-          conflictCallbacksRef.current.forEach(cb => cb(conflicting.operation, remoteOp))
+          setSyncState((prev) => ({
+            ...prev,
+            conflictCount: prev.conflictCount + 1,
+          }));
+          conflictCallbacksRef.current.forEach((cb) =>
+            cb(conflicting.operation, remoteOp)
+          );
         }
 
         // Notify listeners
-        operationCallbacksRef.current.forEach(cb => cb(remoteOp))
+        operationCallbacksRef.current.forEach((cb) => cb(remoteOp));
 
         // Update server version
-        serverVersionRef.current = Math.max(serverVersionRef.current, remoteOp.version)
-        setSyncState(prev => ({
+        serverVersionRef.current = Math.max(
+          serverVersionRef.current,
+          remoteOp.version
+        );
+        setSyncState((prev) => ({
           ...prev,
           serverVersion: serverVersionRef.current,
-        }))
-        break
+        }));
+        break;
       }
 
       case 'collab:presence': {
-        presenceCallbacksRef.current.forEach(cb => cb(msg.participant))
-        break
+        presenceCallbacksRef.current.forEach((cb) => cb(msg.participant));
+        break;
       }
 
       case 'collab:sync': {
-        serverVersionRef.current = msg.document.version
-        localVersionRef.current = msg.document.version
-        
+        serverVersionRef.current = msg.document.version;
+        localVersionRef.current = msg.document.version;
+
         // Clear pending ops after full sync
-        pendingOpsRef.current = []
+        pendingOpsRef.current = [];
 
-        fullSyncCallbacksRef.current.forEach(cb => cb(msg.document, msg.participants))
+        fullSyncCallbacksRef.current.forEach((cb) =>
+          cb(msg.document, msg.participants)
+        );
 
-        setSyncState(prev => ({
+        setSyncState((prev) => ({
           ...prev,
           serverVersion: msg.document.version,
           localVersion: msg.document.version,
           pendingOpsCount: 0,
           lastSyncTime: Date.now(),
           isSyncing: false,
-        }))
-        break
+        }));
+        break;
       }
     }
-  }, [])
+  }, []);
 
   // ---- Send Operation ----
-  const sendOperation = useCallback((op: TextOperation) => {
-    const bridge = getBackendBridge()
-    localVersionRef.current += 1
-    const versionedOp = { ...op, version: localVersionRef.current }
+  const sendOperation = useCallback(
+    (op: TextOperation) => {
+      const bridge = getBackendBridge();
+      localVersionRef.current += 1;
+      const versionedOp = { ...op, version: localVersionRef.current };
 
-    if (bridge.isConnected) {
-      const pendingId = crypto.randomUUID()
+      if (bridge.isConnected) {
+        const pendingId = crypto.randomUUID();
 
-      // Track as pending
-      pendingOpsRef.current.push({
-        id: pendingId,
-        operation: versionedOp,
-        sentAt: Date.now(),
-        retries: 0,
-        acked: false,
-      })
+        // Track as pending
+        pendingOpsRef.current.push({
+          id: pendingId,
+          operation: versionedOp,
+          sentAt: Date.now(),
+          retries: 0,
+          acked: false,
+        });
 
-      // Send via WebSocket
+        // Send via WebSocket
+        bridge.dispatchSignal({
+          id: pendingId,
+          timestamp: Date.now(),
+          type: 'COMMAND',
+          senderId: 'USER',
+          receiverId: 'CENTRAL_PULSE',
+          payload: {
+            content: JSON.stringify({
+              type: 'collab:operation',
+              sessionId: `session-${documentId}`,
+              operation: versionedOp,
+              baseVersion: serverVersionRef.current,
+            }),
+            mood: 'FOCUSED',
+            priority: 'HIGH',
+            modelSource: 'REAL',
+          },
+          metadata: { version: '1.0.0' },
+        });
+
+        setSyncState((prev) => ({
+          ...prev,
+          pendingOpsCount: pendingOpsRef.current.filter((p) => !p.acked).length,
+          localVersion: localVersionRef.current,
+          isSyncing: true,
+        }));
+      } else {
+        // Offline: buffer the operation
+        if (offlineBufferRef.current.length < offlineBufferSize) {
+          offlineBufferRef.current.push(versionedOp);
+          setSyncState((prev) => ({
+            ...prev,
+            offlineBufferCount: offlineBufferRef.current.length,
+            localVersion: localVersionRef.current,
+          }));
+        } else {
+          setSyncState((prev) => ({
+            ...prev,
+            error: '离线缓冲区已满，部分操作可能丢失',
+          }));
+        }
+      }
+    },
+    [documentId, offlineBufferSize]
+  );
+
+  // ---- Batch Send ----
+  const sendOperationBatch = useCallback(
+    (ops: TextOperation[]) => {
+      batchQueueRef.current.push(...ops);
+
+      if (batchTimerRef.current) clearTimeout(batchTimerRef.current);
+
+      batchTimerRef.current = setTimeout(() => {
+        const batch = batchQueueRef.current.splice(0);
+        batch.forEach((op) => sendOperation(op));
+      }, batchDelay);
+    },
+    [sendOperation, batchDelay]
+  );
+
+  // ---- Send Presence ----
+  const sendPresence = useCallback(
+    (participant: CollaborationParticipant) => {
+      const bridge = getBackendBridge();
+      if (!bridge.isConnected) return;
+
       bridge.dispatchSignal({
-        id: pendingId,
+        id: crypto.randomUUID(),
         timestamp: Date.now(),
-        type: 'COMMAND',
+        type: 'SYNC',
         senderId: 'USER',
         receiverId: 'CENTRAL_PULSE',
         payload: {
           content: JSON.stringify({
-            type: 'collab:operation',
+            type: 'collab:presence',
             sessionId: `session-${documentId}`,
-            operation: versionedOp,
-            baseVersion: serverVersionRef.current,
+            participant,
           }),
           mood: 'FOCUSED',
-          priority: 'HIGH',
+          priority: 'LOW',
           modelSource: 'REAL',
         },
         metadata: { version: '1.0.0' },
-      })
-
-      setSyncState(prev => ({
-        ...prev,
-        pendingOpsCount: pendingOpsRef.current.filter(p => !p.acked).length,
-        localVersion: localVersionRef.current,
-        isSyncing: true,
-      }))
-    } else {
-      // Offline: buffer the operation
-      if (offlineBufferRef.current.length < offlineBufferSize) {
-        offlineBufferRef.current.push(versionedOp)
-        setSyncState(prev => ({
-          ...prev,
-          offlineBufferCount: offlineBufferRef.current.length,
-          localVersion: localVersionRef.current,
-        }))
-      } else {
-        setSyncState(prev => ({
-          ...prev,
-          error: '离线缓冲区已满，部分操作可能丢失',
-        }))
-      }
-    }
-  }, [documentId, offlineBufferSize])
-
-  // ---- Batch Send ----
-  const sendOperationBatch = useCallback((ops: TextOperation[]) => {
-    batchQueueRef.current.push(...ops)
-
-    if (batchTimerRef.current) clearTimeout(batchTimerRef.current)
-
-    batchTimerRef.current = setTimeout(() => {
-      const batch = batchQueueRef.current.splice(0)
-      batch.forEach(op => sendOperation(op))
-    }, batchDelay)
-  }, [sendOperation, batchDelay])
-
-  // ---- Send Presence ----
-  const sendPresence = useCallback((participant: CollaborationParticipant) => {
-    const bridge = getBackendBridge()
-    if (!bridge.isConnected) return
-
-    bridge.dispatchSignal({
-      id: crypto.randomUUID(),
-      timestamp: Date.now(),
-      type: 'SYNC',
-      senderId: 'USER',
-      receiverId: 'CENTRAL_PULSE',
-      payload: {
-        content: JSON.stringify({
-          type: 'collab:presence',
-          sessionId: `session-${documentId}`,
-          participant,
-        }),
-        mood: 'FOCUSED',
-        priority: 'LOW',
-        modelSource: 'REAL',
-      },
-      metadata: { version: '1.0.0' },
-    })
-  }, [documentId])
+      });
+    },
+    [documentId]
+  );
 
   // ---- Request Full Sync ----
   const requestFullSync = useCallback(() => {
-    const bridge = getBackendBridge()
+    const bridge = getBackendBridge();
     if (!bridge.isConnected) {
-      setSyncState(prev => ({ ...prev, error: '未连接到服务端，无法请求全量同步' }))
-      return
+      setSyncState((prev) => ({
+        ...prev,
+        error: '未连接到服务端，无法请求全量同步',
+      }));
+      return;
     }
 
-    setSyncState(prev => ({ ...prev, isSyncing: true }))
+    setSyncState((prev) => ({ ...prev, isSyncing: true }));
 
     bridge.dispatchSignal({
       id: crypto.randomUUID(),
@@ -418,16 +464,16 @@ export function useCRDTSync(config: CRDTSyncConfig): UseCRDTSyncReturn {
         modelSource: 'REAL',
       },
       metadata: { version: '1.0.0' },
-    })
-  }, [documentId, userId])
+    });
+  }, [documentId, userId]);
 
   // ---- Reconnect and Sync ----
   const reconnectAndSync = useCallback(async () => {
-    const bridge = getBackendBridge()
-    setSyncState(prev => ({ ...prev, error: null }))
+    const bridge = getBackendBridge();
+    setSyncState((prev) => ({ ...prev, error: null }));
 
     try {
-      await bridge.connect()
+      await bridge.connect();
 
       if (bridge.isConnected) {
         // Send join message
@@ -450,50 +496,50 @@ export function useCRDTSync(config: CRDTSyncConfig): UseCRDTSyncReturn {
             modelSource: 'REAL',
           },
           metadata: { version: '1.0.0' },
-        })
+        });
 
         // Flush offline buffer
-        flushOfflineBuffer()
+        flushOfflineBuffer();
 
         // Request full sync
-        requestFullSync()
+        requestFullSync();
       }
     } catch (err: any) {
-      setSyncState(prev => ({
+      setSyncState((prev) => ({
         ...prev,
         error: `重连失败: ${err.message || '未知错误'}`,
-      }))
+      }));
     }
-  }, [documentId, userId, userName, requestFullSync])
+  }, [documentId, userId, userName, requestFullSync]);
 
   // ---- Flush Offline Buffer ----
   const flushOfflineBuffer = useCallback(() => {
-    const buffer = offlineBufferRef.current.splice(0)
-    if (buffer.length === 0) return
+    const buffer = offlineBufferRef.current.splice(0);
+    if (buffer.length === 0) return;
 
-    buffer.forEach(op => sendOperation(op))
+    buffer.forEach((op) => sendOperation(op));
 
-    setSyncState(prev => ({
+    setSyncState((prev) => ({
       ...prev,
       offlineBufferCount: 0,
-    }))
-  }, [sendOperation])
+    }));
+  }, [sendOperation]);
 
   // ---- Retry Pending Operations ----
   const retryPendingOps = useCallback(() => {
-    const bridge = getBackendBridge()
-    if (!bridge.isConnected) return
+    const bridge = getBackendBridge();
+    if (!bridge.isConnected) return;
 
-    const now = Date.now()
-    const timeout = 5000 // 5 seconds
+    const now = Date.now();
+    const timeout = 5000; // 5 seconds
 
-    pendingOpsRef.current = pendingOpsRef.current.filter(pending => {
-      if (pending.acked) return false
+    pendingOpsRef.current = pendingOpsRef.current.filter((pending) => {
+      if (pending.acked) return false;
       if (now - pending.sentAt > timeout) {
         if (pending.retries < maxRetries) {
           // Retry
-          pending.retries++
-          pending.sentAt = now
+          pending.retries++;
+          pending.sentAt = now;
           bridge.dispatchSignal({
             id: pending.id,
             timestamp: now,
@@ -513,42 +559,64 @@ export function useCRDTSync(config: CRDTSyncConfig): UseCRDTSyncReturn {
               modelSource: 'REAL',
             },
             metadata: { version: '1.0.0' },
-          })
-          return true
+          });
+          return true;
         }
         // Max retries exceeded, drop
-        return false
+        return false;
       }
-      return true
-    })
+      return true;
+    });
 
-    setSyncState(prev => ({
+    setSyncState((prev) => ({
       ...prev,
-      pendingOpsCount: pendingOpsRef.current.filter(p => !p.acked).length,
-      isSyncing: pendingOpsRef.current.some(p => !p.acked),
-    }))
-  }, [documentId, maxRetries])
+      pendingOpsCount: pendingOpsRef.current.filter((p) => !p.acked).length,
+      isSyncing: pendingOpsRef.current.some((p) => !p.acked),
+    }));
+  }, [documentId, maxRetries]);
 
   // ---- Callback Registration ----
   const onRemoteOperation = useCallback((cb: (op: TextOperation) => void) => {
-    operationCallbacksRef.current.add(cb)
-    return () => { operationCallbacksRef.current.delete(cb) }
-  }, [])
+    operationCallbacksRef.current.add(cb);
+    return () => {
+      operationCallbacksRef.current.delete(cb);
+    };
+  }, []);
 
-  const onRemotePresence = useCallback((cb: (p: CollaborationParticipant) => void) => {
-    presenceCallbacksRef.current.add(cb)
-    return () => { presenceCallbacksRef.current.delete(cb) }
-  }, [])
+  const onRemotePresence = useCallback(
+    (cb: (p: CollaborationParticipant) => void) => {
+      presenceCallbacksRef.current.add(cb);
+      return () => {
+        presenceCallbacksRef.current.delete(cb);
+      };
+    },
+    []
+  );
 
-  const onFullSync = useCallback((cb: (doc: CRDTDocumentState, participants: CollaborationParticipant[]) => void) => {
-    fullSyncCallbacksRef.current.add(cb)
-    return () => { fullSyncCallbacksRef.current.delete(cb) }
-  }, [])
+  const onFullSync = useCallback(
+    (
+      cb: (
+        doc: CRDTDocumentState,
+        participants: CollaborationParticipant[]
+      ) => void
+    ) => {
+      fullSyncCallbacksRef.current.add(cb);
+      return () => {
+        fullSyncCallbacksRef.current.delete(cb);
+      };
+    },
+    []
+  );
 
-  const onConflict = useCallback((cb: (local: TextOperation, remote: TextOperation) => void) => {
-    conflictCallbacksRef.current.add(cb)
-    return () => { conflictCallbacksRef.current.delete(cb) }
-  }, [])
+  const onConflict = useCallback(
+    (cb: (local: TextOperation, remote: TextOperation) => void) => {
+      conflictCallbacksRef.current.add(cb);
+      return () => {
+        conflictCallbacksRef.current.delete(cb);
+      };
+    },
+    []
+  );
 
   return {
     syncState,
@@ -561,5 +629,5 @@ export function useCRDTSync(config: CRDTSyncConfig): UseCRDTSyncReturn {
     onRemotePresence,
     onFullSync,
     onConflict,
-  }
+  };
 }

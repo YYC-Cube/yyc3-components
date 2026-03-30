@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { ErrorBoundary, GlassCard, FadeIn } from '@yyc3/core';
 import { formatDate, getRelativeTime, uuid } from '@yyc3/utils';
-import { useToggle, useLocalStorage, useDebounce, useWindowSize } from '@yyc3/hooks';
+import {
+  useToggle,
+  useLocalStorage,
+  useDebounce,
+  useWindowSize,
+} from '@yyc3/hooks';
 
 function DemoContent() {
   const [isDark, toggleDark] = useToggle(false);

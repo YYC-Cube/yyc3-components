@@ -6,6 +6,8 @@ export interface UIModelInfo {
   contextLength: number;
   supportsStreaming: boolean;
   supportsVision: boolean;
+  color: string;
+  isAvailable: boolean;
 }
 
 export const MODEL_CATALOG: Record<string, UIModelInfo> = {
@@ -17,6 +19,8 @@ export const MODEL_CATALOG: Record<string, UIModelInfo> = {
     contextLength: 128000,
     supportsStreaming: true,
     supportsVision: true,
+    color: '#10a37f',
+    isAvailable: true,
   },
   'claude-3.5-sonnet': {
     id: 'claude-3.5-sonnet',
@@ -26,6 +30,8 @@ export const MODEL_CATALOG: Record<string, UIModelInfo> = {
     contextLength: 200000,
     supportsStreaming: true,
     supportsVision: true,
+    color: '#d97757',
+    isAvailable: true,
   },
   'llama-3.1-70b': {
     id: 'llama-3.1-70b',
@@ -35,6 +41,8 @@ export const MODEL_CATALOG: Record<string, UIModelInfo> = {
     contextLength: 128000,
     supportsStreaming: true,
     supportsVision: false,
+    color: '#f59e0b',
+    isAvailable: true,
   },
 };
 

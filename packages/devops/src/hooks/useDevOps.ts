@@ -9,8 +9,8 @@
  * Provides React component-level DevOps state management, bridging DevOpsService layer
  */
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { devOpsService } from "../services/DevOpsService";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { devOpsService } from '../services/DevOpsService';
 import type {
   MCPServer,
   MCPToolResult,
@@ -22,7 +22,7 @@ import type {
   WorkflowCreateInput,
   WorkflowUpdateInput,
   WSConnectionStatus,
-} from "../types/devops";
+} from '../types/devops';
 
 /* ──────────────────── Hook 返回类型 / Hook Return Type ──────────────────── */
 
@@ -43,7 +43,11 @@ export interface UseDevOpsReturn {
   /** 切换自动连接 / Toggle auto-connect */
   toggleAutoConnect: (serverId: string) => void;
   /** 执行 MCP 工具 / Execute MCP tool */
-  executeTool: (serverId: string, toolId: string, params?: Record<string, string | number | boolean>) => Promise<MCPToolResult>;
+  executeTool: (
+    serverId: string,
+    toolId: string,
+    params?: Record<string, string | number | boolean>
+  ) => Promise<MCPToolResult>;
   /** 最后工具执行结果 / Last tool execution result */
   lastToolResult: MCPToolResult | null;
   /** 工具执行中 / Tool executing */
@@ -125,18 +129,36 @@ export interface UseDevOpsReturn {
  */
 export function useDevOps(): UseDevOpsReturn {
   /* ── 状态 / State ── */
-  const [servers, setServers] = useState<MCPServer[]>(devOpsService.getServers());
-  const [workflows, setWorkflows] = useState<Workflow[]>(devOpsService.getWorkflows());
-  const [infraServices, setInfraServices] = useState<InfraService[]>(devOpsService.getInfraServices());
-  const [diagnosticIssues, setDiagnosticIssues] = useState<DiagnosticIssue[]>([]);
-  const [opsLog, setOpsLog] = useState<OpsLogEntry[]>(devOpsService.getOpsLog());
-  const [metrics, setMetrics] = useState<DevOpsMetrics>(devOpsService.getMetrics());
-  const [lastToolResult, setLastToolResult] = useState<MCPToolResult | null>(null);
+  const [servers, setServers] = useState<MCPServer[]>(
+    devOpsService.getServers()
+  );
+  const [workflows, setWorkflows] = useState<Workflow[]>(
+    devOpsService.getWorkflows()
+  );
+  const [infraServices, setInfraServices] = useState<InfraService[]>(
+    devOpsService.getInfraServices()
+  );
+  const [diagnosticIssues, setDiagnosticIssues] = useState<DiagnosticIssue[]>(
+    []
+  );
+  const [opsLog, setOpsLog] = useState<OpsLogEntry[]>(
+    devOpsService.getOpsLog()
+  );
+  const [metrics, setMetrics] = useState<DevOpsMetrics>(
+    devOpsService.getMetrics()
+  );
+  const [lastToolResult, setLastToolResult] = useState<MCPToolResult | null>(
+    null
+  );
   const [isToolExecuting, setIsToolExecuting] = useState(false);
   const [isWorkflowExecuting, setIsWorkflowExecuting] = useState(false);
-  const [executingWorkflowId, setExecutingWorkflowId] = useState<string | null>(null);
+  const [executingWorkflowId, setExecutingWorkflowId] = useState<string | null>(
+    null
+  );
   const [isScanning, setIsScanning] = useState(false);
-  const [wsStatus, setWsStatus] = useState<WSConnectionStatus>(devOpsService.getWsStatus());
+  const [wsStatus, setWsStatus] = useState<WSConnectionStatus>(
+    devOpsService.getWsStatus()
+  );
 
   /** 防止 stale closure / Prevent stale closure */
   const mountedRef = useRef(true);
@@ -163,11 +185,14 @@ export function useDevOps(): UseDevOpsReturn {
 
   /* ── MCP 服务器操作 / MCP Server Operations ── */
 
-  const probeServer = useCallback(async (serverId: string): Promise<boolean> => {
-    const result = await devOpsService.probeServer(serverId);
-    refreshAll();
-    return result;
-  }, [refreshAll]);
+  const probeServer = useCallback(
+    async (serverId: string): Promise<boolean> => {
+      const result = await devOpsService.probeServer(serverId);
+      refreshAll();
+      return result;
+    },
+    [refreshAll]
+  );
 
   const probeAllServers = useCallback(async (): Promise<number> => {
     const count = await devOpsService.probeAllServers();
@@ -175,56 +200,78 @@ export function useDevOps(): UseDevOpsReturn {
     return count;
   }, [refreshAll]);
 
-  const disconnectServer = useCallback((serverId: string) => {
-    devOpsService.disconnectServer(serverId);
-    refreshAll();
-  }, [refreshAll]);
-
-  const toggleAutoConnect = useCallback((serverId: string) => {
-    devOpsService.toggleAutoConnect(serverId);
-    refreshAll();
-  }, [refreshAll]);
-
-  const executeTool = useCallback(async (
-    serverId: string,
-    toolId: string,
-    params?: Record<string, string | number | boolean>
-  ): Promise<MCPToolResult> => {
-    setIsToolExecuting(true);
-    try {
-      const result = await devOpsService.executeTool(serverId, toolId, params);
-      setLastToolResult(result);
+  const disconnectServer = useCallback(
+    (serverId: string) => {
+      devOpsService.disconnectServer(serverId);
       refreshAll();
-      return result;
-    } finally {
-      setIsToolExecuting(false);
-    }
-  }, [refreshAll]);
+    },
+    [refreshAll]
+  );
+
+  const toggleAutoConnect = useCallback(
+    (serverId: string) => {
+      devOpsService.toggleAutoConnect(serverId);
+      refreshAll();
+    },
+    [refreshAll]
+  );
+
+  const executeTool = useCallback(
+    async (
+      serverId: string,
+      toolId: string,
+      params?: Record<string, string | number | boolean>
+    ): Promise<MCPToolResult> => {
+      setIsToolExecuting(true);
+      try {
+        const result = await devOpsService.executeTool(
+          serverId,
+          toolId,
+          params
+        );
+        setLastToolResult(result);
+        refreshAll();
+        return result;
+      } finally {
+        setIsToolExecuting(false);
+      }
+    },
+    [refreshAll]
+  );
 
   /* ── 工作流操作 / Workflow Operations ── */
 
-  const executeWorkflow = useCallback(async (workflowId: string): Promise<boolean> => {
-    setIsWorkflowExecuting(true);
-    setExecutingWorkflowId(workflowId);
-    try {
-      const result = await devOpsService.executeWorkflow(workflowId);
+  const executeWorkflow = useCallback(
+    async (workflowId: string): Promise<boolean> => {
+      setIsWorkflowExecuting(true);
+      setExecutingWorkflowId(workflowId);
+      try {
+        const result = await devOpsService.executeWorkflow(workflowId);
+        refreshAll();
+        return result;
+      } finally {
+        setIsWorkflowExecuting(false);
+        setExecutingWorkflowId(null);
+      }
+    },
+    [refreshAll]
+  );
+
+  const toggleWorkflow = useCallback(
+    (workflowId: string) => {
+      devOpsService.toggleWorkflow(workflowId);
       refreshAll();
-      return result;
-    } finally {
-      setIsWorkflowExecuting(false);
-      setExecutingWorkflowId(null);
-    }
-  }, [refreshAll]);
+    },
+    [refreshAll]
+  );
 
-  const toggleWorkflow = useCallback((workflowId: string) => {
-    devOpsService.toggleWorkflow(workflowId);
-    refreshAll();
-  }, [refreshAll]);
-
-  const resetWorkflow = useCallback((workflowId: string) => {
-    devOpsService.resetWorkflow(workflowId);
-    refreshAll();
-  }, [refreshAll]);
+  const resetWorkflow = useCallback(
+    (workflowId: string) => {
+      devOpsService.resetWorkflow(workflowId);
+      refreshAll();
+    },
+    [refreshAll]
+  );
 
   /* ── 健康扫描 / Health Scanning ── */
 
@@ -258,23 +305,32 @@ export function useDevOps(): UseDevOpsReturn {
 
   /* ── 工作流 CRUD / Workflow CRUD ── */
 
-  const createWorkflow = useCallback((input: WorkflowCreateInput) => {
-    const workflow = devOpsService.createWorkflow(input);
-    refreshAll();
-    return workflow;
-  }, [refreshAll]);
+  const createWorkflow = useCallback(
+    (input: WorkflowCreateInput) => {
+      const workflow = devOpsService.createWorkflow(input);
+      refreshAll();
+      return workflow;
+    },
+    [refreshAll]
+  );
 
-  const updateWorkflow = useCallback((id: string, input: WorkflowUpdateInput) => {
-    const workflow = devOpsService.updateWorkflow(id, input);
-    refreshAll();
-    return workflow;
-  }, [refreshAll]);
+  const updateWorkflow = useCallback(
+    (id: string, input: WorkflowUpdateInput) => {
+      const workflow = devOpsService.updateWorkflow(id, input);
+      refreshAll();
+      return workflow;
+    },
+    [refreshAll]
+  );
 
-  const deleteWorkflow = useCallback((id: string) => {
-    const result = devOpsService.deleteWorkflow(id);
-    refreshAll();
-    return result;
-  }, [refreshAll]);
+  const deleteWorkflow = useCallback(
+    (id: string) => {
+      const result = devOpsService.deleteWorkflow(id);
+      refreshAll();
+      return result;
+    },
+    [refreshAll]
+  );
 
   /* ── WebSocket / WebSocket ── */
 

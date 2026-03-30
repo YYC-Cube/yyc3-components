@@ -8,14 +8,14 @@
  * Unified DevOps workspace integrating terminal, container management, and system monitoring
  */
 
-import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Badge } from "./ui/badge";
-import { WebTerminal } from "./terminal/WebTerminal";
-import { ContainerManager } from "./docker/ContainerManager";
-import { SystemMonitor } from "./SystemMonitor";
-import { GitPanel } from "./GitPanel";
-import { EnvironmentBadge } from "./EnvironmentBadge";
+import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Badge } from './ui/badge';
+import { WebTerminal } from './terminal/WebTerminal';
+import { ContainerManager } from './docker/ContainerManager';
+import { SystemMonitor } from './SystemMonitor';
+import { GitPanel } from './GitPanel';
+import { EnvironmentBadge } from './EnvironmentBadge';
 import {
   Terminal,
   Box,
@@ -24,10 +24,10 @@ import {
   Server,
   GitBranch,
   Code2,
-} from "lucide-react";
-import { useDevOps } from "../hooks/useDevOps";
-import { useDocker } from "../hooks/useDocker";
-import { useTerminal } from "../hooks/useTerminal";
+} from 'lucide-react';
+import { useDevOps } from '../hooks/useDevOps';
+import { useDocker } from '../hooks/useDocker';
+import { useTerminal } from '../hooks/useTerminal';
 
 /**
  * DevOps 集成面板 / DevOps Hub Panel
@@ -46,7 +46,9 @@ export function DevOpsHub(): JSX.Element {
   const { isHealthy: dockerHealthy } = useDocker();
   const { metrics: terminalMetrics } = useTerminal();
 
-  const [activeTab, setActiveTab] = useState<"terminal" | "docker" | "monitor" | "git">("terminal");
+  const [activeTab, setActiveTab] = useState<
+    'terminal' | 'docker' | 'monitor' | 'git'
+  >('terminal');
   const [startTime] = useState(Date.now());
 
   /**
@@ -54,26 +56,34 @@ export function DevOpsHub(): JSX.Element {
    */
   const getTabBadge = (tab: string) => {
     switch (tab) {
-      case "terminal":
+      case 'terminal':
         return terminalMetrics.activeSessions > 0 ? (
-          <Badge variant="outline" className="ml-2 border-green-500 text-green-500 text-xs">
+          <Badge
+            variant="outline"
+            className="ml-2 border-green-500 text-xs text-green-500"
+          >
             {terminalMetrics.activeSessions}
           </Badge>
         ) : null;
-      case "docker":
+      case 'docker':
         return (
           <Badge
             variant="outline"
             className={`ml-2 text-xs ${
-              dockerHealthy ? "border-green-500 text-green-500" : "border-red-500 text-red-500"
+              dockerHealthy
+                ? 'border-green-500 text-green-500'
+                : 'border-red-500 text-red-500'
             }`}
           >
-            {dockerHealthy ? "ON" : "OFF"}
+            {dockerHealthy ? 'ON' : 'OFF'}
           </Badge>
         );
-      case "monitor":
+      case 'monitor':
         return devOpsMetrics.unresolvedIssues > 0 ? (
-          <Badge variant="outline" className="ml-2 border-yellow-500 text-yellow-500 text-xs">
+          <Badge
+            variant="outline"
+            className="ml-2 border-yellow-500 text-xs text-yellow-500"
+          >
             {devOpsMetrics.unresolvedIssues}
           </Badge>
         ) : null;
@@ -83,35 +93,38 @@ export function DevOpsHub(): JSX.Element {
   };
 
   return (
-    <div className="h-full flex flex-col bg-black">
+    <div className="flex h-full flex-col bg-black">
       {/* 头部横幅 / Header Banner */}
-      <div className="border-b-2 border-green-500 p-4 bg-black">
+      <div className="border-b-2 border-green-500 bg-black p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Code2 className="w-7 h-7 text-green-500" />
+            <Code2 className="h-7 w-7 text-green-500" />
             <div>
-              <div className="text-green-500 tracking-wider text-xl">DEVOPS HUB</div>
-              <div className="text-green-500/50 text-xs tracking-wider">
+              <div className="text-xl tracking-wider text-green-500">
+                DEVOPS HUB
+              </div>
+              <div className="text-xs tracking-wider text-green-500/50">
                 CODE | AI | FAMILY v0.9.4 [PERSONALIZE]
               </div>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Server className="w-4 h-4 text-green-500" />
-              <span className="text-green-500 text-sm">
-                {devOpsMetrics.healthyServices}/{devOpsMetrics.totalServices} SERVICES
+              <Server className="h-4 w-4 text-green-500" />
+              <span className="text-sm text-green-500">
+                {devOpsMetrics.healthyServices}/{devOpsMetrics.totalServices}{' '}
+                SERVICES
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <Workflow className="w-4 h-4 text-green-500" />
-              <span className="text-green-500 text-sm">
+              <Workflow className="h-4 w-4 text-green-500" />
+              <span className="text-sm text-green-500">
                 {devOpsMetrics.activeWorkflows} WORKFLOWS
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-green-500" />
-              <span className="text-green-500 text-sm">
+              <Activity className="h-4 w-4 text-green-500" />
+              <span className="text-sm text-green-500">
                 {devOpsMetrics.todaySuccessRate.toFixed(0)}% SUCCESS
               </span>
             </div>
@@ -124,68 +137,71 @@ export function DevOpsHub(): JSX.Element {
         <Tabs
           value={activeTab}
           onValueChange={(v: string) => setActiveTab(v as typeof activeTab)}
-          className="h-full flex flex-col"
+          className="flex h-full flex-col"
         >
-          <TabsList className="border-b border-green-500/30 bg-black rounded-none w-full justify-start p-0">
+          <TabsList className="w-full justify-start rounded-none border-b border-green-500/30 bg-black p-0">
             <TabsTrigger
               value="terminal"
-              className="data-[state=active]:bg-green-500/10 data-[state=active]:text-green-500 data-[state=active]:border-b-2 data-[state=active]:border-green-500 rounded-none px-6 py-3"
+              className="rounded-none px-6 py-3 data-[state=active]:border-b-2 data-[state=active]:border-green-500 data-[state=active]:bg-green-500/10 data-[state=active]:text-green-500"
             >
-              <Terminal className="w-4 h-4 mr-2" />
+              <Terminal className="mr-2 h-4 w-4" />
               TERMINAL
-              {getTabBadge("terminal")}
+              {getTabBadge('terminal')}
             </TabsTrigger>
             <TabsTrigger
               value="docker"
-              className="data-[state=active]:bg-green-500/10 data-[state=active]:text-green-500 data-[state=active]:border-b-2 data-[state=active]:border-green-500 rounded-none px-6 py-3"
+              className="rounded-none px-6 py-3 data-[state=active]:border-b-2 data-[state=active]:border-green-500 data-[state=active]:bg-green-500/10 data-[state=active]:text-green-500"
             >
-              <Box className="w-4 h-4 mr-2" />
+              <Box className="mr-2 h-4 w-4" />
               DOCKER
-              {getTabBadge("docker")}
+              {getTabBadge('docker')}
             </TabsTrigger>
             <TabsTrigger
               value="monitor"
-              className="data-[state=active]:bg-green-500/10 data-[state=active]:text-green-500 data-[state=active]:border-b-2 data-[state=active]:border-green-500 rounded-none px-6 py-3"
+              className="rounded-none px-6 py-3 data-[state=active]:border-b-2 data-[state=active]:border-green-500 data-[state=active]:bg-green-500/10 data-[state=active]:text-green-500"
             >
-              <Activity className="w-4 h-4 mr-2" />
+              <Activity className="mr-2 h-4 w-4" />
               MONITOR
-              {getTabBadge("monitor")}
+              {getTabBadge('monitor')}
             </TabsTrigger>
             <TabsTrigger
               value="git"
-              className="data-[state=active]:bg-green-500/10 data-[state=active]:text-green-500 data-[state=active]:border-b-2 data-[state=active]:border-green-500 rounded-none px-6 py-3"
+              className="rounded-none px-6 py-3 data-[state=active]:border-b-2 data-[state=active]:border-green-500 data-[state=active]:bg-green-500/10 data-[state=active]:text-green-500"
             >
-              <GitBranch className="w-4 h-4 mr-2" />
+              <GitBranch className="mr-2 h-4 w-4" />
               GIT
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="terminal" className="flex-1 mt-0 p-4">
+          <TabsContent value="terminal" className="mt-0 flex-1 p-4">
             <WebTerminal />
           </TabsContent>
 
-          <TabsContent value="docker" className="flex-1 mt-0 p-4">
+          <TabsContent value="docker" className="mt-0 flex-1 p-4">
             <ContainerManager />
           </TabsContent>
 
-          <TabsContent value="monitor" className="flex-1 mt-0 p-4">
+          <TabsContent value="monitor" className="mt-0 flex-1 p-4">
             <SystemMonitor />
           </TabsContent>
 
-          <TabsContent value="git" className="flex-1 mt-0 p-4">
+          <TabsContent value="git" className="mt-0 flex-1 p-4">
             <GitPanel />
           </TabsContent>
         </Tabs>
       </div>
 
       {/* 状态栏 / Status Bar */}
-      <div className="border-t border-green-500/30 p-2 bg-black flex items-center justify-between text-xs">
+      <div className="flex items-center justify-between border-t border-green-500/30 bg-black p-2 text-xs">
         <div className="flex items-center gap-4 text-green-500/50">
           <span>YYC³ AI FAMILY</span>
           <span>•</span>
           <EnvironmentBadge />
           <span>•</span>
-          <span>MCP SERVERS: {servers.filter((s) => s.status === "connected").length}</span>
+          <span>
+            MCP SERVERS:{' '}
+            {servers.filter((s) => s.status === 'connected').length}
+          </span>
         </div>
         <div className="flex items-center gap-4 text-green-500/50">
           <span>SESSION: {new Date().toLocaleDateString()}</span>

@@ -1,19 +1,19 @@
 /**
  * Git 面板组件
  * Git Panel Component
- * 
+ *
  * Git 仓库管理和操作界面
  * Git repository management and operations interface
- * 
+ *
  * @module components/devops/GitPanel
  */
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  GitBranch, 
-  GitCommit as GitCommitIcon, 
-  GitPullRequest, 
+import {
+  GitBranch,
+  GitCommit as GitCommitIcon,
+  GitPullRequest,
   RefreshCw,
   FolderGit2,
   Upload,
@@ -58,7 +58,9 @@ export function GitPanel(): JSX.Element {
     checkout,
   } = useGit();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'branches' | 'commits' | 'changes'>('overview');
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'branches' | 'commits' | 'changes'
+  >('overview');
   const [commitMessage, setCommitMessage] = useState('');
   const [showCommitDialog, setShowCommitDialog] = useState(false);
   const [repoPath, setRepoPath] = useState('');
@@ -91,7 +93,7 @@ export function GitPanel(): JSX.Element {
    * 处理分支切换 / Handle branch checkout
    */
   const handleBranchCheckout = async (branchName: string): Promise<void> => {
-    await checkout(branchName);
+    await checkout({ branch: branchName });
   };
 
   /**
@@ -115,24 +117,29 @@ export function GitPanel(): JSX.Element {
    */
   const getFileStatusColor = (status: string): string => {
     switch (status) {
-      case 'added': return 'text-green-400';
-      case 'modified': return 'text-yellow-400';
-      case 'deleted': return 'text-red-400';
-      case 'renamed': return 'text-blue-400';
-      default: return 'text-gray-400';
+      case 'added':
+        return 'text-green-400';
+      case 'modified':
+        return 'text-yellow-400';
+      case 'deleted':
+        return 'text-red-400';
+      case 'renamed':
+        return 'text-blue-400';
+      default:
+        return 'text-gray-400';
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-black text-green-500 font-mono">
+    <div className="flex h-full flex-col bg-black font-mono text-green-500">
       {/* 头部栏 / Header Bar */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-green-500/30">
+      <div className="flex items-center justify-between border-b border-green-500/30 px-6 py-4">
         <div className="flex items-center gap-4">
-          <FolderGit2 className="w-6 h-6" />
+          <FolderGit2 className="h-6 w-6" />
           <div>
             <h2 className="tracking-wider">GIT MANAGEMENT / GIT 管理</h2>
             {repository && (
-              <p className="text-xs text-green-500/70 mt-1">
+              <p className="mt-1 text-xs text-green-500/70">
                 {repository.name} • {repository.currentBranch}
               </p>
             )}
@@ -141,11 +148,11 @@ export function GitPanel(): JSX.Element {
 
         <div className="flex items-center gap-3">
           {/* 状态指示器 / Status Indicator */}
-          <div className="flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded border border-green-500/30">
+          <div className="flex items-center gap-2 rounded border border-green-500/30 bg-green-500/10 px-3 py-1">
             {repository?.isClean ? (
-              <CheckCircle2 className="w-4 h-4 text-green-400" />
+              <CheckCircle2 className="h-4 w-4 text-green-400" />
             ) : (
-              <AlertCircle className="w-4 h-4 text-yellow-400" />
+              <AlertCircle className="h-4 w-4 text-yellow-400" />
             )}
             <span className="text-xs tracking-wider">{statusText}</span>
           </div>
@@ -154,28 +161,32 @@ export function GitPanel(): JSX.Element {
           <button
             onClick={() => refresh()}
             disabled={isOperating}
-            className="p-2 hover:bg-green-500/10 rounded transition-colors disabled:opacity-50"
+            className="rounded p-2 transition-colors hover:bg-green-500/10 disabled:opacity-50"
             title="REFRESH / 刷新"
           >
-            <RefreshCw className={`w-5 h-5 ${isOperating ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`h-5 w-5 ${isOperating ? 'animate-spin' : ''}`}
+            />
           </button>
         </div>
       </div>
 
       {/* 错误提示 / Error Message */}
       {error && (
-        <div className="mx-6 mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded">
-          <p className="text-xs text-red-400 tracking-wider">{error}</p>
+        <div className="mx-6 mt-4 rounded border border-red-500/30 bg-red-500/10 p-3">
+          <p className="text-xs tracking-wider text-red-400">{error}</p>
         </div>
       )}
 
       {!repository ? (
         /* 打开仓库界面 / Open Repository Interface */
-        <div className="flex-1 flex items-center justify-center p-6">
+        <div className="flex flex-1 items-center justify-center p-6">
           <div className="w-full max-w-md space-y-4">
-            <div className="text-center space-y-2">
-              <FolderGit2 className="w-16 h-16 mx-auto text-green-500/50" />
-              <h3 className="tracking-wider">OPEN GIT REPOSITORY / 打开 GIT 仓库</h3>
+            <div className="space-y-2 text-center">
+              <FolderGit2 className="mx-auto h-16 w-16 text-green-500/50" />
+              <h3 className="tracking-wider">
+                OPEN GIT REPOSITORY / 打开 GIT 仓库
+              </h3>
               <p className="text-xs text-green-500/70">
                 ENTER REPOSITORY PATH TO START / 输入仓库路径开始
               </p>
@@ -187,7 +198,7 @@ export function GitPanel(): JSX.Element {
                 value={repoPath}
                 onChange={(e) => setRepoPath(e.target.value)}
                 placeholder="/path/to/repository"
-                className="w-full px-4 py-3 bg-black border border-green-500/30 rounded text-green-500 placeholder-green-500/30 focus:outline-none focus:border-green-500"
+                className="w-full rounded border border-green-500/30 bg-black px-4 py-3 text-green-500 placeholder-green-500/30 focus:border-green-500 focus:outline-none"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleOpenRepository();
@@ -198,9 +209,11 @@ export function GitPanel(): JSX.Element {
               <button
                 onClick={handleOpenRepository}
                 disabled={!repoPath.trim() || isOperating}
-                className="w-full px-4 py-3 bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 rounded tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded border border-green-500/30 bg-green-500/10 px-4 py-3 tracking-wider transition-colors hover:bg-green-500/20 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isOperating ? 'OPENING... / 打开中...' : 'OPEN REPOSITORY / 打开仓库'}
+                {isOperating
+                  ? 'OPENING... / 打开中...'
+                  : 'OPEN REPOSITORY / 打开仓库'}
               </button>
             </div>
 
@@ -214,7 +227,7 @@ export function GitPanel(): JSX.Element {
       ) : (
         <>
           {/* 标签页导航 / Tab Navigation */}
-          <div className="flex gap-1 px-6 pt-4 border-b border-green-500/30">
+          <div className="flex gap-1 border-b border-green-500/30 px-6 pt-4">
             {[
               { id: 'overview', label: 'OVERVIEW / 概览', icon: TrendingUp },
               { id: 'branches', label: 'BRANCHES / 分支', icon: GitBranch },
@@ -226,11 +239,11 @@ export function GitPanel(): JSX.Element {
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-4 py-2 tracking-wider transition-colors ${
                   activeTab === tab.id
-                    ? 'text-green-500 border-b-2 border-green-500'
+                    ? 'border-b-2 border-green-500 text-green-500'
                     : 'text-green-500/50 hover:text-green-400'
                 }`}
               >
-                <tab.icon className="w-4 h-4" />
+                <tab.icon className="h-4 w-4" />
                 <span className="text-xs">{tab.label}</span>
               </button>
             ))}
@@ -253,81 +266,105 @@ export function GitPanel(): JSX.Element {
                     <button
                       onClick={() => pull()}
                       disabled={isOperating}
-                      className="flex flex-col items-center gap-2 p-4 bg-green-500/5 hover:bg-green-500/10 border border-green-500/30 rounded transition-colors disabled:opacity-50"
+                      className="flex flex-col items-center gap-2 rounded border border-green-500/30 bg-green-500/5 p-4 transition-colors hover:bg-green-500/10 disabled:opacity-50"
                     >
-                      <Download className="w-6 h-6" />
-                      <span className="text-xs tracking-wider">PULL / 拉取</span>
+                      <Download className="h-6 w-6" />
+                      <span className="text-xs tracking-wider">
+                        PULL / 拉取
+                      </span>
                     </button>
 
                     <button
                       onClick={() => setShowCommitDialog(true)}
                       disabled={isOperating || stagedFiles.length === 0}
-                      className="flex flex-col items-center gap-2 p-4 bg-green-500/5 hover:bg-green-500/10 border border-green-500/30 rounded transition-colors disabled:opacity-50"
+                      className="flex flex-col items-center gap-2 rounded border border-green-500/30 bg-green-500/5 p-4 transition-colors hover:bg-green-500/10 disabled:opacity-50"
                     >
-                      <GitCommitIcon className="w-6 h-6" />
-                      <span className="text-xs tracking-wider">COMMIT / 提交</span>
+                      <GitCommitIcon className="h-6 w-6" />
+                      <span className="text-xs tracking-wider">
+                        COMMIT / 提交
+                      </span>
                     </button>
 
                     <button
                       onClick={() => push()}
                       disabled={isOperating}
-                      className="flex flex-col items-center gap-2 p-4 bg-green-500/5 hover:bg-green-500/10 border border-green-500/30 rounded transition-colors disabled:opacity-50"
+                      className="flex flex-col items-center gap-2 rounded border border-green-500/30 bg-green-500/5 p-4 transition-colors hover:bg-green-500/10 disabled:opacity-50"
                     >
-                      <Upload className="w-6 h-6" />
-                      <span className="text-xs tracking-wider">PUSH / 推送</span>
+                      <Upload className="h-6 w-6" />
+                      <span className="text-xs tracking-wider">
+                        PUSH / 推送
+                      </span>
                     </button>
                   </div>
 
                   {/* 统计卡片 / Stats Cards */}
                   <div className="grid grid-cols-4 gap-3">
-                    <div className="p-4 bg-green-500/5 border border-green-500/30 rounded">
-                      <div className="flex items-center justify-between mb-2">
-                        <GitCommitIcon className="w-5 h-5" />
+                    <div className="rounded border border-green-500/30 bg-green-500/5 p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <GitCommitIcon className="h-5 w-5" />
                         <span className="text-2xl">{metrics.totalCommits}</span>
                       </div>
-                      <p className="text-xs text-green-500/70 tracking-wider">COMMITS / 提交</p>
+                      <p className="text-xs tracking-wider text-green-500/70">
+                        COMMITS / 提交
+                      </p>
                     </div>
 
-                    <div className="p-4 bg-green-500/5 border border-green-500/30 rounded">
-                      <div className="flex items-center justify-between mb-2">
-                        <GitBranch className="w-5 h-5" />
-                        <span className="text-2xl">{metrics.totalBranches}</span>
+                    <div className="rounded border border-green-500/30 bg-green-500/5 p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <GitBranch className="h-5 w-5" />
+                        <span className="text-2xl">
+                          {metrics.totalBranches}
+                        </span>
                       </div>
-                      <p className="text-xs text-green-500/70 tracking-wider">BRANCHES / 分支</p>
+                      <p className="text-xs tracking-wider text-green-500/70">
+                        BRANCHES / 分支
+                      </p>
                     </div>
 
-                    <div className="p-4 bg-green-500/5 border border-green-500/30 rounded">
-                      <div className="flex items-center justify-between mb-2">
-                        <Tag className="w-5 h-5" />
+                    <div className="rounded border border-green-500/30 bg-green-500/5 p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <Tag className="h-5 w-5" />
                         <span className="text-2xl">{metrics.totalTags}</span>
                       </div>
-                      <p className="text-xs text-green-500/70 tracking-wider">TAGS / 标签</p>
+                      <p className="text-xs tracking-wider text-green-500/70">
+                        TAGS / 标签
+                      </p>
                     </div>
 
-                    <div className="p-4 bg-green-500/5 border border-green-500/30 rounded">
-                      <div className="flex items-center justify-between mb-2">
-                        <Globe className="w-5 h-5" />
+                    <div className="rounded border border-green-500/30 bg-green-500/5 p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <Globe className="h-5 w-5" />
                         <span className="text-2xl">{remotes.length}</span>
                       </div>
-                      <p className="text-xs text-green-500/70 tracking-wider">REMOTES / 远程</p>
+                      <p className="text-xs tracking-wider text-green-500/70">
+                        REMOTES / 远程
+                      </p>
                     </div>
                   </div>
 
                   {/* 最近提交 / Recent Commits */}
                   <div>
-                    <h3 className="tracking-wider mb-3">RECENT COMMITS / 最近提交</h3>
+                    <h3 className="mb-3 tracking-wider">
+                      RECENT COMMITS / 最近提交
+                    </h3>
                     <div className="space-y-2">
                       {commits.slice(0, 5).map((commit) => (
                         <div
                           key={commit.hash}
-                          className="p-3 bg-green-500/5 border border-green-500/30 rounded hover:bg-green-500/10 transition-colors"
+                          className="rounded border border-green-500/30 bg-green-500/5 p-3 transition-colors hover:bg-green-500/10"
                         >
-                          <div className="flex items-start justify-between mb-2">
-                            <span className="text-xs font-mono text-yellow-400">{commit.shortHash}</span>
-                            <span className="text-xs text-green-500/70">{formatTime(commit.timestamp)}</span>
+                          <div className="mb-2 flex items-start justify-between">
+                            <span className="font-mono text-xs text-yellow-400">
+                              {commit.shortHash}
+                            </span>
+                            <span className="text-xs text-green-500/70">
+                              {formatTime(commit.timestamp)}
+                            </span>
                           </div>
-                          <p className="text-xs mb-1">{commit.message}</p>
-                          <p className="text-xs text-green-500/70">{commit.author}</p>
+                          <p className="mb-1 text-xs">{commit.message}</p>
+                          <p className="text-xs text-green-500/70">
+                            {commit.author}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -347,23 +384,23 @@ export function GitPanel(): JSX.Element {
                   {branches.map((branch) => (
                     <div
                       key={branch.name}
-                      className={`p-4 border rounded transition-colors ${
+                      className={`rounded border p-4 transition-colors ${
                         branch.isCurrent
-                          ? 'bg-green-500/10 border-green-500'
-                          : 'bg-green-500/5 border-green-500/30 hover:bg-green-500/10'
+                          ? 'border-green-500 bg-green-500/10'
+                          : 'border-green-500/30 bg-green-500/5 hover:bg-green-500/10'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="mb-2 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <GitBranch className="w-5 h-5" />
+                          <GitBranch className="h-5 w-5" />
                           <span className="tracking-wider">{branch.name}</span>
                           {branch.isCurrent && (
-                            <span className="px-2 py-0.5 bg-green-500 text-black text-xs tracking-wider rounded">
+                            <span className="rounded bg-green-500 px-2 py-0.5 text-xs tracking-wider text-black">
                               CURRENT / 当前
                             </span>
                           )}
                           {branch.isRemote && (
-                            <Globe className="w-4 h-4 text-green-500/70" />
+                            <Globe className="h-4 w-4 text-green-500/70" />
                           )}
                         </div>
 
@@ -371,7 +408,7 @@ export function GitPanel(): JSX.Element {
                           <button
                             onClick={() => handleBranchCheckout(branch.name)}
                             disabled={isOperating}
-                            className="px-3 py-1 text-xs tracking-wider bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 rounded transition-colors disabled:opacity-50"
+                            className="rounded border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs tracking-wider transition-colors hover:bg-green-500/20 disabled:opacity-50"
                           >
                             CHECKOUT / 检出
                           </button>
@@ -383,20 +420,25 @@ export function GitPanel(): JSX.Element {
                           <p className="mb-1">{branch.lastCommitMessage}</p>
                           {branch.lastCommitTime && (
                             <p className="flex items-center gap-2">
-                              <Clock className="w-3 h-3" />
+                              <Clock className="h-3 w-3" />
                               {formatTime(branch.lastCommitTime)}
                             </p>
                           )}
                         </div>
                       )}
 
-                      {(branch.ahead !== undefined || branch.behind !== undefined) && (
+                      {(branch.ahead !== undefined ||
+                        branch.behind !== undefined) && (
                         <div className="mt-2 flex items-center gap-3 text-xs">
                           {branch.ahead !== undefined && branch.ahead > 0 && (
-                            <span className="text-green-400">↑ {branch.ahead} AHEAD / 领先</span>
+                            <span className="text-green-400">
+                              ↑ {branch.ahead} AHEAD / 领先
+                            </span>
                           )}
                           {branch.behind !== undefined && branch.behind > 0 && (
-                            <span className="text-yellow-400">↓ {branch.behind} BEHIND / 落后</span>
+                            <span className="text-yellow-400">
+                              ↓ {branch.behind} BEHIND / 落后
+                            </span>
                           )}
                         </div>
                       )}
@@ -417,33 +459,37 @@ export function GitPanel(): JSX.Element {
                   {commits.map((commit) => (
                     <div
                       key={commit.hash}
-                      className="p-4 bg-green-500/5 border border-green-500/30 rounded hover:bg-green-500/10 transition-colors"
+                      className="rounded border border-green-500/30 bg-green-500/5 p-4 transition-colors hover:bg-green-500/10"
                     >
-                      <div className="flex items-start justify-between mb-3">
+                      <div className="mb-3 flex items-start justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="text-xs font-mono text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded">
+                          <span className="rounded bg-yellow-400/10 px-2 py-1 font-mono text-xs text-yellow-400">
                             {commit.shortHash}
                           </span>
                           {commit.tags.map((tag: string) => (
                             <span
                               key={tag}
-                              className="text-xs px-2 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/30 rounded"
+                              className="rounded border border-blue-500/30 bg-blue-500/10 px-2 py-1 text-xs text-blue-400"
                             >
-                              <Tag className="w-3 h-3 inline mr-1" />
+                              <Tag className="mr-1 inline h-3 w-3" />
                               {tag}
                             </span>
                           ))}
                         </div>
-                        <span className="text-xs text-green-500/70">{formatTime(commit.timestamp)}</span>
+                        <span className="text-xs text-green-500/70">
+                          {formatTime(commit.timestamp)}
+                        </span>
                       </div>
 
-                      <p className="text-sm mb-2">{commit.message}</p>
+                      <p className="mb-2 text-sm">{commit.message}</p>
 
                       <div className="flex items-center justify-between text-xs text-green-500/70">
-                        <span>{commit.author} &lt;{commit.authorEmail}&gt;</span>
+                        <span>
+                          {commit.author} &lt;{commit.authorEmail}&gt;
+                        </span>
                         {commit.branches && commit.branches.length > 0 && (
                           <div className="flex items-center gap-2">
-                            <GitBranch className="w-3 h-3" />
+                            <GitBranch className="h-3 w-3" />
                             <span>{commit.branches.join(', ')}</span>
                           </div>
                         )}
@@ -465,29 +511,38 @@ export function GitPanel(): JSX.Element {
                   {/* 已暂存文件 / Staged Files */}
                   {stagedFiles.length > 0 && (
                     <div>
-                      <h3 className="tracking-wider mb-3 flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-green-400" />
+                      <h3 className="mb-3 flex items-center gap-2 tracking-wider">
+                        <CheckCircle2 className="h-4 w-4 text-green-400" />
                         STAGED CHANGES ({stagedFiles.length}) / 已暂存变更
                       </h3>
                       <div className="space-y-2">
                         {stagedFiles.map((file: GitFileChange) => (
                           <div
                             key={file.path}
-                            className="p-3 bg-green-500/10 border border-green-500/30 rounded"
+                            className="rounded border border-green-500/30 bg-green-500/10 p-3"
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-mono">{file.path}</span>
-                              <span className={`text-xs tracking-wider ${getFileStatusColor(file.status)}`}>
+                              <span className="font-mono text-xs">
+                                {file.path}
+                              </span>
+                              <span
+                                className={`text-xs tracking-wider ${getFileStatusColor(file.status)}`}
+                              >
                                 {file.status.toUpperCase()}
                               </span>
                             </div>
-                            {(file.linesAdded !== undefined || file.linesDeleted !== undefined) && (
-                              <div className="mt-2 text-xs flex items-center gap-3">
+                            {(file.linesAdded !== undefined ||
+                              file.linesDeleted !== undefined) && (
+                              <div className="mt-2 flex items-center gap-3 text-xs">
                                 {file.linesAdded !== undefined && (
-                                  <span className="text-green-400">+{file.linesAdded}</span>
+                                  <span className="text-green-400">
+                                    +{file.linesAdded}
+                                  </span>
                                 )}
                                 {file.linesDeleted !== undefined && (
-                                  <span className="text-red-400">-{file.linesDeleted}</span>
+                                  <span className="text-red-400">
+                                    -{file.linesDeleted}
+                                  </span>
                                 )}
                               </div>
                             )}
@@ -500,19 +555,23 @@ export function GitPanel(): JSX.Element {
                   {/* 未暂存文件 / Unstaged Files */}
                   {unstagedFiles.length > 0 && (
                     <div>
-                      <h3 className="tracking-wider mb-3 flex items-center gap-2">
-                        <AlertCircle className="w-4 h-4 text-yellow-400" />
+                      <h3 className="mb-3 flex items-center gap-2 tracking-wider">
+                        <AlertCircle className="h-4 w-4 text-yellow-400" />
                         UNSTAGED CHANGES ({unstagedFiles.length}) / 未暂存变更
                       </h3>
                       <div className="space-y-2">
                         {unstagedFiles.map((file: GitFileChange) => (
                           <div
                             key={file.path}
-                            className="p-3 bg-green-500/5 border border-green-500/30 rounded hover:bg-green-500/10 transition-colors"
+                            className="rounded border border-green-500/30 bg-green-500/5 p-3 transition-colors hover:bg-green-500/10"
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-mono">{file.path}</span>
-                              <span className={`text-xs tracking-wider ${getFileStatusColor(file.status)}`}>
+                              <span className="font-mono text-xs">
+                                {file.path}
+                              </span>
+                              <span
+                                className={`text-xs tracking-wider ${getFileStatusColor(file.status)}`}
+                              >
                                 {file.status.toUpperCase()}
                               </span>
                             </div>
@@ -524,12 +583,12 @@ export function GitPanel(): JSX.Element {
 
                   {/* 无变更 / No Changes */}
                   {fileChanges.length === 0 && (
-                    <div className="text-center py-12">
-                      <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-green-500/50" />
+                    <div className="py-12 text-center">
+                      <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-500/50" />
                       <p className="tracking-wider text-green-500/70">
                         NO CHANGES / 无变更
                       </p>
-                      <p className="text-xs text-green-500/50 mt-2">
+                      <p className="mt-2 text-xs text-green-500/50">
                         WORKING DIRECTORY CLEAN / 工作目录干净
                       </p>
                     </div>
@@ -543,17 +602,17 @@ export function GitPanel(): JSX.Element {
 
       {/* 提交对话框 / Commit Dialog */}
       {showCommitDialog && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md bg-black border border-green-500 rounded-lg p-6"
+            className="w-full max-w-md rounded-lg border border-green-500 bg-black p-6"
           >
-            <h3 className="tracking-wider mb-4">COMMIT CHANGES / 提交变更</h3>
+            <h3 className="mb-4 tracking-wider">COMMIT CHANGES / 提交变更</h3>
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs tracking-wider text-green-500/70 mb-2 block">
+                <label className="mb-2 block text-xs tracking-wider text-green-500/70">
                   COMMIT MESSAGE / 提交消息
                 </label>
                 <textarea
@@ -561,7 +620,7 @@ export function GitPanel(): JSX.Element {
                   onChange={(e) => setCommitMessage(e.target.value)}
                   placeholder="Enter commit message..."
                   rows={4}
-                  className="w-full px-3 py-2 bg-black border border-green-500/30 rounded text-green-500 placeholder-green-500/30 focus:outline-none focus:border-green-500 resize-none"
+                  className="w-full resize-none rounded border border-green-500/30 bg-black px-3 py-2 text-green-500 placeholder-green-500/30 focus:border-green-500 focus:outline-none"
                 />
               </div>
 
@@ -573,7 +632,7 @@ export function GitPanel(): JSX.Element {
                 <button
                   onClick={handleCommit}
                   disabled={!commitMessage.trim() || isOperating}
-                  className="flex-1 px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 rounded tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 rounded border border-green-500/30 bg-green-500/10 px-4 py-2 tracking-wider transition-colors hover:bg-green-500/20 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isOperating ? 'COMMITTING... / 提交中...' : 'COMMIT / 提交'}
                 </button>
@@ -583,7 +642,7 @@ export function GitPanel(): JSX.Element {
                     setShowCommitDialog(false);
                     setCommitMessage('');
                   }}
-                  className="px-4 py-2 hover:bg-green-500/10 border border-green-500/30 rounded tracking-wider transition-colors"
+                  className="rounded border border-green-500/30 px-4 py-2 tracking-wider transition-colors hover:bg-green-500/10"
                 >
                   CANCEL / 取消
                 </button>

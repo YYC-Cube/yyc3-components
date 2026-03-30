@@ -1,7 +1,7 @@
 /**
  * Git 类型定义
  * Git Type Definitions
- * 
+ *
  * @module types/git
  */
 
@@ -78,14 +78,14 @@ export interface GitCommit {
 /**
  * Git 文件状态 / Git file status
  */
-export type GitFileStatus = 
-  | 'untracked'    // 未跟踪 / Untracked
-  | 'modified'     // 已修改 / Modified
-  | 'added'        // 新增 / Added
-  | 'deleted'      // 已删除 / Deleted
-  | 'renamed'      // 重命名 / Renamed
-  | 'copied'       // 复制 / Copied
-  | 'unmerged';    // 未合并 / Unmerged
+export type GitFileStatus =
+  | 'untracked' // 未跟踪 / Untracked
+  | 'modified' // 已修改 / Modified
+  | 'added' // 新增 / Added
+  | 'deleted' // 已删除 / Deleted
+  | 'renamed' // 重命名 / Renamed
+  | 'copied' // 复制 / Copied
+  | 'unmerged'; // 未合并 / Unmerged
 
 /**
  * Git 文件变更 / Git file change
@@ -108,19 +108,19 @@ export interface GitFileChange {
 /**
  * Git 操作类型 / Git operation type
  */
-export type GitOperation = 
-  | 'pull'         // 拉取 / Pull
-  | 'push'         // 推送 / Push
-  | 'commit'       // 提交 / Commit
-  | 'checkout'     // 检出 / Checkout
-  | 'merge'        // 合并 / Merge
-  | 'rebase'       // 变基 / Rebase
-  | 'stash'        // 暂存 / Stash
-  | 'reset'        // 重置 / Reset
-  | 'fetch'        // 获取 / Fetch
-  | 'clone'        // 克隆 / Clone
-  | 'init'         // 初始化 / Init
-  | 'status';      // 状态 / Status
+export type GitOperation =
+  | 'pull' // 拉取 / Pull
+  | 'push' // 推送 / Push
+  | 'commit' // 提交 / Commit
+  | 'checkout' // 检出 / Checkout
+  | 'merge' // 合并 / Merge
+  | 'rebase' // 变基 / Rebase
+  | 'stash' // 暂存 / Stash
+  | 'reset' // 重置 / Reset
+  | 'fetch' // 获取 / Fetch
+  | 'clone' // 克隆 / Clone
+  | 'init' // 初始化 / Init
+  | 'status'; // 状态 / Status
 
 /**
  * Git 操作结果 / Git operation result
@@ -267,12 +267,12 @@ export interface GitMetrics {
  */
 export interface GitStatusEvent {
   /** 事件类型 / Event type */
-  type: 
-    | 'repository_changed'    // 仓库变更 / Repository changed
-    | 'branch_changed'        // 分支变更 / Branch changed
-    | 'files_changed'         // 文件变更 / Files changed
-    | 'operation_completed'   // 操作完成 / Operation completed
-    | 'error';                // 错误 / Error
+  type:
+    | 'repository_changed' // 仓库变更 / Repository changed
+    | 'branch_changed' // 分支变更 / Branch changed
+    | 'files_changed' // 文件变更 / Files changed
+    | 'operation_completed' // 操作完成 / Operation completed
+    | 'error'; // 错误 / Error
   /** 事件数据 / Event data */
   data: unknown;
   /** 事件时间戳 / Event timestamp */

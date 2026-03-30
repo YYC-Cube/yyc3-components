@@ -28,8 +28,13 @@
  * notes: 支持多种操作系统和 Shell 类型
  */
 
-export type TerminalSessionStatus = "idle" | "active" | "running" | "exited" | "error";
-export type ShellType = "bash" | "zsh" | "sh" | "powershell" | "cmd" | "fish";
+export type TerminalSessionStatus =
+  | 'idle'
+  | 'active'
+  | 'running'
+  | 'exited'
+  | 'error';
+export type ShellType = 'bash' | 'zsh' | 'sh' | 'powershell' | 'cmd' | 'fish';
 
 export interface TerminalSessionConfig {
   shell: ShellType;
@@ -54,7 +59,13 @@ export interface TerminalSession {
   historyCount: number;
 }
 
-export type CommandExecutionStatus = "pending" | "running" | "success" | "failed" | "timeout" | "cancelled";
+export type CommandExecutionStatus =
+  | 'pending'
+  | 'running'
+  | 'success'
+  | 'failed'
+  | 'timeout'
+  | 'cancelled';
 
 export interface CommandExecutionResult {
   command: string;

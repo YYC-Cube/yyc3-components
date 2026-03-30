@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  deepClone,
-  unique,
-  groupBy,
-  chunk,
-} from '../src/data';
+import { deepClone, unique, groupBy, chunk } from '../src/data';
 
 describe('Data Utilities', () => {
   describe('deepClone', () => {

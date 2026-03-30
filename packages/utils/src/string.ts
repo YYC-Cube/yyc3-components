@@ -12,8 +12,14 @@
  * @param suffix - 后缀 (默认为"...")
  * @returns 截断后的字符串
  */
-export function truncate(str: string, maxLength: number, suffix: string = '...'): string {
-  if (str.length <= maxLength) {return str;}
+export function truncate(
+  str: string,
+  maxLength: number,
+  suffix: string = '...'
+): string {
+  if (str.length <= maxLength) {
+    return str;
+  }
   return str.slice(0, maxLength - suffix.length) + suffix;
 }
 
@@ -23,7 +29,9 @@ export function truncate(str: string, maxLength: number, suffix: string = '...')
  * @returns 首字母大写的字符串
  */
 export function capitalize(str: string): string {
-  if (!str) {return '';}
+  if (!str) {
+    return '';
+  }
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
@@ -67,7 +75,7 @@ export function randomString(
  * @returns UUID字符串
  */
 export function uuid(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -84,7 +92,9 @@ export function interpolate(
   template: string,
   vars?: Record<string, string | number>
 ): string {
-  if (!vars) {return template;}
+  if (!vars) {
+    return template;
+  }
   return template.replace(/\{(\w+)\}/g, (_, key) =>
     vars[key] !== undefined ? String(vars[key]) : `{${key}}`
   );
@@ -103,7 +113,7 @@ export function escapeHtml(str: string): string {
     '"': '&quot;',
     "'": '&#39;',
   };
-  return str.replace(/[&<>"']/g, char => htmlEscapes[char]);
+  return str.replace(/[&<>"']/g, (char) => htmlEscapes[char]);
 }
 
 /**
@@ -119,7 +129,10 @@ export function unescapeHtml(str: string): string {
     '&quot;': '"',
     '&#39;': "'",
   };
-  return str.replace(/&amp;|&lt;|&gt;|&quot;|&#39;/g, char => htmlUnescapes[char]);
+  return str.replace(
+    /&amp;|&lt;|&gt;|&quot;|&#39;/g,
+    (char) => htmlUnescapes[char]
+  );
 }
 
 /**
@@ -147,9 +160,15 @@ export function removeWhitespace(str: string): string {
  * @param suffix - 后缀 (默认为"...")
  * @returns 截断后的字符串
  */
-export function truncateByWords(str: string, maxWords: number, suffix: string = '...'): string {
+export function truncateByWords(
+  str: string,
+  maxWords: number,
+  suffix: string = '...'
+): string {
   const words = str.split(/\s+/);
-  if (words.length <= maxWords) {return str;}
+  if (words.length <= maxWords) {
+    return str;
+  }
   return words.slice(0, maxWords).join(' ') + suffix;
 }
 

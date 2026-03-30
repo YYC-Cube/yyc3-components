@@ -30,7 +30,11 @@ pnpm add @yyc3/diagnostics
 ## 快速开始 / Quick Start
 
 ```tsx
-import { runDiagnostics, clearAllData, repairConfigData } from '@yyc3/diagnostics';
+import {
+  runDiagnostics,
+  clearAllData,
+  repairConfigData,
+} from '@yyc3/diagnostics';
 
 function DiagnosticsPage() {
   const handleRunDiagnostics = () => {
@@ -72,7 +76,7 @@ function DiagnosticsPage() {
 执行完整系统诊断。
 
 ```typescript
-function runDiagnostics(): DiagnosticReport
+function runDiagnostics(): DiagnosticReport;
 ```
 
 #### 返回值 / Returns
@@ -94,7 +98,7 @@ interface DiagnosticReport {
 清除所有应用数据。
 
 ```typescript
-function clearAllData(): { success: boolean; error?: string }
+function clearAllData(): { success: boolean; error?: string };
 ```
 
 ---
@@ -104,7 +108,11 @@ function clearAllData(): { success: boolean; error?: string }
 修复损坏的配置数据。
 
 ```typescript
-function repairConfigData(): { success: boolean; repaired: string[]; error?: string }
+function repairConfigData(): {
+  success: boolean;
+  repaired: string[];
+  error?: string;
+};
 ```
 
 ---
@@ -114,7 +122,7 @@ function repairConfigData(): { success: boolean; repaired: string[]; error?: str
 格式化诊断报告为可读文本。
 
 ```typescript
-function formatDiagnosticReport(report: DiagnosticReport): string
+function formatDiagnosticReport(report: DiagnosticReport): string;
 ```
 
 ---
@@ -156,9 +164,7 @@ const handleRunDiagnostics = () => {
 return (
   <div>
     <button onClick={handleRunDiagnostics}>Run Diagnostics</button>
-    {report && (
-      <pre>{formatDiagnosticReport(report)}</pre>
-    )}
+    {report && <pre>{formatDiagnosticReport(report)}</pre>}
   </div>
 );
 ```
@@ -218,9 +224,9 @@ MIT License
 
 <div align="center">
 
-> 「***YanYuCloudCube***」
-> 「***<admin@0379.email>***」
-> 「***Words Initiate Quadrants, Language Serves as Core for Future***」
-> 「***All things converge in cloud pivot; Deep stacks ignite a new era of intelligence***」
+> 「**_YanYuCloudCube_**」
+> 「**_<admin@0379.email>_**」
+> 「**_Words Initiate Quadrants, Language Serves as Core for Future_**」
+> 「**_All things converge in cloud pivot; Deep stacks ignite a new era of intelligence_**」
 
 </div>

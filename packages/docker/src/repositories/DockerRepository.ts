@@ -39,10 +39,15 @@ export const dockerRepository = {
       timestamp: new Date().toISOString(),
     };
   },
-  async createContainer(_config: ContainerCreateConfig): Promise<string | null> {
+  async createContainer(
+    _config: ContainerCreateConfig
+  ): Promise<string | null> {
     return null;
   },
-  async getContainerLogs(_containerId: string, _tail?: number): Promise<DockerLogEntry[]> {
+  async getContainerLogs(
+    _containerId: string,
+    _tail?: number
+  ): Promise<DockerLogEntry[]> {
     return [];
   },
 };

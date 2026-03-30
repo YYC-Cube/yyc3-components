@@ -16,21 +16,14 @@ YYC3 Git 版本控制库 - 完整的 Git 仓库管理功能。
 import { useGit } from '@yyc3/git';
 
 function GitPanel() {
-  const {
-    repoInfo,
-    branches,
-    commits,
-    gitStatus,
-    commit,
-    push,
-    pull
-  } = useGit();
+  const { repoInfo, branches, commits, gitStatus, commit, push, pull } =
+    useGit();
 
   return (
     <div>
       <h1>Git Repository</h1>
       <p>Branch: {repoInfo.currentBranch}</p>
-      {commits.map(commit => (
+      {commits.map((commit) => (
         <div key={commit.hash}>
           {commit.message} - {commit.author}
         </div>

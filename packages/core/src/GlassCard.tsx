@@ -10,8 +10,8 @@
  * - 完整的响应式设计
  */
 
-import React, { forwardRef } from "react";
-import type { BaseComponentProps } from "@yyc3/types";
+import React, { forwardRef } from 'react';
+import type { BaseComponentProps } from '@yyc3/types';
 
 export interface GlassCardProps extends BaseComponentProps {
   children: React.ReactNode;
@@ -27,24 +27,26 @@ export interface GlassCardProps extends BaseComponentProps {
 }
 
 export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
-  ({ children, className = "", glowColor, clickable = false, onClick, style, ...rest }, ref) => {
+  (
+    {
+      children,
+      className = '',
+      glowColor,
+      clickable = false,
+      onClick,
+      style,
+      ...rest
+    },
+    ref
+  ) => {
     return (
       <div
         ref={ref}
         onClick={onClick}
-        className={`
-          relative rounded-xl
-          bg-white/70 dark:bg-gray-800/70
-          backdrop-blur-xl
-          border border-gray-200/50 dark:border-gray-700/50
-          shadow-lg
-          transition-all duration-300
-          hover:border-gray-300 dark:hover:border-gray-600
-          hover:shadow-xl
-          ${clickable ? "cursor-pointer active:scale-[0.99]" : ""}
-          ${className}
-        `}
-        style={glowColor ? { boxShadow: `0 0 30px ${glowColor}`, ...style } : style}
+        className={`relative rounded-xl border border-gray-200/50 bg-white/70 shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-gray-300 hover:shadow-xl dark:border-gray-700/50 dark:bg-gray-800/70 dark:hover:border-gray-600 ${clickable ? 'cursor-pointer active:scale-[0.99]' : ''} ${className} `}
+        style={
+          glowColor ? { boxShadow: `0 0 30px ${glowColor}`, ...style } : style
+        }
         {...rest}
       >
         {children}
@@ -53,4 +55,4 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
   }
 );
 
-GlassCard.displayName = "GlassCard";
+GlassCard.displayName = 'GlassCard';

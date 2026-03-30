@@ -27,11 +27,17 @@
  */
 
 // Components
-export { TypingIndicator } from "./components/TypingIndicator";
+export { TypingIndicator } from './components/TypingIndicator';
 
 // Hooks
-export { useChatPersistence } from "./useChatPersistence";
-export { useChannelManager } from "./useChannelManager";
+export { useChatPersistence } from './useChatPersistence';
+export { useChannelManager } from './useChannelManager';
 
 // Types
-export type { Chat, Message, Channel, UseChatPersistenceReturn, UseChannelManagerReturn } from "./types";
+export type {
+  Chat,
+  Message,
+  Channel,
+  UseChatPersistenceReturn,
+  UseChannelManagerReturn,
+} from './types';

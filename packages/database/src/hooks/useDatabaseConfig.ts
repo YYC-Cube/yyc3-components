@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
-import { databaseService } from "../services/DatabaseService";
+import { useState, useEffect, useCallback } from 'react';
+import { databaseService } from '../services/DatabaseService';
 import type {
   DatabaseConfig,
   LocalAPIProxyConfig,
   ConnectionHealth,
   SyncStrategy,
-} from "../services/DatabaseService";
-import type { ConnectionStatus } from "../types/database";
+} from '../services/DatabaseService';
+import type { ConnectionStatus } from '../types/database';
 
 /**
  * useDatabaseConfig Hook 返回类型 / useDatabaseConfig Hook return type
@@ -42,7 +42,8 @@ export function useDatabaseConfig(): UseDatabaseConfigReturn {
   const [proxyConfig, setProxyConfig] = useState<LocalAPIProxyConfig>(() =>
     databaseService.getProxyConfig()
   );
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("disconnected");
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>('disconnected');
   const [health, setHealth] = useState<ConnectionHealth | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
@@ -71,13 +72,18 @@ export function useDatabaseConfig(): UseDatabaseConfigReturn {
       setConnectionStatus(event.currentStatus);
 
       // 从 Mock 恢复到真实连接时，更新状态 / When recovering from mock to real, update state
-      if (event.previousStatus === "error" && event.currentStatus === "connected") {
+      if (
+        event.previousStatus === 'error' &&
+        event.currentStatus === 'connected'
+      ) {
         setLastError(null);
       }
 
       // 进入 Mock 模式时，记录错误 / When entering mock mode, record error
-      if (event.isMockMode && event.currentStatus === "error") {
-        setLastError(`MOCK_MODE_ACTIVE / 模拟模式激活 (重连尝试: ${event.reconnectAttempts})`);
+      if (event.isMockMode && event.currentStatus === 'error') {
+        setLastError(
+          `MOCK_MODE_ACTIVE / 模拟模式激活 (重连尝试: ${event.reconnectAttempts})`
+        );
       }
     });
 
@@ -87,11 +93,14 @@ export function useDatabaseConfig(): UseDatabaseConfigReturn {
   /**
    * 保存数据库配置 / Save database config
    */
-  const saveConfig = useCallback((newConfig: Partial<DatabaseConfig>) => {
-    const updated = { ...config, ...newConfig };
-    setConfig(updated);
-    databaseService.saveConfig(updated);
-  }, [config]);
+  const saveConfig = useCallback(
+    (newConfig: Partial<DatabaseConfig>) => {
+      const updated = { ...config, ...newConfig };
+      setConfig(updated);
+      databaseService.saveConfig(updated);
+    },
+    [config]
+  );
 
   /**
    * 保存代理配置 / Save proxy config
@@ -112,21 +121,23 @@ export function useDatabaseConfig(): UseDatabaseConfigReturn {
     try {
       setIsConnecting(true);
       setLastError(null);
-      setConnectionStatus("connecting");
+      setConnectionStatus('connecting');
 
       const result = await databaseService.initializeConnection(config);
 
       if (result.success) {
-        setConnectionStatus("connected");
+        setConnectionStatus('connected');
         return true;
       } else {
-        setConnectionStatus("error");
+        setConnectionStatus('error');
         setLastError(result.error);
         return false;
       }
     } catch (error) {
-      setConnectionStatus("error");
-      setLastError(error instanceof Error ? error.message : "UNKNOWN_ERROR / 未知错误");
+      setConnectionStatus('error');
+      setLastError(
+        error instanceof Error ? error.message : 'UNKNOWN_ERROR / 未知错误'
+      );
       return false;
     } finally {
       setIsConnecting(false);
@@ -138,7 +149,7 @@ export function useDatabaseConfig(): UseDatabaseConfigReturn {
    */
   const disconnect = useCallback(() => {
     databaseService.disconnect();
-    setConnectionStatus("disconnected");
+    setConnectionStatus('disconnected');
     setHealth(null);
     setLastError(null);
   }, []);
@@ -158,11 +169,13 @@ export function useDatabaseConfig(): UseDatabaseConfigReturn {
 
       // 测试后断开 / Disconnect after test
       databaseService.disconnect();
-      setConnectionStatus("disconnected");
+      setConnectionStatus('disconnected');
 
       return success;
     } catch (error) {
-      setLastError(error instanceof Error ? error.message : "TEST_FAILED / 测试失败");
+      setLastError(
+        error instanceof Error ? error.message : 'TEST_FAILED / 测试失败'
+      );
       return false;
     } finally {
       setIsConnecting(false);

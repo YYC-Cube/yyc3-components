@@ -1,10 +1,10 @@
 /**
  * Git 服务层
  * Git Service Layer
- * 
+ *
  * 负责 Git 业务逻辑处理和状态管理
  * Responsible for Git business logic and state management
- * 
+ *
  * @module services/GitService
  */
 
@@ -74,14 +74,14 @@ class GitServiceClass {
   /**
    * 打开仓库 / Open repository
    */
-  async openRepository(path: string): Promise<GitRepository> {
+  openRepository(path: string): GitRepository {
     try {
-      const repo = await gitRepository.getRepositoryStatus(path) as any;
+      const repo = gitRepository.getRepositoryStatus(path) as any;
       this.currentRepository = repo;
       gitRepository.setCurrentPath(path);
 
       // 加载仓库数据 / Load repository data
-      await this.loadRepositoryData(path);
+      this.loadRepositoryData(path);
 
       this.notifyObservers({
         type: 'repository_changed',
@@ -103,24 +103,15 @@ class GitServiceClass {
   /**
    * 加载仓库数据 / Load repository data
    */
-  private async loadRepositoryData(path: string): Promise<void> {
+  private loadRepositoryData(path: string): void {
     try {
-      // 并行加载所有数据 / Load all data in parallel
-      const [branches, commits, fileChanges, remotes, tags, config] = await Promise.all([
-        gitRepository.getBranches(path),
-        gitRepository.getCommitHistory(path, 50),
-        gitRepository.getFileChanges(path),
-        gitRepository.getRemotes(path),
-        gitRepository.getTags(path),
-        gitRepository.getConfig(path),
-      ]);
-
-      this.branches = branches as any;
-      this.commits = commits as any;
-      this.fileChanges = fileChanges as any;
-      this.remotes = remotes as any;
-      this.tags = tags as any;
-      this.config = config as any;
+      // 加载所有数据 / Load all data
+      this.branches = gitRepository.getBranches(path) as any;
+      this.commits = gitRepository.getCommitHistory(path, 50) as any;
+      this.fileChanges = gitRepository.getFileChanges(path) as any;
+      this.remotes = gitRepository.getRemotes(path) as any;
+      this.tags = gitRepository.getTags(path) as any;
+      this.config = gitRepository.getConfig(path) as any;
 
       // 更新指标 / Update metrics
       this.updateMetrics();
@@ -132,13 +123,15 @@ class GitServiceClass {
   /**
    * 刷新仓库状态 / Refresh repository status
    */
-  async refresh(): Promise<void> {
+  refresh(): void {
     const path = gitRepository.getCurrentPath();
-    if (!path) {return;}
+    if (!path) {
+      return;
+    }
 
     try {
-      await this.loadRepositoryData(path);
-      const repo = await gitRepository.getRepositoryStatus(path) as any;
+      this.loadRepositoryData(path);
+      const repo = gitRepository.getRepositoryStatus(path) as any;
       this.currentRepository = repo;
 
       this.notifyObservers({
@@ -166,7 +159,7 @@ class GitServiceClass {
    * 获取当前分支 / Get current branch
    */
   getCurrentBranch(): GitBranch | null {
-    return this.branches.find(b => b.isCurrent) || null;
+    return this.branches.find((b) => b.isCurrent) || null;
   }
 
   /**
@@ -187,14 +180,14 @@ class GitServiceClass {
    * 获取已暂存文件 / Get staged files
    */
   getStagedFiles(): GitFileChange[] {
-    return this.fileChanges.filter(f => f.isStaged);
+    return this.fileChanges.filter((f) => f.isStaged);
   }
 
   /**
    * 获取未暂存文件 / Get unstaged files
    */
   getUnstagedFiles(): GitFileChange[] {
-    return this.fileChanges.filter(f => !f.isStaged);
+    return this.fileChanges.filter((f) => !f.isStaged);
   }
 
   /**
@@ -230,26 +223,36 @@ class GitServiceClass {
    */
   private updateMetrics(): void {
     const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
     const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
     // 统计提交数 / Count commits
-    const commitsToday = this.commits.filter(c => c.timestamp >= todayStart).length;
-    const commitsThisWeek = this.commits.filter(c => c.timestamp >= weekStart).length;
-    const commitsThisMonth = this.commits.filter(c => c.timestamp >= monthStart).length;
+    const commitsToday = this.commits.filter(
+      (c) => c.timestamp >= todayStart
+    ).length;
+    const commitsThisWeek = this.commits.filter(
+      (c) => c.timestamp >= weekStart
+    ).length;
+    const commitsThisMonth = this.commits.filter(
+      (c) => c.timestamp >= monthStart
+    ).length;
 
     // 统计贡献者 / Count contributors
-    const contributors = new Set(this.commits.map(c => c.authorEmail));
+    const contributors = new Set(this.commits.map((c) => c.authorEmail));
 
     // 查找最活跃分支 / Find most active branch
     const branchCommits = new Map<string, number>();
-    this.commits.forEach(commit => {
-      commit.branches.forEach(branch => {
+    this.commits.forEach((commit) => {
+      commit.branches.forEach((branch) => {
         branchCommits.set(branch, (branchCommits.get(branch) || 0) + 1);
       });
     });
-    
+
     let mostActiveBranch: string | undefined;
     let maxCommits = 0;
     branchCommits.forEach((count, branch) => {
@@ -286,10 +289,10 @@ class GitServiceClass {
     try {
       const result = await gitRepository.commit(path, options);
       const duration = Date.now() - startTime;
-      
+
       if (result.success) {
         await this.refresh();
-        
+
         this.notifyObservers({
           type: 'operation_completed',
           data: result,
@@ -328,10 +331,10 @@ class GitServiceClass {
     try {
       const result = await gitRepository.push(path, options);
       const duration = Date.now() - startTime;
-      
+
       if (result.success) {
         await this.refresh();
-        
+
         this.notifyObservers({
           type: 'operation_completed',
           data: result,
@@ -370,10 +373,10 @@ class GitServiceClass {
     try {
       const result = await gitRepository.pull(path, options);
       const duration = Date.now() - startTime;
-      
+
       if (result.success) {
         await this.refresh();
-        
+
         this.notifyObservers({
           type: 'operation_completed',
           data: result,
@@ -412,10 +415,10 @@ class GitServiceClass {
     try {
       const result = await gitRepository.checkout(path, options);
       const duration = Date.now() - startTime;
-      
+
       if (result.success) {
         await this.refresh();
-        
+
         this.notifyObservers({
           type: 'branch_changed',
           data: { branch: options.branch },
@@ -452,12 +455,14 @@ class GitServiceClass {
 
     const startTime = Date.now();
     try {
-      const result = await gitRepository.merge(path, { branch: options.sourceBranch, strategy: options.strategy });
+      const result = await gitRepository.merge(path, {
+        branch: options.source,
+      });
       const duration = Date.now() - startTime;
-      
+
       if (result.success) {
         await this.refresh();
-        
+
         this.notifyObservers({
           type: 'operation_completed',
           data: result,
@@ -468,7 +473,9 @@ class GitServiceClass {
       return {
         operation: 'merge',
         success: result.success,
-        output: result.conflicts ? `Merge with conflicts: ${result.conflicts.join(', ')}` : 'Merge completed',
+        output: result.conflicts
+          ? `Merge with conflicts: ${result.conflicts.join(', ')}`
+          : 'Merge completed',
         error: result.error,
         timestamp: new Date(),
         duration,
@@ -516,7 +523,7 @@ class GitServiceClass {
    */
   startAutoRefresh(intervalMs: number = 10000): void {
     this.stopAutoRefresh();
-    
+
     this.refreshInterval = setInterval(() => {
       this.refresh();
     }, intervalMs);
@@ -537,7 +544,7 @@ class GitServiceClass {
    */
   onStatusChange(callback: StatusChangeCallback): () => void {
     this.observers.add(callback);
-    
+
     // 返回取消订阅函数 / Return unsubscribe function
     return () => {
       this.observers.delete(callback);
@@ -548,7 +555,7 @@ class GitServiceClass {
    * 通知观察者 / Notify observers
    */
   private notifyObservers(event: GitStatusEvent): void {
-    this.observers.forEach(callback => {
+    this.observers.forEach((callback) => {
       try {
         callback(event);
       } catch (error) {

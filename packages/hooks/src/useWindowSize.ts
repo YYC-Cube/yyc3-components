@@ -9,7 +9,7 @@
  * - 提供宽高信息
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 interface WindowSize {
   width: number;
@@ -24,7 +24,7 @@ export function useWindowSize(): WindowSize {
 
   useEffect(() => {
     // SSR 安全检查
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     const handleResize = () => {
       setWindowSize({
@@ -36,8 +36,8 @@ export function useWindowSize(): WindowSize {
     // 初始化
     handleResize();
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return windowSize;

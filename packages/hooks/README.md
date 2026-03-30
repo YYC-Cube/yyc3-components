@@ -25,6 +25,7 @@ YYC3可复用组件库 - 自定义Hooks包
 完整的国际化解决方案，支持动态切换语言。
 
 **功能**:
+
 - localStorage持久化语言偏好
 - React Context全局共享
 - 动态切换无需刷新
@@ -33,16 +34,16 @@ YYC3可复用组件库 - 自定义Hooks包
 **使用示例**:
 
 ```tsx
-import { I18nProvider, useI18n } from "@yyc3/hooks";
+import { I18nProvider, useI18n } from '@yyc3/hooks';
 
 const messages = {
-  "zh-CN": {
-    welcome: "欢迎使用",
-    greeting: "你好, {name}!",
+  'zh-CN': {
+    welcome: '欢迎使用',
+    greeting: '你好, {name}!',
   },
-  "en-US": {
-    welcome: "Welcome",
-    greeting: "Hello, {name}!",
+  'en-US': {
+    welcome: 'Welcome',
+    greeting: 'Hello, {name}!',
   },
 };
 
@@ -59,8 +60,8 @@ function Child() {
 
   return (
     <div>
-      <p>{t("welcome")}</p>
-      <p>{t("greeting", { name: "World" })}</p>
+      <p>{t('welcome')}</p>
+      <p>{t('greeting', { name: 'World' })}</p>
       <select value={locale} onChange={(e) => setLocale(e.target.value as any)}>
         {availableLocales.map((loc) => (
           <option key={loc.code} value={loc.code}>
@@ -75,28 +76,29 @@ function Child() {
 
 **Props (I18nProvider)**:
 
-| Prop | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `children` | `ReactNode` | - | 子组件 |
-| `defaultLocale` | `Locale` | `"zh-CN"` | 默认语言 |
-| `messages` | `Record<Locale, I18nMessages>` | - | 翻译消息 |
-| `availableLocales` | `LocaleInfo[]` | 中英文 | 可用语言列表 |
-| `storageKey` | `string` | `"yyc3_locale"` | localStorage键名 |
+| Prop               | 类型                           | 默认值          | 说明             |
+| ------------------ | ------------------------------ | --------------- | ---------------- |
+| `children`         | `ReactNode`                    | -               | 子组件           |
+| `defaultLocale`    | `Locale`                       | `"zh-CN"`       | 默认语言         |
+| `messages`         | `Record<Locale, I18nMessages>` | -               | 翻译消息         |
+| `availableLocales` | `LocaleInfo[]`                 | 中英文          | 可用语言列表     |
+| `storageKey`       | `string`                       | `"yyc3_locale"` | localStorage键名 |
 
 **返回值 (useI18n)**:
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `locale` | `Locale` | 当前语言 |
-| `setLocale` | `(locale: Locale) => void` | 设置语言 |
-| `t` | `(key: string, vars?) => string` | 翻译函数 |
-| `availableLocales` | `LocaleInfo[]` | 可用语言列表 |
+| 属性               | 类型                             | 说明         |
+| ------------------ | -------------------------------- | ------------ |
+| `locale`           | `Locale`                         | 当前语言     |
+| `setLocale`        | `(locale: Locale) => void`       | 设置语言     |
+| `t`                | `(key: string, vars?) => string` | 翻译函数     |
+| `availableLocales` | `LocaleInfo[]`                   | 可用语言列表 |
 
 ### 2. useLocalStorage - 本地存储
 
 简化的localStorage操作Hook，支持自动同步和类型推断。
 
 **功能**:
+
 - 自动同步localStorage
 - 支持任意类型的数据
 - SSR安全
@@ -106,11 +108,11 @@ function Child() {
 **使用示例**:
 
 ```tsx
-import { useLocalStorage } from "@yyc3/hooks";
+import { useLocalStorage } from '@yyc3/hooks';
 
 function App() {
-  const [count, setCount, removeCount] = useLocalStorage("count", 0);
-  const [user, setUser, removeUser] = useLocalStorage("user", null);
+  const [count, setCount, removeCount] = useLocalStorage('count', 0);
+  const [user, setUser, removeUser] = useLocalStorage('user', null);
 
   return (
     <div>
@@ -124,24 +126,25 @@ function App() {
 
 **参数**:
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `key` | `string` | localStorage键名 |
-| `defaultValue` | `T` | 默认值 |
+| 参数           | 类型     | 说明             |
+| -------------- | -------- | ---------------- |
+| `key`          | `string` | localStorage键名 |
+| `defaultValue` | `T`      | 默认值           |
 
 **返回值**:
 
-| 索引 | 类型 | 说明 |
-|------|------|------|
-| 0 | `T` | 当前值 |
-| 1 | `(value: T \| ((prev: T) => T)) => void` | 设置值 |
-| 2 | `() => void` | 删除值 |
+| 索引 | 类型                                     | 说明   |
+| ---- | ---------------------------------------- | ------ |
+| 0    | `T`                                      | 当前值 |
+| 1    | `(value: T \| ((prev: T) => T)) => void` | 设置值 |
+| 2    | `() => void`                             | 删除值 |
 
 ### 3. useDebounce - 防抖
 
 防抖Hook，延迟执行函数。
 
 **功能**:
+
 - 延迟执行函数
 - 支持取消
 - 支持立即执行
@@ -149,15 +152,15 @@ function App() {
 **使用示例**:
 
 ```tsx
-import { useDebounce, useDebouncedCallback } from "@yyc3/hooks";
+import { useDebounce, useDebouncedCallback } from '@yyc3/hooks';
 
 function Search() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 500);
 
   const handleClick = useDebouncedCallback(
     () => {
-      console.log("Clicked!");
+      console.log('Clicked!');
     },
     300,
     { leading: true }
@@ -182,6 +185,7 @@ function Search() {
 监听媒体查询变化的Hook。
 
 **功能**:
+
 - 监听媒体查询变化
 - SSR安全
 - 支持自定义查询
@@ -189,24 +193,25 @@ function Search() {
 **使用示例**:
 
 ```tsx
-import { useMediaQuery, useIsMobile, useIsDarkMode } from "@yyc3/hooks";
+import { useMediaQuery, useIsMobile, useIsDarkMode } from '@yyc3/hooks';
 
 function Responsive() {
   const isMobile = useIsMobile();
   const isDarkMode = useIsDarkMode();
-  const isLarge = useMediaQuery("(min-width: 1200px)");
+  const isLarge = useMediaQuery('(min-width: 1200px)');
 
   return (
     <div>
-      <p>Mobile: {isMobile ? "Yes" : "No"}</p>
-      <p>Dark Mode: {isDarkMode ? "Yes" : "No"}</p>
-      <p>Large Screen: {isLarge ? "Yes" : "No"}</p>
+      <p>Mobile: {isMobile ? 'Yes' : 'No'}</p>
+      <p>Dark Mode: {isDarkMode ? 'Yes' : 'No'}</p>
+      <p>Large Screen: {isLarge ? 'Yes' : 'No'}</p>
     </div>
   );
 }
 ```
 
 **可用的Hooks**:
+
 - `useMediaQuery(query: string)` - 自定义查询
 - `useIsMobile()` - 移动设备 (max-width: 768px)
 - `useIsTablet()` - 平板设备 (769px-1024px)
@@ -219,22 +224,21 @@ function Responsive() {
 简化的布尔值状态管理Hook。
 
 **功能**:
+
 - 简单的布尔值状态管理
 - 提供便捷的切换方法
 
 **使用示例**:
 
 ```tsx
-import { useToggle } from "@yyc3/hooks";
+import { useToggle } from '@yyc3/hooks';
 
 function Modal() {
   const [isOpen, { toggle, setTrue, setFalse }] = useToggle(false);
 
   return (
     <div>
-      <button onClick={toggle}>
-        {isOpen ? "Close" : "Open"} Modal
-      </button>
+      <button onClick={toggle}>{isOpen ? 'Close' : 'Open'} Modal</button>
       <button onClick={setTrue}>Open</button>
       <button onClick={setFalse}>Close</button>
 
@@ -246,16 +250,17 @@ function Modal() {
 
 **返回值**:
 
-| 索引 | 类型 | 说明 |
-|------|------|------|
-| 0 | `boolean` | 当前值 |
-| 1 | `{ toggle, setTrue, setFalse }` | 操作方法 |
+| 索引 | 类型                            | 说明     |
+| ---- | ------------------------------- | -------- |
+| 0    | `boolean`                       | 当前值   |
+| 1    | `{ toggle, setTrue, setFalse }` | 操作方法 |
 
 ### 6. useClickOutside - 点击外部检测
 
 检测点击是否在元素外部的Hook。
 
 **功能**:
+
 - 检测点击是否在元素外部
 - 支持多个ref
 - 支持自定义事件
@@ -263,8 +268,8 @@ function Modal() {
 **使用示例**:
 
 ```tsx
-import { useClickOutside } from "@yyc3/hooks";
-import { useRef } from "react";
+import { useClickOutside } from '@yyc3/hooks';
+import { useRef } from 'react';
 
 function Dropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -287,17 +292,18 @@ function Dropdown() {
 
 **参数**:
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `ref` | `RefObject \| RefObject[]` | - | 元素引用 |
-| `handler` | `(event) => void` | - | 点击外部时的回调 |
-| `active` | `boolean` | `true` | 是否激活检测 |
+| 参数      | 类型                       | 默认值 | 说明             |
+| --------- | -------------------------- | ------ | ---------------- |
+| `ref`     | `RefObject \| RefObject[]` | -      | 元素引用         |
+| `handler` | `(event) => void`          | -      | 点击外部时的回调 |
+| `active`  | `boolean`                  | `true` | 是否激活检测     |
 
 ### 7. useWindowSize - 窗口尺寸
 
 实时监听窗口尺寸变化的Hook。
 
 **功能**:
+
 - 实时监听窗口尺寸变化
 - SSR安全
 - 提供宽高信息
@@ -305,7 +311,7 @@ function Dropdown() {
 **使用示例**:
 
 ```tsx
-import { useWindowSize, useWindowWidth, useWindowHeight } from "@yyc3/hooks";
+import { useWindowSize, useWindowWidth, useWindowHeight } from '@yyc3/hooks';
 
 function WindowInfo() {
   const { width, height } = useWindowSize();
@@ -324,6 +330,7 @@ function WindowInfo() {
 ```
 
 **可用的Hooks**:
+
 - `useWindowSize()` - 返回 `{ width, height }`
 - `useWindowWidth()` - 返回窗口宽度
 - `useWindowHeight()` - 返回窗口高度
@@ -341,24 +348,24 @@ pnpm add @yyc3/hooks
 ## 🚀 快速开始
 
 ```tsx
-import { I18nProvider, useLocalStorage, useMediaQuery } from "@yyc3/hooks";
+import { I18nProvider, useLocalStorage, useMediaQuery } from '@yyc3/hooks';
 
 function App() {
   return (
-    <I18nProvider messages={{ "zh-CN": {}, "en-US": {} }}>
+    <I18nProvider messages={{ 'zh-CN': {}, 'en-US': {} }}>
       <Content />
     </I18nProvider>
   );
 }
 
 function Content() {
-  const [theme, setTheme] = useLocalStorage("theme", "light");
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [theme, setTheme] = useLocalStorage('theme', 'light');
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
     <div>
       <p>Theme: {theme}</p>
-      <p>Mobile: {isMobile ? "Yes" : "No"}</p>
+      <p>Mobile: {isMobile ? 'Yes' : 'No'}</p>
     </div>
   );
 }
@@ -372,35 +379,35 @@ function Content() {
 
 ```tsx
 const messages = {
-  "zh-CN": {
+  'zh-CN': {
     common: {
-      ok: "确定",
-      cancel: "取消",
-      delete: "删除",
+      ok: '确定',
+      cancel: '取消',
+      delete: '删除',
     },
     user: {
-      login: "登录",
-      logout: "退出",
-      profile: "个人资料",
+      login: '登录',
+      logout: '退出',
+      profile: '个人资料',
     },
   },
-  "en-US": {
+  'en-US': {
     common: {
-      ok: "OK",
-      cancel: "Cancel",
-      delete: "Delete",
+      ok: 'OK',
+      cancel: 'Cancel',
+      delete: 'Delete',
     },
     user: {
-      login: "Login",
-      logout: "Logout",
-      profile: "Profile",
+      login: 'Login',
+      logout: 'Logout',
+      profile: 'Profile',
     },
   },
 };
 
 // 使用
-t("common.ok");
-t("user.login");
+t('common.ok');
+t('user.login');
 ```
 
 ### 2. 防抖使用场景
@@ -413,11 +420,9 @@ useEffect(() => {
 }, [debouncedQuery]);
 
 // 按钮点击防抖
-const handleClick = useDebouncedCallback(
-  () => submitForm(),
-  1000,
-  { leading: true }
-);
+const handleClick = useDebouncedCallback(() => submitForm(), 1000, {
+  leading: true,
+});
 ```
 
 ### 3. 响应式设计
@@ -469,7 +474,7 @@ npm run dev
 ## 📄 依赖
 
 - `react`: >=18.0.0 (peer dependency)
-- `@yyc3/types`: workspace:* (dependency)
+- `@yyc3/types`: workspace:\* (dependency)
 
 ## 📝 许可证
 

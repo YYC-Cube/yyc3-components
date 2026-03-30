@@ -11,19 +11,20 @@
 
 ### 阶段划分
 
-| 阶段 | 名称 | 预估工时 | 状态 | 开始时间 |
-|------|------|----------|------|----------|
-| **Phase 1** | 评估与准备 | 1-2天 | 🟡 进行中 | 2026-03-26 |
-| **Phase 2** | 提取核心组件 | 5-10天 | ⏳ 待开始 | - |
-| **Phase 3** | 改造业务组件 | 20-30天 | ⏳ 待开始 | - |
-| **Phase 4** | 集成与测试 | 5-10天 | ⏳ 待开始 | - |
-| **Phase 5** | 文档与交付 | 3-5天 | ⏳ 待开始 | - |
+| 阶段        | 名称         | 预估工时 | 状态      | 开始时间   |
+| ----------- | ------------ | -------- | --------- | ---------- |
+| **Phase 1** | 评估与准备   | 1-2天    | 🟡 进行中 | 2026-03-26 |
+| **Phase 2** | 提取核心组件 | 5-10天   | ⏳ 待开始 | -          |
+| **Phase 3** | 改造业务组件 | 20-30天  | ⏳ 待开始 | -          |
+| **Phase 4** | 集成与测试   | 5-10天   | ⏳ 待开始 | -          |
+| **Phase 5** | 文档与交付   | 3-5天    | ⏳ 待开始 | -          |
 
 ---
 
 ## Phase 1: 评估与准备 (1-2天) 🟡 进行中
 
 ### 目标
+
 - 完成复用模块的详细评估
 - 创建复用项目目录结构
 - 配置开发环境
@@ -31,6 +32,7 @@
 ### 任务清单
 
 #### 1.1 复用模块评估 ✅ 已完成
+
 - [x] 审核可复用模块清单
 - [x] 评估复用成本
 - [x] 制定复用计划
@@ -39,6 +41,7 @@
 **输出**: `项目可复用内容统计报告.md`
 
 #### 1.2 创建项目结构 🟡 进行中
+
 创建复用项目的标准目录结构：
 
 ```
@@ -58,12 +61,14 @@
 ```
 
 **执行命令**:
+
 ```bash
 mkdir -p yyc3-reusable-components/packages/{ui,core,utils,hooks,types,error-handling,i18n,storage}
 mkdir -p yyc3-reusable-components/{docs,examples,scripts}
 ```
 
 #### 1.3 配置项目环境 🟡 进行中
+
 - [ ] 初始化package.json
 - [ ] 配置TypeScript
 - [ ] 配置构建工具
@@ -77,17 +82,20 @@ mkdir -p yyc3-reusable-components/{docs,examples,scripts}
 ## Phase 2: 提取核心组件 (5-10天) ⏳ 待开始
 
 ### 目标
+
 提取低耦合、高价值的组件，零改造或轻微改造即可复用
 
 ### 2.1 UI组件库提取 (1-2天) 🔴 P0
 
 #### 任务清单
+
 - [ ] 提取48个UI组件到 `packages/ui/`
 - [ ] 配置组件导出
 - [ ] 创建组件文档
 - [ ] 编写组件测试
 
 #### 组件清单
+
 ```
 packages/ui/
 ├── button.tsx              ✅ 强烈推荐
@@ -111,6 +119,7 @@ packages/ui/
 ```
 
 #### 执行步骤
+
 ```bash
 # 1. 创建包目录
 mkdir -p packages/ui/src
@@ -163,12 +172,14 @@ EOF
 ### 2.2 工具函数提取 (0.5天) 🔴 P0
 
 #### 任务清单
+
 - [ ] 提取工具函数到 `packages/utils/`
 - [ ] 配置函数导出
 - [ ] 创建函数文档
 - [ ] 编写函数测试
 
 #### 函数清单
+
 ```
 packages/utils/
 ├── color.ts                 # hexToRgb
@@ -179,6 +190,7 @@ packages/utils/
 ```
 
 #### 执行步骤
+
 ```bash
 # 1. 创建包目录
 mkdir -p packages/utils/src
@@ -209,11 +221,13 @@ EOF
 ### 2.3 类型定义提取 (0.5天) 🔴 P0
 
 #### 任务清单
+
 - [ ] 提取类型定义到 `packages/types/`
 - [ ] 配置类型导出
 - [ ] 创建类型文档
 
 #### 类型清单
+
 ```
 packages/types/
 ├── error.ts                 # AppError, ErrorCategory, ErrorSeverity
@@ -224,6 +238,7 @@ packages/types/
 ```
 
 #### 执行步骤
+
 ```bash
 # 1. 创建包目录
 mkdir -p packages/types/src
@@ -252,11 +267,13 @@ EOF
 ### 2.4 简单组件提取 (0.5天) 🔴 P0
 
 #### 任务清单
+
 - [ ] 提取FadeIn组件到 `packages/core/`
 - [ ] 提取GlassCard组件到 `packages/core/`
 - [ ] 创建组件文档
 
 #### 组件清单
+
 ```
 packages/core/
 ├── FadeIn.tsx              # 沙箱安全的动画组件
@@ -265,6 +282,7 @@ packages/core/
 ```
 
 #### 执行步骤
+
 ```bash
 # 1. 创建包目录
 mkdir -p packages/core/src
@@ -302,11 +320,13 @@ EOF
 ### 2.5 Hooks提取 (0.5天) 🟡 P1
 
 #### 任务清单
+
 - [ ] 提取useI18n到 `packages/hooks/`
 - [ ] 配置Hook导出
 - [ ] 创建Hook文档
 
 #### Hooks清单
+
 ```
 packages/hooks/
 ├── useI18n.ts              # 国际化Hook
@@ -318,22 +338,25 @@ packages/hooks/
 ## Phase 3: 改造业务组件 (20-30天) ⏳ 待开始
 
 ### 目标
+
 改造高耦合、高价值的组件,去业务化,增加灵活性
 
 ### 3.1 AIFamilyRouter改造 (2天) 🟡 P1
 
 #### 任务清单
+
 - [ ] 移除AI Family特定路由
 - [ ] 支持自定义路由配置
 - [ ] 提供路由配置接口
 - [ ] 创建改造后文档
 
 #### 改造方案
+
 ```typescript
 // 改造前: 硬编码路由
 const lazyMap = {
-  home: () => import("./FamilyHome"),
-  chat: () => import("./FamilyChat"),
+  home: () => import('./FamilyHome'),
+  chat: () => import('./FamilyChat'),
   // ...
 };
 
@@ -353,12 +376,14 @@ export function LazyRouter({ config }: { config: RouterConfig }) {
 ### 3.2 shared.ts改造 (3天) 🟡 P1
 
 #### 任务清单
+
 - [ ] 提取通用数据模型
 - [ ] 移除AI Family特定数据
 - [ ] 参数化配置
 - [ ] 创建改造后文档
 
 #### 改造方案
+
 ```typescript
 // 改造后: 可配置的角色系统
 interface RoleConfig {
@@ -371,7 +396,7 @@ interface RoleConfig {
 export function createRoleSystem(config: RoleConfig[]) {
   return {
     roles: config,
-    getRole: (id: string) => config.find(r => r.id === id),
+    getRole: (id: string) => config.find((r) => r.id === id),
     // ...
   };
 }
@@ -380,12 +405,14 @@ export function createRoleSystem(config: RoleConfig[]) {
 ### 3.3 ErrorBoundary改造 (2天) 🟡 P1
 
 #### 任务清单
+
 - [ ] 移除赛博朋克风格(可选)
 - [ ] 提供自定义主题配置
 - [ ] 增加SSR兼容性
 - [ ] 创建改造后文档
 
 #### 改造方案
+
 ```typescript
 // 改造后: 可配置主题
 interface ErrorBoundaryTheme {
@@ -394,9 +421,9 @@ interface ErrorBoundaryTheme {
   background?: string;
 }
 
-export function ErrorBoundary({ 
-  children, 
-  theme = {} 
+export function ErrorBoundary({
+  children,
+  theme = {},
 }: ErrorBoundaryProps & { theme?: ErrorBoundaryTheme }) {
   // 使用theme参数
 }
@@ -405,12 +432,14 @@ export function ErrorBoundary({
 ### 3.4 error-handler改造 (3天) 🟡 P1
 
 #### 任务清单
+
 - [ ] 移除YYC3特定标识
 - [ ] 提供自定义错误分类
 - [ ] 增加远程日志上报接口
 - [ ] 创建改造后文档
 
 #### 改造方案
+
 ```typescript
 // 改造后: 可配置错误上报
 interface ErrorHandlerConfig {
@@ -427,12 +456,14 @@ export function initErrorHandler(config: ErrorHandlerConfig) {
 ### 3.5 FamilyModelSettings改造 (5天) 🟡 P1
 
 #### 任务清单
+
 - [ ] 移除8位AI家人绑定
 - [ ] 支持自定义模型提供商
 - [ ] 提供配置导出接口
 - [ ] 创建改造后文档
 
 #### 改造方案
+
 ```typescript
 // 改造后: 通用AI模型配置
 interface ModelProvider {
@@ -450,10 +481,10 @@ interface ModelConfig {
   };
 }
 
-export function ModelSettings({ 
-  providers, 
-  config, 
-  onChange 
+export function ModelSettings({
+  providers,
+  config,
+  onChange,
 }: ModelSettingsProps) {
   // ...
 }
@@ -462,12 +493,14 @@ export function ModelSettings({
 ### 3.6 FamilyVoiceSystem改造 (7天) 🟡 P1
 
 #### 任务清单
+
 - [ ] 移除8位AI家人语音
 - [ ] 支持自定义语音档案
 - [ ] 增加语音合成接口
 - [ ] 创建改造后文档
 
 #### 改造方案
+
 ```typescript
 // 改造后: 通用语音系统
 interface VoiceProfile {
@@ -479,10 +512,7 @@ interface VoiceProfile {
   lang: string;
 }
 
-export function VoiceSystem({ 
-  profiles, 
-  onSpeak 
-}: VoiceSystemProps) {
+export function VoiceSystem({ profiles, onSpeak }: VoiceSystemProps) {
   // ...
 }
 ```
@@ -492,27 +522,32 @@ export function VoiceSystem({
 ## Phase 4: 集成与测试 (5-10天) ⏳ 待开始
 
 ### 目标
+
 将改造后的组件集成到示例项目,完成测试
 
 ### 4.1 创建示例项目 (2天)
+
 - [ ] 初始化示例项目
 - [ ] 配置依赖
 - [ ] 集成所有复用组件
 - [ ] 创建示例页面
 
 ### 4.2 单元测试 (2-3天)
+
 - [ ] 为UI组件编写测试
 - [ ] 为工具函数编写测试
 - [ ] 为Hooks编写测试
 - [ ] 为核心组件编写测试
 
 ### 4.3 集成测试 (1-2天)
+
 - [ ] 测试组件集成
 - [ ] 测试类型兼容性
 - [ ] 测试构建流程
 - [ ] 测试文档准确性
 
 ### 4.4 性能测试 (1天)
+
 - [ ] Bundle大小分析
 - [ ] 渲染性能测试
 - [ ] 内存泄漏检测
@@ -522,15 +557,18 @@ export function VoiceSystem({
 ## Phase 5: 文档与交付 (3-5天) ⏳ 待开始
 
 ### 目标
+
 完善文档,完成交付
 
 ### 5.1 文档编写 (2-3天)
+
 - [ ] 组件文档(Markdown)
 - [ ] API文档(TypeScript)
 - [ ] 使用示例(Storybook)
 - [ ] 迁移指南
 
 ### 5.2 发布准备 (1-2天)
+
 - [ ] 版本号管理
 - [ ] CHANGELOG生成
 - [ ] NPM发布配置
@@ -541,11 +579,13 @@ export function VoiceSystem({
 ## 📊 执行进度追踪
 
 ### 整体进度
+
 ```
 [████████░░░░░░░░░░░░░░░] 20% 完成
 ```
 
 ### 阶段进度
+
 - Phase 1: [████████████░░░░░░░░░] 80% 完成
 - Phase 2: [░░░░░░░░░░░░░░░░░░░░] 0% 完成
 - Phase 3: [░░░░░░░░░░░░░░░░░░░░] 0% 完成
@@ -553,6 +593,7 @@ export function VoiceSystem({
 - Phase 5: [░░░░░░░░░░░░░░░░░░░░] 0% 完成
 
 ### 任务完成情况
+
 - ✅ 复用模块评估: 100%
 - 🟡 创建项目结构: 30%
 - ⏳ 配置项目环境: 0%
@@ -569,11 +610,13 @@ export function VoiceSystem({
 ## 🎯 下一步行动
 
 ### 立即执行(今天)
+
 1. ✅ 创建项目目录结构
 2. ⏳ 配置项目环境(package.json, tsconfig.json)
 3. ⏳ 创建构建脚本
 
 ### 明天
+
 4. ⏳ 提取UI组件库
 5. ⏳ 提取工具函数
 6. ⏳ 提取类型定义

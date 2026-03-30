@@ -34,13 +34,17 @@
  * MCP 服务器连接状态
  * MCP Server connection status
  */
-export type MCPServerStatus = "connected" | "disconnected" | "error" | "probing";
+export type MCPServerStatus =
+  | 'connected'
+  | 'disconnected'
+  | 'error'
+  | 'probing';
 
 /**
  * MCP 服务器传输协议
  * MCP Server transport protocol
  */
-export type MCPTransport = "stdio" | "http" | "sse" | "websocket";
+export type MCPTransport = 'stdio' | 'http' | 'sse' | 'websocket';
 
 /**
  * MCP 工具参数定义
@@ -50,7 +54,7 @@ export interface MCPToolParam {
   /** 参数名 / Parameter name */
   name: string;
   /** 参数类型 / Parameter type */
-  type: "string" | "number" | "boolean" | "object" | "array";
+  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
   /** 是否必填 / Is required */
   required: boolean;
   /** 参数描述 / Parameter description */
@@ -71,7 +75,15 @@ export interface MCPTool {
   /** 工具描述 / Tool description */
   description: string;
   /** 工具分类 / Tool category */
-  category: "database" | "git" | "docker" | "testing" | "monitoring" | "filesystem" | "security" | "custom";
+  category:
+    | 'database'
+    | 'git'
+    | 'docker'
+    | 'testing'
+    | 'monitoring'
+    | 'filesystem'
+    | 'security'
+    | 'custom';
   /** 参数列表 / Parameter list */
   params: MCPToolParam[];
   /** 是否危险操作 / Is dangerous operation */
@@ -141,34 +153,40 @@ export interface MCPServer {
  * Workflow trigger type
  */
 export type WorkflowTriggerType =
-  | "manual"          // 手动触发 / Manual trigger
-  | "schedule"        // 定时调度 / Scheduled
-  | "webhook"         // Webhook 回调 / Webhook callback
-  | "file_change"     // 文件变更 / File change
-  | "git_push"        // Git 推送 / Git push
-  | "health_alert"    // 健康告警 / Health alert
-  | "on_connect"      // 连接时 / On connect
-  | "on_disconnect";  // 断开时 / On disconnect
+  | 'manual' // 手动触发 / Manual trigger
+  | 'schedule' // 定时调度 / Scheduled
+  | 'webhook' // Webhook 回调 / Webhook callback
+  | 'file_change' // 文件变更 / File change
+  | 'git_push' // Git 推送 / Git push
+  | 'health_alert' // 健康告警 / Health alert
+  | 'on_connect' // 连接时 / On connect
+  | 'on_disconnect'; // 断开时 / On disconnect
 
 /**
  * 工作流步骤类型
  * Workflow step type
  */
 export type WorkflowStepType =
-  | "mcp_tool"        // 执行 MCP 工具 / Execute MCP tool
-  | "condition"       // 条件判断 / Conditional branch
-  | "parallel"        // 并行执行 / Parallel execution
-  | "delay"           // 延时等待 / Delay wait
-  | "notification"    // 发送通知 / Send notification
-  | "script"          // 自定义脚本 / Custom script
-  | "approval"        // 人工审批 / Manual approval
-  | "loop";           // 循环执行 / Loop execution
+  | 'mcp_tool' // 执行 MCP 工具 / Execute MCP tool
+  | 'condition' // 条件判断 / Conditional branch
+  | 'parallel' // 并行执行 / Parallel execution
+  | 'delay' // 延时等待 / Delay wait
+  | 'notification' // 发送通知 / Send notification
+  | 'script' // 自定义脚本 / Custom script
+  | 'approval' // 人工审批 / Manual approval
+  | 'loop'; // 循环执行 / Loop execution
 
 /**
  * 工作流步骤执行状态
  * Workflow step execution status
  */
-export type StepExecutionStatus = "pending" | "running" | "success" | "failed" | "skipped" | "waiting";
+export type StepExecutionStatus =
+  | 'pending'
+  | 'running'
+  | 'success'
+  | 'failed'
+  | 'skipped'
+  | 'waiting';
 
 /**
  * 工作流触发器配置
@@ -199,7 +217,7 @@ export interface WorkflowStep {
   /** 步骤配置参数 / Step configuration parameters */
   config: Record<string, string | number | boolean>;
   /** 失败时操作 / On failure action */
-  onFailure: "stop" | "continue" | "retry";
+  onFailure: 'stop' | 'continue' | 'retry';
   /** 重试次数 / Retry count */
   retryCount: number;
   /** 超时 (ms) / Timeout (ms) */
@@ -220,7 +238,12 @@ export interface WorkflowStep {
  * 工作流执行状态
  * Workflow execution status
  */
-export type WorkflowExecutionStatus = "idle" | "running" | "completed" | "failed" | "cancelled";
+export type WorkflowExecutionStatus =
+  | 'idle'
+  | 'running'
+  | 'completed'
+  | 'failed'
+  | 'cancelled';
 
 /**
  * 工作流定义
@@ -234,7 +257,14 @@ export interface Workflow {
   /** 工作流描述 / Workflow description */
   description: string;
   /** 工作流分类 / Workflow category */
-  category: "devops" | "testing" | "deployment" | "monitoring" | "security" | "data" | "custom";
+  category:
+    | 'devops'
+    | 'testing'
+    | 'deployment'
+    | 'monitoring'
+    | 'security'
+    | 'data'
+    | 'custom';
   /** 触发器 / Trigger */
   trigger: WorkflowTrigger;
   /** 步骤列表 / Steps list */
@@ -271,7 +301,7 @@ export interface WorkflowLogEntry {
   /** 步骤 ID / Step ID */
   stepId: string | null;
   /** 日志级别 / Log level */
-  level: "info" | "warn" | "error" | "debug";
+  level: 'info' | 'warn' | 'error' | 'debug';
   /** 日志消息 / Log message */
   message: string;
   /** 时间戳 / Timestamp */
@@ -286,7 +316,7 @@ export interface WorkflowLogEntry {
  * 服务健康状态
  * Service health status
  */
-export type ServiceHealthStatus = "healthy" | "degraded" | "down" | "unknown";
+export type ServiceHealthStatus = 'healthy' | 'degraded' | 'down' | 'unknown';
 
 /**
  * 基础服务定义（全栈健康聚合）
@@ -298,7 +328,7 @@ export interface InfraService {
   /** 服务名称 / Service name */
   name: string;
   /** 服务类型 / Service type */
-  type: "database" | "proxy" | "frontend" | "docker" | "mcp" | "external";
+  type: 'database' | 'proxy' | 'frontend' | 'docker' | 'mcp' | 'external';
   /** 端点 URL / Endpoint URL */
   endpoint: string;
   /** 健康状态 / Health status */
@@ -319,7 +349,7 @@ export interface InfraService {
  * 诊断问题严重级别
  * Diagnostic issue severity level
  */
-export type IssueSeverity = "critical" | "warning" | "info" | "suggestion";
+export type IssueSeverity = 'critical' | 'warning' | 'info' | 'suggestion';
 
 /**
  * 智能诊断问题
@@ -356,9 +386,9 @@ export interface OpsLogEntry {
   /** 日志 ID / Log ID */
   id: string;
   /** 操作来源 / Operation source */
-  source: "mcp" | "workflow" | "health" | "user" | "system";
+  source: 'mcp' | 'workflow' | 'health' | 'user' | 'system';
   /** 日志级别 / Log level */
-  level: "info" | "warn" | "error" | "success" | "debug";
+  level: 'info' | 'warn' | 'error' | 'success' | 'debug';
   /** 消息 / Message */
   message: string;
   /** 详细数据 / Detail data */
@@ -408,7 +438,7 @@ export interface WorkflowCreateInput {
   /** 工作流描述 / Workflow description */
   description: string;
   /** 工作流分类 / Workflow category */
-  category: Workflow["category"];
+  category: Workflow['category'];
   /** 触发器 / Trigger */
   trigger: WorkflowTrigger;
   /** 步骤定义列表 / Step definitions */
@@ -429,7 +459,7 @@ export interface WorkflowStepInput {
   /** 步骤配置参数 / Step configuration */
   config: Record<string, string | number | boolean>;
   /** 失败时操作 / On failure action */
-  onFailure: "stop" | "continue" | "retry";
+  onFailure: 'stop' | 'continue' | 'retry';
   /** 超时 (ms) / Timeout (ms) */
   timeout: number;
 }
@@ -444,7 +474,7 @@ export interface WorkflowUpdateInput {
   /** 工作流描述 / Workflow description */
   description?: string;
   /** 工作流分类 / Workflow category */
-  category?: Workflow["category"];
+  category?: Workflow['category'];
   /** 触发器 / Trigger */
   trigger?: WorkflowTrigger;
   /** 步骤定义列表 / Step definitions (full replace) */
@@ -461,20 +491,25 @@ export interface WorkflowUpdateInput {
  * WebSocket 连接状态
  * WebSocket connection status
  */
-export type WSConnectionStatus = "disconnected" | "connecting" | "connected" | "error" | "reconnecting";
+export type WSConnectionStatus =
+  | 'disconnected'
+  | 'connecting'
+  | 'connected'
+  | 'error'
+  | 'reconnecting';
 
 /**
  * WebSocket 消息类型
  * WebSocket message type
  */
 export type WSMessageType =
-  | "log"             // 日志推送 / Log push
-  | "health_update"   // 健康变更 / Health update
-  | "workflow_event"  // 工作流事件 / Workflow event
-  | "tool_output"     // 工具输出流 / Tool output stream
-  | "heartbeat"       // 心跳 / Heartbeat
-  | "command"         // 指令下发 / Command dispatch
-  | "ack";            // 确认 / Acknowledgement
+  | 'log' // 日志推送 / Log push
+  | 'health_update' // 健康变更 / Health update
+  | 'workflow_event' // 工作流事件 / Workflow event
+  | 'tool_output' // 工具输出流 / Tool output stream
+  | 'heartbeat' // 心跳 / Heartbeat
+  | 'command' // 指令下发 / Command dispatch
+  | 'ack'; // 确认 / Acknowledgement
 
 /**
  * WebSocket 消息结构

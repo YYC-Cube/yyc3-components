@@ -23,14 +23,14 @@ function FileManager() {
     browseDirectory,
     readFile,
     writeFile,
-    searchFiles
+    searchFiles,
   } = useFileSystem();
 
   return (
     <div>
       <h1>File Manager</h1>
       <p>Current Path: {currentPath}</p>
-      {files.map(file => (
+      {files.map((file) => (
         <div key={file.name}>
           {file.name} - {file.type}
         </div>

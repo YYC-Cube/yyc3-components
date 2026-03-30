@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-03-26
 
 ### Added
+
 - 🎉 Initial release of @yyc3/ui
 - ✨ 48 high-quality UI components
 - 📦 Complete shadcn/ui component library
@@ -20,30 +21,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Components Included
 
 #### Basic Components
+
 - Button, Input, Label, Textarea, Badge
 
 #### Container Components
+
 - Card, Dialog, Sheet, Drawer, Popover, Alert
 
 #### Menu Components
+
 - DropdownMenu, ContextMenu, NavigationMenu, Menubar, Command
 
 #### Layout Components
+
 - Accordion, Collapsible, Tabs, Separator, ScrollArea
 
 #### Feedback Components
+
 - Progress, Skeleton, Sonner, Alert, Avatar
 
 #### List Components
+
 - Table, Pagination, Breadcrumb
 
 #### Form Components
+
 - Form, Checkbox, RadioGroup, Switch, Slider, Select, Calendar
 
 #### Advanced Components
+
 - Sidebar, Resizable, Carousel, Chart, Command
 
 ### Dependencies
+
 - React ^18.0.0
 - React DOM ^18.0.0
 - Radix UI components
@@ -53,11 +63,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - tailwind-merge
 
 ### Documentation
+
 - Complete README with examples
 - TypeScript type definitions
 - Usage examples for all components
 
 ### Notes
+
 - All components are based on shadcn/ui v0.x
 - Components follow atomic design principles
 - Built with accessibility in mind
@@ -67,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
+
 - [ ] Storybook integration
 - [ ] Unit tests
 - [ ] E2E tests

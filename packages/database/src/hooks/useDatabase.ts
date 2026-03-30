@@ -5,15 +5,15 @@
  * @version 1.0.0
  */
 
-import { useState, useCallback } from "react";
-import { databaseService } from "../services/DatabaseService";
+import { useState, useCallback } from 'react';
+import { databaseService } from '../services/DatabaseService';
 import type {
   DatabaseConnection,
   SQLQueryInput,
   SQLQueryResult,
   DatabaseTable,
   DatabaseStatistics,
-} from "../types/database";
+} from '../types/database';
 
 export interface UseDatabaseReturn {
   /* 连接管理 */
@@ -21,10 +21,15 @@ export interface UseDatabaseReturn {
   activeConnection: DatabaseConnection | null;
   loading: boolean;
   error: string | null;
-  
+
   /* 操作方法 */
   loadConnections: () => Promise<void>;
-  createConnection: (conn: Omit<DatabaseConnection, "id" | "createdAt" | "lastConnectedAt" | "status">) => Promise<void>;
+  createConnection: (
+    conn: Omit<
+      DatabaseConnection,
+      'id' | 'createdAt' | 'lastConnectedAt' | 'status'
+    >
+  ) => Promise<void>;
   testConnection: (id: string) => Promise<void>;
   executeQuery: (input: SQLQueryInput) => Promise<SQLQueryResult>;
   getTables: (connectionId: string) => Promise<DatabaseTable[]>;
@@ -33,7 +38,8 @@ export interface UseDatabaseReturn {
 
 export function useDatabase(): UseDatabaseReturn {
   const [connections, setConnections] = useState<DatabaseConnection[]>([]);
-  const [activeConnection, setActiveConnection] = useState<DatabaseConnection | null>(null);
+  const [activeConnection, setActiveConnection] =
+    useState<DatabaseConnection | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,39 +52,56 @@ export function useDatabase(): UseDatabaseReturn {
       const active = databaseService.getActiveConnection();
       setActiveConnection(active);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "LOAD_FAILED / 加载连接失败");
+      setError(
+        err instanceof Error ? err.message : 'LOAD_FAILED / 加载连接失败'
+      );
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const createConnection = useCallback(async (conn: Omit<DatabaseConnection, "id" | "createdAt" | "lastConnectedAt" | "status">) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await databaseService.createConnection(conn);
-      await loadConnections();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "CREATE_FAILED / 创建连接失败");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [loadConnections]);
+  const createConnection = useCallback(
+    async (
+      conn: Omit<
+        DatabaseConnection,
+        'id' | 'createdAt' | 'lastConnectedAt' | 'status'
+      >
+    ): Promise<void> => {
+      setLoading(true);
+      setError(null);
+      try {
+        databaseService.createConnection(conn);
+        await loadConnections();
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'CREATE_FAILED / 创建连接失败'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loadConnections]
+  );
 
-  const testConnection = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await databaseService.testConnection(id);
-      await loadConnections();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "TEST_FAILED / 测试连接失败");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [loadConnections]);
+  const testConnection = useCallback(
+    async (id: string): Promise<void> => {
+      setLoading(true);
+      setError(null);
+      try {
+        databaseService.testConnection(id);
+        await loadConnections();
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'TEST_FAILED / 测试连接失败'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loadConnections]
+  );
 
   const executeQuery = useCallback(async (input: SQLQueryInput): Promise<SQLQueryResult> => {
     setLoading(true);
@@ -86,7 +109,8 @@ export function useDatabase(): UseDatabaseReturn {
     try {
       return await databaseService.executeQuery(input);
     } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "QUERY_FAILED / 查询失败";
+      const errMsg =
+        err instanceof Error ? err.message : 'QUERY_FAILED / 查询失败';
       setError(errMsg);
       throw err;
     } finally {
@@ -100,7 +124,10 @@ export function useDatabase(): UseDatabaseReturn {
     try {
       return await databaseService.getTables(connectionId);
     } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "GET_TABLES_FAILED / 获取表列表失败";
+      const errMsg =
+        err instanceof Error
+          ? err.message
+          : 'GET_TABLES_FAILED / 获取表列表失败';
       setError(errMsg);
       throw err;
     } finally {
@@ -108,19 +135,25 @@ export function useDatabase(): UseDatabaseReturn {
     }
   }, []);
 
-  const getStatistics = useCallback(async (connectionId: string): Promise<DatabaseStatistics> => {
-    setLoading(true);
-    setError(null);
-    try {
-      return await databaseService.getStatistics(connectionId);
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "GET_STATS_FAILED / 获取统计信息失败";
-      setError(errMsg);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const getStatistics = useCallback(
+    async (connectionId: string): Promise<DatabaseStatistics> => {
+      setLoading(true);
+      setError(null);
+      try {
+        return await databaseService.getStatistics(connectionId);
+      } catch (err) {
+        const errMsg =
+          err instanceof Error
+            ? err.message
+            : 'GET_STATS_FAILED / 获取统计信息失败';
+        setError(errMsg);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   return {
     connections,

@@ -7,6 +7,7 @@
 ## [1.0.0] - 2026-03-26
 
 ### 新增 / Added
+
 - ✅ `runDiagnostics` - 执行完整系统诊断
 - ✅ `clearAllData` - 清除所有应用数据
 - ✅ `repairConfigData` - 修复损坏的配置数据
@@ -17,6 +18,7 @@
 - ✅ 系统诊断报告（完整的状态报告）
 
 ### 类型 / Types
+
 - ✅ `DiagnosticResult` - 单个诊断结果接口
 - ✅ `DiagnosticReport` - 完整诊断报告接口
 - ✅ 支持多语言（中文/English）
@@ -24,6 +26,7 @@
 - ✅ 提供时间戳和统计信息
 
 ### 文档 / Documentation
+
 - ✅ 完整的 README.md（中英文）
 - ✅ 代码标头规范（YYC3 标准）
 - ✅ 使用示例和最佳实践
@@ -33,6 +36,7 @@
 ## [Unreleased]
 
 ### 计划中 / Planned
+
 - [ ] 更多诊断项（网络连接、内存使用等）
 - [ ] 自动修复更多类型的数据损坏
 - [ ] 诊断历史记录
@@ -55,8 +59,8 @@
 
 <div align="center">
 
-> 「***YanYuCloudCube***」
-> 「***Words Initiate Quadrants, Language Serves as Core for Future***」
-> 「***All things converge in cloud pivot; Deep stacks ignite a new era of intelligence***」
+> 「**_YanYuCloudCube_**」
+> 「**_Words Initiate Quadrants, Language Serves as Core for Future_**」
+> 「**_All things converge in cloud pivot; Deep stacks ignite a new era of intelligence_**」
 
 </div>

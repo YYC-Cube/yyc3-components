@@ -13,4 +13,4 @@ export const ENDPOINTS = {
   PERMISSIONS: '/api/permissions',
 } as const;
 
-export type Endpoint = typeof ENDPOINTS[keyof typeof ENDPOINTS];
+export type Endpoint = (typeof ENDPOINTS)[keyof typeof ENDPOINTS];

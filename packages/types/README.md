@@ -16,53 +16,63 @@ YYC3可复用组件库 - 通用类型定义包
 ## 📋 包含的类型
 
 ### 1. 错误处理类型
+
 - `ErrorCategory` - 错误分类
 - `ErrorSeverity` - 错误严重程度
 - `AppError` - 应用错误对象
 - `ErrorStats` - 错误统计
 
 ### 2. 用户与认证类型
+
 - `UserRole` - 用户角色
 - `AppUser` - 用户信息
 - `AppSession` - 会话信息
 - `AuthContextValue` - 认证上下文
 
 ### 3. 国际化类型
+
 - `Locale` - 语言代码
 - `LocaleInfo` - 语言信息
 - `I18nContextValue` - 国际化上下文
 - `I18nMessages` - 消息类型
 
 ### 4. 组件状态类型
+
 - `LoadingState` - 加载状态
 - `AsyncState` - 异步状态
 - `ComponentStatus` - 组件状态
 
 ### 5. 表单类型
+
 - `FormField` - 表单字段
 - `FormState` - 表单状态
 
 ### 6. 网络请求类型
+
 - `ApiResponse` - API响应
 - `RequestConfig` - 请求配置
 
 ### 7. 存储类型
+
 - `StorageType` - 存储类型
 - `StorageItem` - 存储项
 - `StorageOptions` - 存储选项
 
 ### 8. 主题与样式类型
+
 - `Theme` - 主题模式
 - `ThemeContextValue` - 主题上下文
 - `ColorScheme` - 色彩方案
 - `ColorPalette` - 色彩调色板
 
 ### 9. 动画类型
+
 - `AnimationDuration` - 动画时长
 - `AnimationEasing` - 动画缓动
 - `AnimationOptions` - 动画选项
 
 ### 10. 通用工具类型
+
 - `Nullable` - 可空类型
 - `Optional` - 可选类型
 - `MaybePromise` - Promise包装类型
@@ -72,23 +82,28 @@ YYC3可复用组件库 - 通用类型定义包
 - `FilterParams` - 过滤参数
 
 ### 11. 路由类型
+
 - `RoutePath` - 路由路径
 - `RouteParams` - 路由参数
 - `RouteMatch` - 路由匹配
 
 ### 12. 文件类型
+
 - `FileType` - 文件类型
 - `FileInfo` - 文件信息
 
 ### 13. 通知类型
+
 - `NotificationType` - 通知类型
 - `Notification` - 通知对象
 
 ### 14. 性能监控类型
+
 - `PerformanceMetric` - 性能指标
 - `PerformanceStats` - 性能统计
 
 ### 15. React组件相关类型
+
 - `ComponentSize` - 组件尺寸
 - `ComponentVariant` - 组件变体
 - `BaseComponentProps` - 基础组件属性
@@ -114,7 +129,7 @@ import type {
   ApiResponse,
   PaginationParams,
   FormState,
-  Theme
+  Theme,
 } from '@yyc3/types';
 ```
 
@@ -140,7 +155,7 @@ import type { ApiResponse, RequestConfig } from '@yyc3/types';
 async function fetchUser(id: string): Promise<ApiResponse<User>> {
   const config: RequestConfig = {
     method: 'GET',
-    timeout: 5000
+    timeout: 5000,
   };
   // ... fetch logic
 }
@@ -154,11 +169,11 @@ import type { FormState, FormField } from '@yyc3/types';
 const formState: FormState = {
   fields: {
     username: { name: 'username', value: '', error: null },
-    password: { name: 'password', value: '', error: null }
+    password: { name: 'password', value: '', error: null },
   },
   isValid: false,
   isDirty: false,
-  isSubmitting: false
+  isSubmitting: false,
 };
 ```
 
@@ -169,8 +184,10 @@ import type { Theme, ThemeContextValue } from '@yyc3/types';
 
 const themeContext: ThemeContextValue = {
   theme: 'dark',
-  setTheme: (theme: Theme) => { /* ... */ },
-  resolvedTheme: 'dark'
+  setTheme: (theme: Theme) => {
+    /* ... */
+  },
+  resolvedTheme: 'dark',
 };
 ```
 

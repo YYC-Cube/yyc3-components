@@ -54,7 +54,9 @@ export interface WebSocketManager {
 /**
  * 创建 WebSocket 管理器 / Create WebSocket manager
  */
-export function createWebSocketManager(config: WebSocketConfig): WebSocketManager {
+export function createWebSocketManager(
+  config: WebSocketConfig
+): WebSocketManager {
   // 简化实现 / Simplified implementation
   return {
     connection: {

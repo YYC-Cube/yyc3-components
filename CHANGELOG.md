@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### @yyc3/ui
+
 - 48个UI组件
   - Button组件
   - Card组件
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ...等48个组件
 
 #### @yyc3/utils
+
 - 28个工具函数
   - 字符串处理：truncate, capitalize, camelToKebab, kebabToCamel, uuid, slugify等
   - 数据处理：deepClone, unique, groupBy, chunk等
@@ -27,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 颜色处理：hexToRgb, hexToRgba, isDarkColor, getContrastColor等
 
 #### @yyc3/types
+
 - 50+个类型定义
   - AppError
   - Locale
@@ -34,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ...等类型
 
 #### @yyc3/core
+
 - 4个核心组件
   - ErrorBoundary - 错误边界
   - GlassCard - 玻璃态卡片
@@ -41,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - LoadingSpinner - 加载动画
 
 #### @yyc3/hooks
+
 - 7个自定义Hooks
   - useToggle - 布尔切换
   - useLocalStorage - 本地存储
@@ -51,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - useI18n - 国际化
 
 #### @yyc3/error-handling
+
 - 完整的错误处理系统
   - 错误分类（网络/解析/认证/运行时）
   - 错误日志记录
@@ -59,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 异步和同步安全包装
 
 #### @yyc3/i18n
+
 - 轻量级国际化工具
   - 嵌套key支持
   - 模板变量替换
@@ -67,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 一致性检查
 
 #### @yyc3/storage
+
 - 完整的存储解决方案
   - IndexedDB封装（自动初始化、CRUD操作）
   - BroadcastChannel（跨标签页/窗口通信）
@@ -109,6 +117,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
+
 - Storybook集成
 - 性能优化
 - 可访问性测试
@@ -121,9 +130,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 版本说明
 
 ### 1.0.0
+
 这是YYC3 Reusable Components的首个正式版本！
 
 **包含内容**:
+
 - 8个完整的包
 - 52个组件
 - 7个Hooks
@@ -133,6 +144,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 详细的文档
 
 **适用场景**:
+
 - Web应用开发
 - 企业级项目
 - 快速原型开发

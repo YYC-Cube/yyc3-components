@@ -10,11 +10,11 @@ tags: YYC³,文档
 checksum: e6941ce4e12cbcb4
 ---
 
-> ***YanYuCloudCube***
-> *言启象限 | 语枢未来*
-> ***Words Initiate Quadrants, Language Serves as Core for Future***
-> *万象归元于云枢 | 深栈智启新纪元*
-> ***All things converge in cloud pivot; Deep stacks ignite a new era of intelligence***
+> **_YanYuCloudCube_**
+> _言启象限 | 语枢未来_
+> **_Words Initiate Quadrants, Language Serves as Core for Future_**
+> _万象归元于云枢 | 深栈智启新纪元_
+> **_All things converge in cloud pivot; Deep stacks ignite a new era of intelligence_**
 
 ---
 
@@ -38,6 +38,7 @@ checksum: e6941ce4e12cbcb4
 **格式**: `{序号}-{阶段}-{功能}-{子功能}`
 
 **示例**:
+
 ```
 00-YYC3-项目总览-目录索引/
 01-YYC3-项目规划-启动阶段/
@@ -56,6 +57,7 @@ checksum: e6941ce4e12cbcb4
 ```
 
 **规则**:
+
 - 序号: 2 位数字（00-99）
 - 阶段: 项目规划、项目开发、项目测试、项目部署、项目运营、项目合规、项目整合、项目资产、项目模版、智能演进、用户指南
 - 功能: 简短描述（中文）
@@ -66,6 +68,7 @@ checksum: e6941ce4e12cbcb4
 **格式**: `{序号}-{项目}-{功能}-{描述}.md`
 
 **示例**:
+
 ```
 001-CP-IM-项目总览索引-项目总览手册.md
 002-CP-IM-项目总览索引-快速开始指南.md
@@ -74,6 +77,7 @@ checksum: e6941ce4e12cbcb4
 ```
 
 **规则**:
+
 - 序号: 3 位数字（001-999）
 - 项目: CP-IM（CloudPivot Intelli-Matrix）
 - 功能: 简短描述（中文）
@@ -84,6 +88,7 @@ checksum: e6941ce4e12cbcb4
 **格式**: `YYC3-CP-IM-{功能}-{描述}.md`
 
 **示例**:
+
 ```
 YYC3-代码标头规范标准.md
 YYC3-代码标头规范化最终总结报告.md
@@ -101,6 +106,7 @@ YYC3-封装文档更新指南.md
 **格式**: `{功能}-{类型}.ts`
 
 **示例**:
+
 ```
 API-REFERENCE.ts
 COMPONENT-REFERENCE.ts
@@ -114,6 +120,7 @@ STORAGE-AUDIT.ts
 ```
 
 **规则**:
+
 - 功能: 大写字母，单词用连字符分隔
 - 类型: REFERENCE, GUIDE, HANDOFF, REPORT, TEST, PLAN, AUDIT
 
@@ -123,35 +130,35 @@ STORAGE-AUDIT.ts
 
 ### 项目级文档类型
 
-| 类型 | 说明 | 示例 |
-|------|------|------|
+| 类型     | 说明               | 示例                       |
+| -------- | ------------------ | -------------------------- |
 | 项目总览 | 项目介绍、快速开始 | 00-YYC3-项目总览-目录索引/ |
-| 项目规划 | 启动设计 | 01-YYC3-项目规划-启动阶段/ |
-| 项目开发 | 实施阶段 | 03-YYC3-项目开发-实施阶段/ |
-| 项目测试 | 审核阶段 | 04-YYC3-项目测试-审核阶段/ |
-| 项目部署 | 文档闭环 | 05-YYC3-项目部署-文档闭环/ |
-| 项目运营 | 维护阶段 | 06-YYC3-项目运营-维护阶段/ |
-| 项目合规 | 安全保障 | 07-YYC3-项目合规-安全保障/ |
-| 项目整合 | 实施阶段 | 08-YYC3-项目整合-实施阶段/ |
-| 项目资产 | 知识管理 | 09-YYC3-项目资产-知识管理/ |
-| 项目模版 | 标准规范 | 10-YYC3-项目模版-标准规范/ |
-| 智能演进 | 优化阶段 | 11-YYC3-智能演进-优化阶段/ |
-| 用户指南 | 操作手册 | 12-YYC3-用户指南-操作手册/ |
-| 标准规范 | 代码规范、审查报告 | YYC3*.md |
+| 项目规划 | 启动设计           | 01-YYC3-项目规划-启动阶段/ |
+| 项目开发 | 实施阶段           | 03-YYC3-项目开发-实施阶段/ |
+| 项目测试 | 审核阶段           | 04-YYC3-项目测试-审核阶段/ |
+| 项目部署 | 文档闭环           | 05-YYC3-项目部署-文档闭环/ |
+| 项目运营 | 维护阶段           | 06-YYC3-项目运营-维护阶段/ |
+| 项目合规 | 安全保障           | 07-YYC3-项目合规-安全保障/ |
+| 项目整合 | 实施阶段           | 08-YYC3-项目整合-实施阶段/ |
+| 项目资产 | 知识管理           | 09-YYC3-项目资产-知识管理/ |
+| 项目模版 | 标准规范           | 10-YYC3-项目模版-标准规范/ |
+| 智能演进 | 优化阶段           | 11-YYC3-智能演进-优化阶段/ |
+| 用户指南 | 操作手册           | 12-YYC3-用户指南-操作手册/ |
+| 标准规范 | 代码规范、审查报告 | YYC3\*.md                  |
 
 ### 应用级文档类型
 
-| 类型 | 说明 | 示例 |
-|------|------|------|
-| API 参考 | API 接口文档 | API-REFERENCE.ts |
-| 组件参考 | 组件使用文档 | COMPONENT-REFERENCE.ts |
-| 开发者交接 | 开发协作规范 | DEVELOPER-HANDOFF.ts |
-| 测试指南 | 测试规范和最佳实践 | TESTING-GUIDE.ts |
-| 对齐计划 | 项目对齐计划 | ALIGNMENT-PLAN.ts |
-| 审核报告 | 最终审核报告 | FINAL-AUDIT-REPORT.ts |
-| 架构测试 | 高可用架构测试 | HA-ARCHITECTURE-TEST.ts |
-| 设计指南 | 本地设计指南 | LOCAL-DESIGN-GUIDE.ts |
-| 存储审计 | 存储审计报告 | STORAGE-AUDIT.ts |
+| 类型       | 说明               | 示例                    |
+| ---------- | ------------------ | ----------------------- |
+| API 参考   | API 接口文档       | API-REFERENCE.ts        |
+| 组件参考   | 组件使用文档       | COMPONENT-REFERENCE.ts  |
+| 开发者交接 | 开发协作规范       | DEVELOPER-HANDOFF.ts    |
+| 测试指南   | 测试规范和最佳实践 | TESTING-GUIDE.ts        |
+| 对齐计划   | 项目对齐计划       | ALIGNMENT-PLAN.ts       |
+| 审核报告   | 最终审核报告       | FINAL-AUDIT-REPORT.ts   |
+| 架构测试   | 高可用架构测试     | HA-ARCHITECTURE-TEST.ts |
+| 设计指南   | 本地设计指南       | LOCAL-DESIGN-GUIDE.ts   |
+| 存储审计   | 存储审计报告       | STORAGE-AUDIT.ts        |
 
 ---
 

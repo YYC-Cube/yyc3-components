@@ -1,17 +1,17 @@
 /**
  * useCollaborativeEditing - CRDT 协同编辑 Hook
- * 
+ *
  * 职责：
  * - 管理 CRDT 文档状态
  * - OT 操作转换
  * - Presence 用户感知（光标/选区）
  * - 与 BackendBridge WebSocket 对接
  * - 冲突检测与解决
- * 
+ *
  * @file hooks/useCollaborativeEditing.ts
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type {
   TextOperation,
   CollaborationSession,
@@ -19,8 +19,8 @@ import type {
   CursorPosition,
   SelectionRange,
   CollabMessage,
-} from '../types/collaboration'
-import { getBackendBridge } from '../services/backend-bridge'
+} from '../types/collaboration';
+import { getBackendBridge } from '../services/backend-bridge';
 
 // ==========================================
 // OT 操作转换引擎
@@ -34,12 +34,12 @@ function transformOperation(
   op1: TextOperation,
   op2: TextOperation
 ): TextOperation {
-  const transformed = { ...op1 }
+  const transformed = { ...op1 };
 
   if (op1.type === 'insert' && op2.type === 'insert') {
     // 两个插入：后者位移
     if (op2.position <= op1.position) {
-      transformed.position += (op2.content?.length || 0)
+      transformed.position += op2.content?.length || 0;
     }
   } else if (op1.type === 'insert' && op2.type === 'delete') {
     // 插入 vs 删除
@@ -47,31 +47,29 @@ function transformOperation(
       transformed.position = Math.max(
         op2.position,
         op1.position - (op2.length || 0)
-      )
+      );
     }
   } else if (op1.type === 'delete' && op2.type === 'insert') {
     // 删除 vs 插入
     if (op2.position <= op1.position) {
-      transformed.position += (op2.content?.length || 0)
+      transformed.position += op2.content?.length || 0;
     }
   } else if (op1.type === 'delete' && op2.type === 'delete') {
     // 两个删除：收缩范围
     if (op2.position < op1.position) {
-      transformed.position = Math.max(
-        0,
-        op1.position - (op2.length || 0)
-      )
+      transformed.position = Math.max(0, op1.position - (op2.length || 0));
     }
     // 重叠区域处理
-    const op1End = op1.position + (op1.length || 0)
-    const op2End = op2.position + (op2.length || 0)
+    const op1End = op1.position + (op1.length || 0);
+    const op2End = op2.position + (op2.length || 0);
     if (op2.position < op1End && op2End > op1.position) {
-      const overlap = Math.min(op1End, op2End) - Math.max(op1.position, op2.position)
-      transformed.length = Math.max(0, (op1.length || 0) - overlap)
+      const overlap =
+        Math.min(op1End, op2End) - Math.max(op1.position, op2.position);
+      transformed.length = Math.max(0, (op1.length || 0) - overlap);
     }
   }
 
-  return transformed
+  return transformed;
 }
 
 /**
@@ -84,16 +82,16 @@ function applyOperation(content: string, op: TextOperation): string {
         content.slice(0, op.position) +
         (op.content || '') +
         content.slice(op.position)
-      )
+      );
     case 'delete':
       return (
         content.slice(0, op.position) +
         content.slice(op.position + (op.length || 0))
-      )
+      );
     case 'retain':
-      return content
+      return content;
     default:
-      return content
+      return content;
   }
 }
 
@@ -102,36 +100,38 @@ function applyOperation(content: string, op: TextOperation): string {
 // ==========================================
 
 export interface UseCollaborativeEditingConfig {
-  documentId: string
-  userId: string
-  userName: string
-  initialContent?: string
-  onConflict?: (localOp: TextOperation, remoteOp: TextOperation) => void
-  onParticipantJoin?: (participant: CollaborationParticipant) => void
-  onParticipantLeave?: (userId: string) => void
+  documentId: string;
+  userId: string;
+  userName: string;
+  initialContent?: string;
+  onConflict?: (localOp: TextOperation, remoteOp: TextOperation) => void;
+  onParticipantJoin?: (participant: CollaborationParticipant) => void;
+  onParticipantLeave?: (userId: string) => void;
 }
 
 export interface UseCollaborativeEditingReturn {
   // 文档状态
-  content: string
-  version: number
-  isConnected: boolean
-  isSyncing: boolean
+  content: string;
+  version: number;
+  isConnected: boolean;
+  isSyncing: boolean;
 
   // 操作方法
-  applyLocalOperation: (op: Omit<TextOperation, 'timestamp' | 'userId' | 'version'>) => void
-  updateContent: (newContent: string, cursorPosition?: number) => void
-  undo: () => void
-  redo: () => void
+  applyLocalOperation: (
+    op: Omit<TextOperation, 'timestamp' | 'userId' | 'version'>
+  ) => void;
+  updateContent: (newContent: string, cursorPosition?: number) => void;
+  undo: () => void;
+  redo: () => void;
 
   // Presence
-  participants: CollaborationParticipant[]
-  updateCursor: (cursor: CursorPosition) => void
-  updateSelection: (selection: SelectionRange | null) => void
+  participants: CollaborationParticipant[];
+  updateCursor: (cursor: CursorPosition) => void;
+  updateSelection: (selection: SelectionRange | null) => void;
 
   // 会话
-  session: CollaborationSession | null
-  conflictCount: number
+  session: CollaborationSession | null;
+  conflictCount: number;
 }
 
 // ==========================================
@@ -139,9 +139,15 @@ export interface UseCollaborativeEditingReturn {
 // ==========================================
 
 const PRESENCE_COLOR_POOL = [
-  '#4ade80', '#38bdf8', '#fbbf24', '#f472b6',
-  '#a78bfa', '#fb923c', '#2dd4bf', '#e879f9',
-]
+  '#4ade80',
+  '#38bdf8',
+  '#fbbf24',
+  '#f472b6',
+  '#a78bfa',
+  '#fb923c',
+  '#2dd4bf',
+  '#e879f9',
+];
 
 export function useCollaborativeEditing(
   config: UseCollaborativeEditingConfig
@@ -154,38 +160,40 @@ export function useCollaborativeEditing(
     onConflict,
     onParticipantJoin,
     onParticipantLeave,
-  } = config
+  } = config;
 
   // 文档状态
-  const [content, setContent] = useState(initialContent)
-  const [version, setVersion] = useState(0)
-  const [isSyncing, setIsSyncing] = useState(false)
-  const [isConnected, setIsConnected] = useState(false)
-  const [conflictCount, setConflictCount] = useState(0)
+  const [content, setContent] = useState(initialContent);
+  const [version, setVersion] = useState(0);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [conflictCount, setConflictCount] = useState(0);
 
   // Presence
-  const [participants, setParticipants] = useState<CollaborationParticipant[]>([])
-  const [session, setSession] = useState<CollaborationSession | null>(null)
+  const [participants, setParticipants] = useState<CollaborationParticipant[]>(
+    []
+  );
+  const [session, setSession] = useState<CollaborationSession | null>(null);
 
   // Undo/Redo
-  const undoStackRef = useRef<TextOperation[]>([])
-  const redoStackRef = useRef<TextOperation[]>([])
-  const pendingOpsRef = useRef<TextOperation[]>([])
-  const versionRef = useRef(0)
-  const contentRef = useRef(initialContent)
+  const undoStackRef = useRef<TextOperation[]>([]);
+  const redoStackRef = useRef<TextOperation[]>([]);
+  const pendingOpsRef = useRef<TextOperation[]>([]);
+  const versionRef = useRef(0);
+  const contentRef = useRef(initialContent);
 
   // Keep refs in sync
   useEffect(() => {
-    contentRef.current = content
-  }, [content])
+    contentRef.current = content;
+  }, [content]);
 
   useEffect(() => {
-    versionRef.current = version
-  }, [version])
+    versionRef.current = version;
+  }, [version]);
 
   // 初始化协同会话
   useEffect(() => {
-    const colorIndex = userId.charCodeAt(0) % PRESENCE_COLOR_POOL.length
+    const colorIndex = userId.charCodeAt(0) % PRESENCE_COLOR_POOL.length;
     const localParticipant: CollaborationParticipant = {
       userId,
       userName,
@@ -195,7 +203,7 @@ export function useCollaborativeEditing(
       isOnline: true,
       lastSeen: Date.now(),
       role: 'editor',
-    }
+    };
 
     // 创建 mock 会话（真实场景通过 BackendBridge）
     const mockSession: CollaborationSession = {
@@ -204,17 +212,17 @@ export function useCollaborativeEditing(
       participants: [localParticipant],
       createdAt: Date.now(),
       isActive: true,
-    }
+    };
 
-    setSession(mockSession)
-    setParticipants([localParticipant])
+    setSession(mockSession);
+    setParticipants([localParticipant]);
 
     // 尝试连接 BackendBridge
-    const bridge = getBackendBridge()
-    const isLive = bridge.isConnected
+    const bridge = getBackendBridge();
+    const isLive = bridge.isConnected;
 
     if (isLive) {
-      setIsConnected(true)
+      setIsConnected(true);
       // 发送加入消息
       bridge.dispatchSignal({
         id: crypto.randomUUID(),
@@ -235,10 +243,10 @@ export function useCollaborativeEditing(
           modelSource: 'MOCK',
         },
         metadata: { version: '1.0.0' },
-      })
+      });
     } else {
       // Mock mode: 模拟远程协作者
-      setIsConnected(false)
+      setIsConnected(false);
       const mockRemote: CollaborationParticipant = {
         userId: 'ai-architect',
         userName: '智源架构师',
@@ -248,171 +256,187 @@ export function useCollaborativeEditing(
         isOnline: true,
         lastSeen: Date.now(),
         role: 'editor',
-      }
-      setParticipants(prev => [...prev, mockRemote])
+      };
+      setParticipants((prev) => [...prev, mockRemote]);
     }
 
     return () => {
       // 清理会话
-    }
-  }, [documentId, userId, userName])
+    };
+  }, [documentId, userId, userName]);
 
   // 监听 BackendBridge 消息
   useEffect(() => {
-    const bridge = getBackendBridge()
+    const bridge = getBackendBridge();
 
-    const unsubSignal = bridge.on('signal_received', (signal) => {
+    const unsubSignal = bridge.on('signal_received', (signal: unknown) => {
       try {
-        const msg = JSON.parse(signal.payload?.content || '{}') as CollabMessage
+        const msg = JSON.parse(
+          (signal as { payload?: { content?: string } })?.payload?.content || '{}'
+        ) as CollabMessage;
 
         switch (msg.type) {
           case 'collab:operation': {
             // 远程操作到达：执行 OT 转换并应用
-            const remoteOp = msg.operation
-            let transformed = remoteOp
+            const remoteOp = msg.operation;
+            let transformed = remoteOp;
 
             // 对所有 pending 本地操作执行转换
             for (const localOp of pendingOpsRef.current) {
-              transformed = transformOperation(transformed, localOp)
+              transformed = transformOperation(transformed, localOp);
             }
 
-            const newContent = applyOperation(contentRef.current, transformed)
-            setContent(newContent)
-            setVersion(prev => prev + 1)
-            break
+            const newContent = applyOperation(contentRef.current, transformed);
+            setContent(newContent);
+            setVersion((prev) => prev + 1);
+            break;
           }
 
           case 'collab:presence': {
-            setParticipants(prev => {
-              const existing = prev.findIndex(p => p.userId === msg.participant.userId)
+            setParticipants((prev) => {
+              const existing = prev.findIndex(
+                (p) => p.userId === msg.participant.userId
+              );
               if (existing >= 0) {
-                const updated = [...prev]
-                updated[existing] = msg.participant
-                return updated
+                const updated = [...prev];
+                updated[existing] = msg.participant;
+                return updated;
               }
-              onParticipantJoin?.(msg.participant)
-              return [...prev, msg.participant]
-            })
-            break
+              onParticipantJoin?.(msg.participant);
+              return [...prev, msg.participant];
+            });
+            break;
           }
 
           case 'collab:sync': {
-            setContent(msg.document.content)
-            setVersion(msg.document.version)
-            setParticipants(msg.participants)
-            setIsSyncing(false)
-            break
+            setContent(msg.document.content);
+            setVersion(msg.document.version);
+            setParticipants(msg.participants);
+            setIsSyncing(false);
+            break;
           }
         }
       } catch {
         // 非协同消息，忽略
       }
-    })
+    });
 
     return () => {
-      unsubSignal()
-    }
-  }, [onParticipantJoin])
+      unsubSignal();
+    };
+  }, [onParticipantJoin]);
 
   // 应用本地操作
-  const applyLocalOperation = useCallback((
-    op: Omit<TextOperation, 'timestamp' | 'userId' | 'version'>
-  ) => {
-    const fullOp: TextOperation = {
-      ...op,
-      timestamp: Date.now(),
-      userId,
-      version: versionRef.current + 1,
-    }
-
-    // 应用到本地文档
-    const newContent = applyOperation(contentRef.current, fullOp)
-    setContent(newContent)
-    setVersion(prev => prev + 1)
-
-    // 记录到 undo 栈
-    undoStackRef.current.push(fullOp)
-    redoStackRef.current = [] // 清空 redo
-
-    // 加入 pending 队列
-    pendingOpsRef.current.push(fullOp)
-
-    // 通过 BackendBridge 发送
-    const bridge = getBackendBridge()
-    if (bridge.isConnected) {
-      bridge.dispatchSignal({
-        id: crypto.randomUUID(),
+  const applyLocalOperation = useCallback(
+    (op: Omit<TextOperation, 'timestamp' | 'userId' | 'version'>) => {
+      const fullOp: TextOperation = {
+        ...op,
         timestamp: Date.now(),
-        type: 'COMMAND',
-        senderId: 'USER',
-        receiverId: 'CENTRAL_PULSE',
-        payload: {
-          content: JSON.stringify({
-            type: 'collab:operation',
-            sessionId: session?.sessionId,
-            operation: fullOp,
-            baseVersion: versionRef.current,
-          }),
-          mood: 'FOCUSED',
-          priority: 'HIGH',
-          modelSource: bridge.isMockMode ? 'MOCK' : 'REAL',
-        },
-        metadata: { version: '1.0.0' },
-      })
-    }
-  }, [userId, session])
+        userId,
+        version: versionRef.current + 1,
+      };
+
+      // 应用到本地文档
+      const newContent = applyOperation(contentRef.current, fullOp);
+      setContent(newContent);
+      setVersion((prev) => prev + 1);
+
+      // 记录到 undo 栈
+      undoStackRef.current.push(fullOp);
+      redoStackRef.current = []; // 清空 redo
+
+      // 加入 pending 队列
+      pendingOpsRef.current.push(fullOp);
+
+      // 通过 BackendBridge 发送
+      const bridge = getBackendBridge();
+      if (bridge.isConnected) {
+        bridge.dispatchSignal({
+          id: crypto.randomUUID(),
+          timestamp: Date.now(),
+          type: 'COMMAND',
+          senderId: 'USER',
+          receiverId: 'CENTRAL_PULSE',
+          payload: {
+            content: JSON.stringify({
+              type: 'collab:operation',
+              sessionId: session?.sessionId,
+              operation: fullOp,
+              baseVersion: versionRef.current,
+            }),
+            mood: 'FOCUSED',
+            priority: 'HIGH',
+            modelSource: bridge.isMockMode ? 'MOCK' : 'REAL',
+          },
+          metadata: { version: '1.0.0' },
+        });
+      }
+    },
+    [userId, session]
+  );
 
   // 便捷方法：直接更新整个内容（自动生成操作）
-  const updateContent = useCallback((newContent: string, cursorPosition?: number) => {
-    const oldContent = contentRef.current
-    if (oldContent === newContent) return
+  const updateContent = useCallback(
+    (newContent: string, cursorPosition?: number) => {
+      const oldContent = contentRef.current;
+      if (oldContent === newContent) return;
 
-    // 简化差异算法：找到第一个不同的位置
-    let commonStart = 0
-    while (commonStart < oldContent.length && commonStart < newContent.length && oldContent[commonStart] === newContent[commonStart]) {
-      commonStart++
-    }
+      // 简化差异算法：找到第一个不同的位置
+      let commonStart = 0;
+      while (
+        commonStart < oldContent.length &&
+        commonStart < newContent.length &&
+        oldContent[commonStart] === newContent[commonStart]
+      ) {
+        commonStart++;
+      }
 
-    let commonEnd = 0
-    while (
-      commonEnd < oldContent.length - commonStart &&
-      commonEnd < newContent.length - commonStart &&
-      oldContent[oldContent.length - 1 - commonEnd] === newContent[newContent.length - 1 - commonEnd]
-    ) {
-      commonEnd++
-    }
+      let commonEnd = 0;
+      while (
+        commonEnd < oldContent.length - commonStart &&
+        commonEnd < newContent.length - commonStart &&
+        oldContent[oldContent.length - 1 - commonEnd] ===
+          newContent[newContent.length - 1 - commonEnd]
+      ) {
+        commonEnd++;
+      }
 
-    const deletedLength = oldContent.length - commonStart - commonEnd
-    const insertedText = newContent.slice(commonStart, newContent.length - commonEnd)
+      const deletedLength = oldContent.length - commonStart - commonEnd;
+      const insertedText = newContent.slice(
+        commonStart,
+        newContent.length - commonEnd
+      );
 
-    // 生成操作
-    if (deletedLength > 0) {
-      applyLocalOperation({
-        type: 'delete',
-        position: commonStart,
-        length: deletedLength,
-      })
-    }
-    if (insertedText.length > 0) {
-      applyLocalOperation({
-        type: 'insert',
-        position: commonStart,
-        content: insertedText,
-      })
-    }
+      // 生成操作
+      if (deletedLength > 0) {
+        applyLocalOperation({
+          type: 'delete',
+          position: commonStart,
+          length: deletedLength,
+        });
+      }
+      if (insertedText.length > 0) {
+        applyLocalOperation({
+          type: 'insert',
+          position: commonStart,
+          content: insertedText,
+        });
+      }
 
-    // 如果操作已经通过 applyLocalOperation 更新了，我们不需要再 set
-    // 但为了确保一致性，直接设置
-    setContent(newContent)
-  }, [applyLocalOperation])
+      // 如果操作已经通过 applyLocalOperation 更新了，我们不需要再 set
+      // 但为了确保一致性，直接设置
+      setContent(newContent);
+    },
+    [applyLocalOperation]
+  );
 
   // Undo
   const undo = useCallback(() => {
-    const op = undoStackRef.current.pop()
-    if (!op) return
+    const op = undoStackRef.current.pop();
+    if (!op) return;
 
     // 生成反向操作
-    let inverseOp: TextOperation
+    let inverseOp: TextOperation;
     if (op.type === 'insert') {
       inverseOp = {
         ...op,
@@ -420,7 +444,7 @@ export function useCollaborativeEditing(
         position: op.position,
         length: op.content?.length || 0,
         content: undefined,
-      }
+      };
     } else if (op.type === 'delete') {
       // 需要保存被删除的内容才能 undo - 简化处理
       inverseOp = {
@@ -428,71 +452,77 @@ export function useCollaborativeEditing(
         type: 'insert',
         position: op.position,
         content: '', // 简化：实际需要记录被删内容
-      }
+      };
     } else {
-      return
+      return;
     }
 
-    const newContent = applyOperation(contentRef.current, inverseOp)
-    setContent(newContent)
-    setVersion(prev => prev + 1)
-    redoStackRef.current.push(op)
-  }, [])
+    const newContent = applyOperation(contentRef.current, inverseOp);
+    setContent(newContent);
+    setVersion((prev) => prev + 1);
+    redoStackRef.current.push(op);
+  }, []);
 
   // Redo
   const redo = useCallback(() => {
-    const op = redoStackRef.current.pop()
-    if (!op) return
+    const op = redoStackRef.current.pop();
+    if (!op) return;
 
-    const newContent = applyOperation(contentRef.current, op)
-    setContent(newContent)
-    setVersion(prev => prev + 1)
-    undoStackRef.current.push(op)
-  }, [])
+    const newContent = applyOperation(contentRef.current, op);
+    setContent(newContent);
+    setVersion((prev) => prev + 1);
+    undoStackRef.current.push(op);
+  }, []);
 
   // 更新光标位置
-  const updateCursor = useCallback((cursor: CursorPosition) => {
-    setParticipants(prev =>
-      prev.map(p =>
-        p.userId === userId ? { ...p, cursor, lastSeen: Date.now() } : p
-      )
-    )
+  const updateCursor = useCallback(
+    (cursor: CursorPosition) => {
+      setParticipants((prev) =>
+        prev.map((p) =>
+          p.userId === userId ? { ...p, cursor, lastSeen: Date.now() } : p
+        )
+      );
 
-    // 广播 presence
-    const bridge = getBackendBridge()
-    if (bridge.isConnected) {
-      const localP = participants.find(p => p.userId === userId)
-      if (localP) {
-        bridge.dispatchSignal({
-          id: crypto.randomUUID(),
-          timestamp: Date.now(),
-          type: 'SYNC',
-          senderId: 'USER',
-          receiverId: 'CENTRAL_PULSE',
-          payload: {
-            content: JSON.stringify({
-              type: 'collab:presence',
-              sessionId: session?.sessionId,
-              participant: { ...localP, cursor, lastSeen: Date.now() },
-            }),
-            mood: 'FOCUSED',
-            priority: 'LOW',
-            modelSource: 'MOCK',
-          },
-          metadata: { version: '1.0.0' },
-        })
+      // 广播 presence
+      const bridge = getBackendBridge();
+      if (bridge.isConnected) {
+        const localP = participants.find((p) => p.userId === userId);
+        if (localP) {
+          bridge.dispatchSignal({
+            id: crypto.randomUUID(),
+            timestamp: Date.now(),
+            type: 'SYNC',
+            senderId: 'USER',
+            receiverId: 'CENTRAL_PULSE',
+            payload: {
+              content: JSON.stringify({
+                type: 'collab:presence',
+                sessionId: session?.sessionId,
+                participant: { ...localP, cursor, lastSeen: Date.now() },
+              }),
+              mood: 'FOCUSED',
+              priority: 'LOW',
+              modelSource: 'MOCK',
+            },
+            metadata: { version: '1.0.0' },
+          });
+        }
       }
-    }
-  }, [userId, session, participants])
+    },
+    [userId, session, participants]
+  );
 
   // 更新选区
-  const updateSelection = useCallback((selection: SelectionRange | null) => {
-    setParticipants(prev =>
-      prev.map(p =>
-        p.userId === userId ? { ...p, selection, lastSeen: Date.now() } : p
-      )
-    )
-  }, [userId])
+  const updateSelection = useCallback(
+    (selection: SelectionRange | null) => {
+      setParticipants((prev) =>
+        prev.map((p) =>
+          p.userId === userId ? { ...p, selection, lastSeen: Date.now() } : p
+        )
+      );
+    },
+    [userId]
+  );
 
   return {
     content,
@@ -508,5 +538,5 @@ export function useCollaborativeEditing(
     updateSelection,
     session,
     conflictCount,
-  }
+  };
 }

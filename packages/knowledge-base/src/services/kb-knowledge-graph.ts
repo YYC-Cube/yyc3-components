@@ -1,8 +1,8 @@
 /**
  * YYC³ Knowledge Base — M6: Knowledge Graph (知识图谱引擎)
- * 
+ *
  * "自动识别实体及关系，构建可视化知识图谱"
- * 
+ *
  * Capabilities:
  *   - Entity node management (CRUD + merge + dedup)
  *   - Relationship edge management with typed relations
@@ -15,32 +15,39 @@
  */
 
 import type {
-  KBEntityId, GraphNode, GraphEdge, EntityType, RelationType,
-  ExtractedEntity, ExtractedRelation, GraphQuery, GraphVisualization,
-} from "./kb-types";
+  KBEntityId,
+  GraphNode,
+  GraphEdge,
+  EntityType,
+  RelationType,
+  ExtractedEntity,
+  ExtractedRelation,
+  GraphQuery,
+  GraphVisualization,
+} from './kb-types';
 
 // ==========================================
 // Color Map for Entity Types
 // ==========================================
 const ENTITY_COLORS: Record<EntityType, string> = {
-  PERSON: "#6366f1",      // Indigo
-  ORGANIZATION: "#8b5cf6", // Purple
-  LOCATION: "#14b8a6",    // Teal
-  DATE: "#f59e0b",        // Amber
-  TIME: "#f97316",        // Orange
-  MONEY: "#22c55e",       // Green
-  PERCENTAGE: "#10b981",  // Emerald
-  EMAIL: "#3b82f6",       // Blue
-  PHONE: "#6366f1",       // Indigo
-  URL: "#0ea5e9",         // Sky
-  PRODUCT: "#ec4899",     // Pink
-  TECHNOLOGY: "#a855f7",  // Violet
-  EVENT: "#f43f5e",       // Rose
-  PROJECT: "#ef4444",     // Red
-  CODE_SYMBOL: "#84cc16", // Lime
-  FILE_PATH: "#64748b",   // Slate
-  VERSION: "#78716c",     // Stone
-  CUSTOM: "#94a3b8",      // Gray
+  PERSON: '#6366f1', // Indigo
+  ORGANIZATION: '#8b5cf6', // Purple
+  LOCATION: '#14b8a6', // Teal
+  DATE: '#f59e0b', // Amber
+  TIME: '#f97316', // Orange
+  MONEY: '#22c55e', // Green
+  PERCENTAGE: '#10b981', // Emerald
+  EMAIL: '#3b82f6', // Blue
+  PHONE: '#6366f1', // Indigo
+  URL: '#0ea5e9', // Sky
+  PRODUCT: '#ec4899', // Pink
+  TECHNOLOGY: '#a855f7', // Violet
+  EVENT: '#f43f5e', // Rose
+  PROJECT: '#ef4444', // Red
+  CODE_SYMBOL: '#84cc16', // Lime
+  FILE_PATH: '#64748b', // Slate
+  VERSION: '#78716c', // Stone
+  CUSTOM: '#94a3b8', // Gray
 };
 
 // ==========================================
@@ -51,17 +58,17 @@ export class KnowledgeGraph {
   private edges: Map<KBEntityId, GraphEdge> = new Map();
   private nodesByLabel: Map<string, Set<KBEntityId>> = new Map(); // label → nodeIds
   private adjacencyOut: Map<KBEntityId, Set<KBEntityId>> = new Map(); // nodeId → edge IDs outgoing
-  private adjacencyIn: Map<KBEntityId, Set<KBEntityId>> = new Map();  // nodeId → edge IDs incoming
+  private adjacencyIn: Map<KBEntityId, Set<KBEntityId>> = new Map(); // nodeId → edge IDs incoming
 
   constructor() {
-    console.log("[KB:Graph] Knowledge graph initialized");
+    console.log('[KB:Graph] Knowledge graph initialized');
   }
 
   // ==========================================
   // Node Operations
   // ==========================================
 
-  addNode(node: Omit<GraphNode, "id" | "createdAt" | "updatedAt">): GraphNode {
+  addNode(node: Omit<GraphNode, 'id' | 'createdAt' | 'updatedAt'>): GraphNode {
     // Check for existing node with same label + type
     const existing = this.findNode(node.label, node.type);
     if (existing) {
@@ -144,7 +151,7 @@ export class KnowledgeGraph {
   // Edge Operations
   // ==========================================
 
-  addEdge(edge: Omit<GraphEdge, "id" | "createdAt">): GraphEdge {
+  addEdge(edge: Omit<GraphEdge, 'id' | 'createdAt'>): GraphEdge {
     // Check for duplicate edge
     const existing = this.findEdge(edge.sourceId, edge.targetId, edge.relation);
     if (existing) {
@@ -163,21 +170,31 @@ export class KnowledgeGraph {
     this.edges.set(id, newEdge);
 
     // Update adjacency
-    if (!this.adjacencyOut.has(edge.sourceId)) this.adjacencyOut.set(edge.sourceId, new Set());
-    if (!this.adjacencyIn.has(edge.targetId)) this.adjacencyIn.set(edge.targetId, new Set());
+    if (!this.adjacencyOut.has(edge.sourceId))
+      this.adjacencyOut.set(edge.sourceId, new Set());
+    if (!this.adjacencyIn.has(edge.targetId))
+      this.adjacencyIn.set(edge.targetId, new Set());
     this.adjacencyOut.get(edge.sourceId)!.add(id);
     this.adjacencyIn.get(edge.targetId)!.add(id);
 
     return newEdge;
   }
 
-  findEdge(sourceId: KBEntityId, targetId: KBEntityId, relation?: RelationType): GraphEdge | undefined {
+  findEdge(
+    sourceId: KBEntityId,
+    targetId: KBEntityId,
+    relation?: RelationType
+  ): GraphEdge | undefined {
     const outEdges = this.adjacencyOut.get(sourceId);
     if (!outEdges) return undefined;
 
     for (const edgeId of outEdges) {
       const edge = this.edges.get(edgeId);
-      if (edge && edge.targetId === targetId && (!relation || edge.relation === relation)) {
+      if (
+        edge &&
+        edge.targetId === targetId &&
+        (!relation || edge.relation === relation)
+      ) {
         return edge;
       }
     }
@@ -191,7 +208,7 @@ export class KnowledgeGraph {
   ingestFromExtraction(
     entities: ExtractedEntity[],
     relations: ExtractedRelation[],
-    documentId: KBEntityId,
+    documentId: KBEntityId
   ): { nodesCreated: number; edgesCreated: number } {
     let nodesCreated = 0;
     let edgesCreated = 0;
@@ -261,7 +278,9 @@ export class KnowledgeGraph {
     if (!startNode) return { nodes: [], edges: [] };
 
     // BFS
-    const queue: { nodeId: KBEntityId; depth: number }[] = [{ nodeId: startId, depth: 0 }];
+    const queue: { nodeId: KBEntityId; depth: number }[] = [
+      { nodeId: startId, depth: 0 },
+    ];
     const visited = new Set<KBEntityId>([startId]);
     resultNodes.set(startId, startNode);
 
@@ -317,10 +336,16 @@ export class KnowledgeGraph {
   /**
    * Find shortest path between two nodes
    */
-  findPath(fromId: KBEntityId, toId: KBEntityId, maxDepth: number = 5): GraphNode[] | null {
+  findPath(
+    fromId: KBEntityId,
+    toId: KBEntityId,
+    maxDepth: number = 5
+  ): GraphNode[] | null {
     if (fromId === toId) return [this.nodes.get(fromId)!].filter(Boolean);
 
-    const queue: { nodeId: KBEntityId; path: KBEntityId[] }[] = [{ nodeId: fromId, path: [fromId] }];
+    const queue: { nodeId: KBEntityId; path: KBEntityId[] }[] = [
+      { nodeId: fromId, path: [fromId] },
+    ];
     const visited = new Set<KBEntityId>([fromId]);
 
     while (queue.length > 0) {
@@ -342,7 +367,9 @@ export class KnowledgeGraph {
 
       for (const neighborId of neighborIds) {
         if (neighborId === toId) {
-          return [...path, neighborId].map(id => this.nodes.get(id)!).filter(Boolean);
+          return [...path, neighborId]
+            .map((id) => this.nodes.get(id)!)
+            .filter(Boolean);
         }
         if (!visited.has(neighborId)) {
           visited.add(neighborId);
@@ -361,7 +388,11 @@ export class KnowledgeGraph {
   /**
    * Generate visualization data for frontend rendering (D3/AntV/Cytoscape)
    */
-  getVisualization(centerNodeId?: KBEntityId, depth: number = 2, limit: number = 100): GraphVisualization {
+  getVisualization(
+    centerNodeId?: KBEntityId,
+    depth: number = 2,
+    limit: number = 100
+  ): GraphVisualization {
     let nodes: GraphNode[];
     let edges: GraphEdge[];
 
@@ -374,9 +405,10 @@ export class KnowledgeGraph {
       nodes = Array.from(this.nodes.values())
         .sort((a, b) => b.weight - a.weight)
         .slice(0, limit);
-      const nodeIds = new Set(nodes.map(n => n.id));
-      edges = Array.from(this.edges.values())
-        .filter(e => nodeIds.has(e.sourceId) && nodeIds.has(e.targetId));
+      const nodeIds = new Set(nodes.map((n) => n.id));
+      edges = Array.from(this.edges.values()).filter(
+        (e) => nodeIds.has(e.sourceId) && nodeIds.has(e.targetId)
+      );
     }
 
     // Calculate graph density
@@ -398,22 +430,24 @@ export class KnowledgeGraph {
           if (visited.has(current)) continue;
           visited.add(current);
           for (const edge of edges) {
-            if (edge.sourceId === current && !visited.has(edge.targetId)) queue.push(edge.targetId);
-            if (edge.targetId === current && !visited.has(edge.sourceId)) queue.push(edge.sourceId);
+            if (edge.sourceId === current && !visited.has(edge.targetId))
+              queue.push(edge.targetId);
+            if (edge.targetId === current && !visited.has(edge.sourceId))
+              queue.push(edge.sourceId);
           }
         }
       }
     }
 
     return {
-      nodes: nodes.map(n => ({
+      nodes: nodes.map((n) => ({
         id: n.id,
         label: n.label,
         type: n.type,
         size: Math.min(5 + n.weight * 2, 30),
-        color: ENTITY_COLORS[n.type] || "#94a3b8",
+        color: ENTITY_COLORS[n.type] || '#94a3b8',
       })),
-      edges: edges.map(e => ({
+      edges: edges.map((e) => ({
         id: e.id,
         source: e.sourceId,
         target: e.targetId,
@@ -448,13 +482,14 @@ export class KnowledgeGraph {
 
     const edgesByRelation: Record<string, number> = {};
     for (const edge of this.edges.values()) {
-      edgesByRelation[edge.relation] = (edgesByRelation[edge.relation] || 0) + 1;
+      edgesByRelation[edge.relation] =
+        (edgesByRelation[edge.relation] || 0) + 1;
     }
 
     const topNodes = Array.from(this.nodes.values())
       .sort((a, b) => b.weight - a.weight)
       .slice(0, 20)
-      .map(n => ({ label: n.label, type: n.type, weight: n.weight }));
+      .map((n) => ({ label: n.label, type: n.type, weight: n.weight }));
 
     const n = this.nodes.size;
     const maxEdges = n * (n - 1);

@@ -24,20 +24,25 @@ pnpm build
 ## 📚 功能展示
 
 ### 1. 错误边界
+
 使用 `ErrorBoundary` 组件捕获子组件中的错误。
 
 ### 2. 玻璃态卡片
+
 使用 `GlassCard` 组件创建美观的毛玻璃效果。
 
 ### 3. 淡入动画
+
 使用 `FadeIn` 组件添加平滑的入场动画。
 
 ### 4. 工具函数
+
 - `formatDate()` - 格式化日期
 - `getRelativeTime()` - 获取相对时间
 - `uuid()` - 生成UUID
 
 ### 5. 自定义Hooks
+
 - `useToggle()` - 布尔值切换
 - `useLocalStorage()` - 本地存储状态
 - `useDebounce()` - 防抖
@@ -53,6 +58,7 @@ pnpm build
 ## 📖 更多示例
 
 查看其他示例项目：
+
 - [基础用法](./basic-usage/)
 - [错误处理](./error-handling/)
 - [国际化](./i18n/)

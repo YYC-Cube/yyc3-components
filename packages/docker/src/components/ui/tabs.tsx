@@ -9,9 +9,10 @@ export const TabsList = React.forwardRef<HTMLDivElement, Props>(
 );
 TabsList.displayName = 'TabsList';
 
-export const TabsTrigger = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement> & Record<string, unknown>>(
-  (props, ref) => <button ref={ref} {...props} />
-);
+export const TabsTrigger = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement> & Record<string, unknown>
+>((props, ref) => <button ref={ref} {...props} />);
 TabsTrigger.displayName = 'TabsTrigger';
 
 export const TabsContent = React.forwardRef<HTMLDivElement, Props>(

@@ -34,6 +34,7 @@
 ## 更新的包
 
 **@yyc3/utils** (v1.0.0 → v1.1.0)
+
 - 新增验证工具函数
 - isString, isNumber, isBoolean 等
 - isEmail, isURL 格式验证

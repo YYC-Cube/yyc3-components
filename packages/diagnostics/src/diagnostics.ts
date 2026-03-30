@@ -27,7 +27,7 @@
  * notes: 所有函数均为纯函数，便于测试和维护
  */
 
-import type { DiagnosticResult, DiagnosticReport } from "./types";
+import type { DiagnosticResult, DiagnosticReport } from './types';
 
 /**
  * 检查 localStorage 可用性 / Check localStorage availability
@@ -38,12 +38,13 @@ function checkLocalStorage(): DiagnosticResult {
     localStorage.setItem(testKey, 'test');
     const value = localStorage.getItem(testKey);
     localStorage.removeItem(testKey);
-    
+
     if (value === 'test') {
       return {
         name: 'LOCALSTORAGE_CHECK',
         passed: true,
-        message: 'localStorage is accessible and functioning / localStorage 可访问且正常运行',
+        message:
+          'localStorage is accessible and functioning / localStorage 可访问且正常运行',
       };
     } else {
       return {
@@ -67,10 +68,7 @@ function checkLocalStorage(): DiagnosticResult {
  */
 function checkConfigData(): DiagnosticResult {
   try {
-    const keys = [
-      'yyc3_ui_settings',
-      'yyc3_database_config',
-    ];
+    const keys = ['yyc3_ui_settings', 'yyc3_database_config'];
 
     const issues: string[] = [];
 
@@ -114,21 +112,19 @@ function checkConfigData(): DiagnosticResult {
  */
 function checkBrowserEnvironment(): DiagnosticResult {
   try {
-    const required = [
-      'window',
-      'document',
-      'localStorage',
-      'fetch',
-      'Promise',
-    ];
+    const required = ['window', 'document', 'localStorage', 'fetch', 'Promise'];
 
-    const missing = required.filter(api => typeof (globalThis as Record<string, unknown>)[api] === 'undefined');
+    const missing = required.filter(
+      (api) =>
+        typeof (globalThis as Record<string, unknown>)[api] === 'undefined'
+    );
 
     if (missing.length === 0) {
       return {
         name: 'BROWSER_ENV_CHECK',
         passed: true,
-        message: 'All required browser APIs available / 所有必需的浏览器 API 可用',
+        message:
+          'All required browser APIs available / 所有必需的浏览器 API 可用',
       };
     } else {
       return {
@@ -158,8 +154,8 @@ export function runDiagnostics(): DiagnosticReport {
     checkConfigData(),
   ];
 
-  const passedChecks = results.filter(r => r.passed).length;
-  const failedChecks = results.filter(r => !r.passed).length;
+  const passedChecks = results.filter((r) => r.passed).length;
+  const failedChecks = results.filter((r) => !r.passed).length;
 
   let overallStatus: 'HEALTHY' | 'WARNING' | 'CRITICAL';
   if (failedChecks === 0) {
@@ -184,7 +180,9 @@ export function runDiagnostics(): DiagnosticReport {
  */
 export function clearAllData(): { success: boolean; error?: string } {
   try {
-    const keys = Object.keys(localStorage).filter(key => key.startsWith('yyc3_'));
+    const keys = Object.keys(localStorage).filter((key) =>
+      key.startsWith('yyc3_')
+    );
     for (const key of keys) {
       localStorage.removeItem(key);
     }
@@ -201,13 +199,14 @@ export function clearAllData(): { success: boolean; error?: string } {
 /**
  * 修复损坏的配置数据 / Repair corrupted config data
  */
-export function repairConfigData(): { success: boolean; repaired: string[]; error?: string } {
+export function repairConfigData(): {
+  success: boolean;
+  repaired: string[];
+  error?: string;
+} {
   try {
     const repairedKeys: string[] = [];
-    const keys = [
-      'yyc3_ui_settings',
-      'yyc3_database_config',
-    ];
+    const keys = ['yyc3_ui_settings', 'yyc3_database_config'];
 
     for (const key of keys) {
       const data = localStorage.getItem(key);

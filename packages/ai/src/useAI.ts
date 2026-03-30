@@ -69,21 +69,21 @@ const CURRENT_VERSION = 1;
 
 /**
  * AI Hook
- * 
+ *
  * 提供AI对话功能，支持流式响应、多提供商和配置管理
  * AI chat functionality with streaming response, multi-provider support, and config management
- * 
+ *
  * @returns {UseAIReturn} Hook 返回值 / Hook return value
- * 
+ *
  * @example
  * ```tsx
  * const { chat, isStreaming, config } = useAI();
- * 
+ *
  * const handleSend = async (message: string) => {
  *   const messages = [
  *     { role: 'user' as const, content: message }
  *   ];
- *   
+ *
  *   await chat(messages, (chunk) => {
  *     console.log('Streaming:', chunk);
  *   });
@@ -101,10 +101,14 @@ export function useAI(): UseAIReturn {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        
+
         // 配置迁移 / Config migration
         if (parsed.version !== CURRENT_VERSION) {
-          const migrated = { ...DEFAULT_CONFIG, ...parsed, version: CURRENT_VERSION };
+          const migrated = {
+            ...DEFAULT_CONFIG,
+            ...parsed,
+            version: CURRENT_VERSION,
+          };
           setConfig(migrated);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
         } else {
@@ -129,88 +133,101 @@ export function useAI(): UseAIReturn {
   }, []);
 
   // 聊天函数 / Chat function
-  const chat = useCallback(async (messages: AIMessage[], onChunk: AIStreamCallback) => {
-    setIsStreaming(true);
-    
-    const currentConfig = config; 
+  const chat = useCallback(
+    async (messages: AIMessage[], onChunk: AIStreamCallback) => {
+      setIsStreaming(true);
 
-    try {
-      // 创建超时控制器 / Create timeout controller
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000); // 2秒超时检查
+      const currentConfig = config;
 
       try {
-        const response = await fetch(`${currentConfig.baseUrl}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentConfig.apiKey}`
-          },
-          body: JSON.stringify({
-            model: currentConfig.model,
-            messages: messages,
-            temperature: currentConfig.temperature,
-            stream: true,
-          }),
-          signal: controller.signal
-        });
+        // 创建超时控制器 / Create timeout controller
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2秒超时检查
 
-        clearTimeout(timeoutId);
+        try {
+          const response = await fetch(
+            `${currentConfig.baseUrl}/chat/completions`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${currentConfig.apiKey}`,
+              },
+              body: JSON.stringify({
+                model: currentConfig.model,
+                messages: messages,
+                temperature: currentConfig.temperature,
+                stream: true,
+              }),
+              signal: controller.signal,
+            }
+          );
 
-        if (!response.ok) {
-          throw new Error(`AI API Error: ${response.statusText}`);
-        }
-        if (!response.body) {
-          throw new Error('No response body');
-        }
+          clearTimeout(timeoutId);
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
+          if (!response.ok) {
+            throw new Error(`AI API Error: ${response.statusText}`);
+          }
+          if (!response.body) {
+            throw new Error('No response body');
+          }
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {break;}
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
 
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = (buffer + chunk).split('\n');
-          buffer = lines.pop() || '';
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              break;
+            }
 
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (trimmed.startsWith('data: ')) {
-              const dataStr = trimmed.slice(6);
-              if (dataStr === '[DONE]') {continue;}
-              
-              try {
-                const data = JSON.parse(dataStr);
-                const content = data.choices?.[0]?.delta?.content || '';
-                if (content) {onChunk(content);}
-              } catch (e) {
-                // 流式块解析异常忽略 / Ignore stream chunk parse error
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = (buffer + chunk).split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('data: ')) {
+                const dataStr = trimmed.slice(6);
+                if (dataStr === '[DONE]') {
+                  continue;
+                }
+
+                try {
+                  const data = JSON.parse(dataStr);
+                  const content = data.choices?.[0]?.delta?.content || '';
+                  if (content) {
+                    onChunk(content);
+                  }
+                } catch (e) {
+                  // 流式块解析异常忽略 / Ignore stream chunk parse error
+                }
               }
             }
           }
-        }
-      } catch (networkError: unknown) {
-        // 网络失败时的模拟响应 / Simulated response on network failure
-        const fallbackMessage = "Local inference node unreachable. Using simulated response.\n\n" + 
-          `Your message has been processed. In production, this would be the actual AI response from ${currentConfig.model}.`;
+        } catch (networkError: unknown) {
+          // 网络失败时的模拟响应 / Simulated response on network failure
+          const fallbackMessage =
+            'Local inference node unreachable. Using simulated response.\n\n' +
+            `Your message has been processed. In production, this would be the actual AI response from ${currentConfig.model}.`;
 
-        const chunks = fallbackMessage.split(" ");
-        for (const chunk of chunks) {
-          await new Promise(r => setTimeout(r, 50)); // 模拟打字 / Simulate typing
-          onChunk(chunk + " ");
+          const chunks = fallbackMessage.split(' ');
+          for (const chunk of chunks) {
+            await new Promise((r) => setTimeout(r, 50)); // 模拟打字 / Simulate typing
+            onChunk(chunk + ' ');
+          }
         }
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
+        onChunk(`\n[SYSTEM_ERROR]: ${errorMessage}\n`);
+      } finally {
+        setIsStreaming(false);
       }
-
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      onChunk(`\n[SYSTEM_ERROR]: ${errorMessage}\n`);
-    } finally {
-      setIsStreaming(false);
-    }
-  }, [config]);
+    },
+    [config]
+  );
 
   return { chat, isStreaming, config, saveConfig, loading };
 }

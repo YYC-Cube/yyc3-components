@@ -21,7 +21,7 @@ function DatabaseManager() {
     executeQuery,
     beginTransaction,
     commitTransaction,
-    rollbackTransaction
+    rollbackTransaction,
   } = useDatabase();
 
   return (

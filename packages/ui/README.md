@@ -34,6 +34,7 @@ pnpm add @yyc3/ui
 ## 🎨 组件列表
 
 ### 基础组件 (Basic Components)
+
 - `Button` - 按钮
 - `Input` - 输入框
 - `Label` - 标签
@@ -41,6 +42,7 @@ pnpm add @yyc3/ui
 - `Badge` - 徽章
 
 ### 容器组件 (Container Components)
+
 - `Card` - 卡片
 - `Dialog` - 对话框
 - `Sheet` - 侧边面板
@@ -49,6 +51,7 @@ pnpm add @yyc3/ui
 - `Alert` - 警告
 
 ### 菜单组件 (Menu Components)
+
 - `DropdownMenu` - 下拉菜单
 - `ContextMenu` - 右键菜单
 - `NavigationMenu` - 导航菜单
@@ -56,6 +59,7 @@ pnpm add @yyc3/ui
 - `Command` - 命令面板
 
 ### 布局组件 (Layout Components)
+
 - `Accordion` - 手风琴
 - `Collapsible` - 折叠面板
 - `Tabs` - 标签页
@@ -63,6 +67,7 @@ pnpm add @yyc3/ui
 - `ScrollArea` - 滚动区域
 
 ### 反馈组件 (Feedback Components)
+
 - `Progress` - 进度条
 - `Skeleton` - 骨架屏
 - `Sonner` - 通知提示
@@ -70,11 +75,13 @@ pnpm add @yyc3/ui
 - `Avatar` - 头像
 
 ### 列表组件 (List Components)
+
 - `Table` - 表格
 - `Pagination` - 分页
 - `Breadcrumb` - 面包屑
 
 ### 表单组件 (Form Components)
+
 - `Form` - 表单
 - `Checkbox` - 复选框
 - `RadioGroup` - 单选框
@@ -84,6 +91,7 @@ pnpm add @yyc3/ui
 - `Calendar` - 日历
 
 ### 高级组件 (Advanced Components)
+
 - `Sidebar` - 侧边栏
 - `Resizable` - 可调整大小面板
 - `Carousel` - 轮播图
@@ -153,10 +161,7 @@ import { Button } from '@yyc3/ui';
 
 function MyButton() {
   return (
-    <Button className={cn(
-      "base-styles",
-      isActive && "active-styles"
-    )}>
+    <Button className={cn('base-styles', isActive && 'active-styles')}>
       Click Me
     </Button>
   );
@@ -169,11 +174,7 @@ function MyButton() {
 import { Card } from '@yyc3/ui';
 
 function ResponsiveCard() {
-  return (
-    <Card className="w-full md:w-1/2 lg:w-1/3">
-      {/* Content */}
-    </Card>
-  );
+  return <Card className="w-full md:w-1/2 lg:w-1/3">{/* Content */}</Card>;
 }
 ```
 
@@ -184,9 +185,7 @@ import { Button } from '@yyc3/ui';
 
 function DarkModeButton() {
   return (
-    <Button className="dark:bg-white dark:text-black">
-      Dark Mode Button
-    </Button>
+    <Button className="dark:bg-white dark:text-black">Dark Mode Button</Button>
   );
 }
 ```
@@ -198,17 +197,12 @@ function DarkModeButton() {
 ```js
 // tailwind.config.js
 module.exports = {
-  content: [
-    "./node_modules/@yyc3/ui/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
-  ],
+  content: ['./node_modules/@yyc3/ui/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {},
   },
-  plugins: [
-    require("tailwindcss-animate"),
-  ],
-}
+  plugins: [require('tailwindcss-animate')],
+};
 ```
 
 ### CSS 变量
@@ -220,7 +214,7 @@ module.exports = {
     --foreground: 222.2 84% 4.9%;
     /* ... */
   }
-  
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;

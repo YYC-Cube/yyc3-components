@@ -26,12 +26,17 @@
  */
 
 // Types
-export type { AIConfig, AIProvider, AIMessage, AIStreamCallback } from "./types";
+export type {
+  AIConfig,
+  AIProvider,
+  AIMessage,
+  AIStreamCallback,
+} from './types';
 
 // Hooks
-export { useAI } from "./useAI";
-export type { UseAIReturn } from "./useAI";
+export { useAI } from './useAI';
+export type { UseAIReturn } from './useAI';
 
 // Utils
-export { createAIStreamParser } from "./utils";
-export type { StreamChunk } from "./utils";
+export { createAIStreamParser } from './utils';
+export type { StreamChunk } from './utils';

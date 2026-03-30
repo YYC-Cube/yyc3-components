@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-03-26
 
 ### Added
+
 - 🎉 Initial release of @yyc3/devops
 - ✨ MCP server management (probe, connect, disconnect, auto-connect)
 - ✨ MCP tool execution and result handling
@@ -22,36 +23,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 
 #### MCP Server Management
+
 - Server probing and status checking
 - Auto-connect support
 - Tool execution with parameter support
 - Connection state management
 
 #### Workflow Engine
+
 - Workflow CRUD operations
 - Step-based workflow execution
 - Workflow execution history
 - Parameter injection support
 
 #### Infrastructure Monitoring
+
 - Real-time service health monitoring
 - Diagnostic issue tracking
 - Automatic issue detection and repair
 - Service metadata management
 
 #### Logging
+
 - Operations log with multiple levels
 - Log export functionality
 - Log filtering and searching
 - Timestamp-based queries
 
 #### Metrics
+
 - DevOps KPI tracking
 - Performance metrics
 - Connection statistics
 - System health indicators
 
 ### Dependencies
+
 - React ^18.0.0
 - React DOM ^18.0.0
 - lucide-react ^0.378.0
@@ -59,12 +66,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - tailwind-merge ^2.3.0
 
 ### Documentation
+
 - Complete README with examples
 - TypeScript type definitions
 - API documentation
 - Best practices guide
 
 ### Notes
+
 - Supports MCP (Model Context Protocol) standard
 - Fully TypeScript type-safe
 - Comprehensive error handling
@@ -75,6 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
+
 - [ ] More diagnostic rules
 - [ ] Advanced workflow scheduling
 - [ ] Alert notifications

@@ -1,12 +1,12 @@
 /**
  * YYC³ AI Family - BackendBridge (灵肉桥梁)
- * 
+ *
  * The sacred bridge connecting the anthropomorphic frontend ("Soul")
  * with the Bun Runtime + WebSocket + Redis backend ("Body").
- * 
+ *
  * Architecture:
  *   [Frontend Soul] <-> [BackendBridge] <-> [Bun WS:3080 / REST API]
- * 
+ *
  * Design: "Neural Lightning Network" (神经闪电网络)
  * - WebSocket for real-time signals (heartbeat, commands, responses)
  * - REST API for CRUD operations (member config, permissions, etc.)
@@ -16,7 +16,11 @@
 import { RoleId } from '../types/family-manifest';
 import { FamilySignal, SignalType } from '../types/protocol';
 import { ENDPOINTS } from '../config/endpoints';
-import { getApiBaseUrl, getWsBaseUrl, readConfigSnapshot } from '../config/dynamic-reader';
+import {
+  getApiBaseUrl,
+  getWsBaseUrl,
+  readConfigSnapshot,
+} from '../config/dynamic-reader';
 import type { NetworkConfig } from '../types/dynamic-config';
 
 // ==========================================
@@ -24,16 +28,16 @@ import type { NetworkConfig } from '../types/dynamic-config';
 // FIX-004: 重连参数从 DynamicConfig 读取
 // ==========================================
 export interface BackendConfig {
-  wsUrl: string;          // WebSocket endpoint
-  apiUrl: string;         // REST API endpoint
-  reconnectInterval: number;  // ms between reconnection attempts
+  wsUrl: string; // WebSocket endpoint
+  apiUrl: string; // REST API endpoint
+  reconnectInterval: number; // ms between reconnection attempts
   maxReconnectAttempts: number;
-  heartbeatInterval: number;  // ms between heartbeat pings
-  connectionTimeout: number;  // ms before connection timeout
-  agentCallTimeout: number;   // ms before agent call timeout
-  maxReconnectDelay: number;  // ms cap for exponential backoff
-  backoffMultiplier: number;  // exponential backoff multiplier
-  authToken?: string;         // JWT or session token
+  heartbeatInterval: number; // ms between heartbeat pings
+  connectionTimeout: number; // ms before connection timeout
+  agentCallTimeout: number; // ms before agent call timeout
+  maxReconnectDelay: number; // ms cap for exponential backoff
+  backoffMultiplier: number; // exponential backoff multiplier
+  authToken?: string; // JWT or session token
 }
 
 /**
@@ -63,21 +67,21 @@ export const DEFAULT_CONFIG: BackendConfig = buildDefaultConfig();
 // ==========================================
 // Connection States
 // ==========================================
-export type ConnectionState = 
-  | 'DISCONNECTED'   // Not connected
-  | 'CONNECTING'     // Attempting connection
-  | 'CONNECTED'      // WebSocket open and healthy
-  | 'DEGRADED'       // Connected but some services unavailable
-  | 'MOCK_MODE';     // Using simulated data (no backend)
+export type ConnectionState =
+  | 'DISCONNECTED' // Not connected
+  | 'CONNECTING' // Attempting connection
+  | 'CONNECTED' // WebSocket open and healthy
+  | 'DEGRADED' // Connected but some services unavailable
+  | 'MOCK_MODE'; // Using simulated data (no backend)
 
 export interface ConnectionStatus {
   state: ConnectionState;
-  latency: number;           // Round-trip latency in ms
+  latency: number; // Round-trip latency in ms
   reconnectAttempts: number;
-  lastHeartbeat: number;     // Unix timestamp
-  backendVersion?: string;   // Backend service version
-  activeMembers: number;     // Number of online AI family members
-  wsReadyState: number;      // WebSocket.readyState
+  lastHeartbeat: number; // Unix timestamp
+  backendVersion?: string; // Backend service version
+  activeMembers: number; // Number of online AI family members
+  wsReadyState: number; // WebSocket.readyState
   error?: string;
 }
 
@@ -86,14 +90,28 @@ export interface ConnectionStatus {
 // Matches the Bun backend's WebSocket message format
 // ==========================================
 export interface BackendMessage {
-  type: 'signal' | 'heartbeat' | 'member_update' | 'system_event' | 'error' | 'pong' | 'agent_response';
+  type:
+    | 'signal'
+    | 'heartbeat'
+    | 'member_update'
+    | 'system_event'
+    | 'error'
+    | 'pong'
+    | 'agent_response';
   payload: any;
   timestamp: number;
   requestId?: string;
 }
 
 export interface BackendCommand {
-  type: 'dispatch_signal' | 'update_member' | 'get_members' | 'ping' | 'subscribe' | 'visual_analysis' | 'agent_call';
+  type:
+    | 'dispatch_signal'
+    | 'update_member'
+    | 'get_members'
+    | 'ping'
+    | 'subscribe'
+    | 'visual_analysis'
+    | 'agent_call';
   payload: any;
   requestId: string;
 }
@@ -104,12 +122,12 @@ export interface BackendCommand {
 type EventCallback = (data: any) => void;
 
 interface EventMap {
-  'connection_change': ConnectionStatus;
-  'signal_received': FamilySignal;
-  'member_update': any;
-  'system_event': any;
-  'error': Error;
-  'heartbeat': { latency: number; timestamp: number };
+  connection_change: ConnectionStatus;
+  signal_received: FamilySignal;
+  member_update: any;
+  system_event: any;
+  error: Error;
+  heartbeat: { latency: number; timestamp: number };
 }
 
 // ==========================================
@@ -127,12 +145,15 @@ export class BackendBridge {
   private isDestroyed: boolean = false;
   private connectResolve: ((status: ConnectionStatus) => void) | null = null;
   // Pending agent call tracking for request-response correlation
-  private pendingAgentCalls: Map<string, {
-    resolve: (response: string) => void;
-    reject: (error: Error) => void;
-    timeout: ReturnType<typeof setTimeout>;
-    roleId: RoleId;
-  }> = new Map();
+  private pendingAgentCalls: Map<
+    string,
+    {
+      resolve: (response: string) => void;
+      reject: (error: Error) => void;
+      timeout: ReturnType<typeof setTimeout>;
+      roleId: RoleId;
+    }
+  > = new Map();
 
   constructor(config: Partial<BackendConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -166,24 +187,29 @@ export class BackendBridge {
    */
   async connect(): Promise<ConnectionStatus> {
     if (this.isDestroyed) return this._status;
-    
+
     // Guard: already connected or connecting
-    if (this._status.state === 'CONNECTED' || (this._status.state === 'CONNECTING' && this.ws)) {
+    if (
+      this._status.state === 'CONNECTED' ||
+      (this._status.state === 'CONNECTING' && this.ws)
+    ) {
       return this._status;
     }
-    
+
     this.updateStatus({ state: 'CONNECTING', error: undefined });
 
     return new Promise((resolve) => {
       this.connectResolve = resolve;
-      
+
       try {
         this.ws = new WebSocket(this.config.wsUrl);
 
         // Connection timeout - if no response in 5s, go to mock mode
         const timeout = setTimeout(() => {
           if (this._status.state === 'CONNECTING') {
-            console.warn('[BackendBridge] Connection timeout. Entering MOCK_MODE.');
+            console.warn(
+              '[BackendBridge] Connection timeout. Entering MOCK_MODE.'
+            );
             this.enterMockMode();
             this.resolveConnect();
           }
@@ -192,13 +218,13 @@ export class BackendBridge {
         this.ws.onopen = () => {
           clearTimeout(timeout);
           this.reconnectAttempts = 0;
-          this.updateStatus({ 
-            state: 'CONNECTED', 
+          this.updateStatus({
+            state: 'CONNECTED',
             reconnectAttempts: 0,
-            wsReadyState: WebSocket.OPEN 
+            wsReadyState: WebSocket.OPEN,
           });
           this.startHeartbeat();
-          
+
           // Subscribe to family channel
           this.send({
             type: 'subscribe',
@@ -223,7 +249,10 @@ export class BackendBridge {
           clearTimeout(timeout);
           // WebSocket errors are expected when backend is not running - keep it quiet
           if (this.reconnectAttempts === 0) {
-            console.info('[BackendBridge] Backend unreachable at', this.config.wsUrl);
+            console.info(
+              '[BackendBridge] Backend unreachable at',
+              this.config.wsUrl
+            );
           }
           this.updateStatus({ error: 'WebSocket connection error' });
         };
@@ -231,22 +260,25 @@ export class BackendBridge {
         this.ws.onclose = (event) => {
           clearTimeout(timeout);
           this.stopHeartbeat();
-          
+
           if (!this.isDestroyed) {
             if (this.reconnectAttempts < this.config.maxReconnectAttempts) {
               this.scheduleReconnect();
             } else {
-              console.info('[BackendBridge] Max reconnect attempts reached. Entering MOCK_MODE.');
+              console.info(
+                '[BackendBridge] Max reconnect attempts reached. Entering MOCK_MODE.'
+              );
               this.enterMockMode();
               this.resolveConnect();
             }
           }
-          
+
           this.updateStatus({ wsReadyState: WebSocket.CLOSED });
         };
-
       } catch (err) {
-        console.info('[BackendBridge] Cannot create WebSocket. Entering MOCK_MODE.');
+        console.info(
+          '[BackendBridge] Cannot create WebSocket. Entering MOCK_MODE.'
+        );
         this.enterMockMode();
         this.resolveConnect();
       }
@@ -271,7 +303,12 @@ export class BackendBridge {
     this.reconnectAttempts = 0;
     this.isDestroyed = false; // Allow reconnection after manual disconnect
     this.resolveConnect(); // Resolve any pending connect promise
-    this.updateStatus({ state: 'MOCK_MODE', wsReadyState: WebSocket.CLOSED, latency: 0, error: undefined });
+    this.updateStatus({
+      state: 'MOCK_MODE',
+      wsReadyState: WebSocket.CLOSED,
+      latency: 0,
+      error: undefined,
+    });
   }
 
   /**
@@ -286,7 +323,10 @@ export class BackendBridge {
     }
     this.pendingAgentCalls.clear();
     this.disconnect();
-    this.updateStatus({ state: 'DISCONNECTED', wsReadyState: WebSocket.CLOSED });
+    this.updateStatus({
+      state: 'DISCONNECTED',
+      wsReadyState: WebSocket.CLOSED,
+    });
     this.listeners.clear();
   }
 
@@ -294,7 +334,7 @@ export class BackendBridge {
    * Dispatch a family signal through the WebSocket to the backend.
    * Falls back to local simulation in MOCK_MODE.
    */
-  async dispatchSignal(signal: FamilySignal): Promise<FamilySignal | null> {
+  dispatchSignal(signal: FamilySignal): FamilySignal | null {
     if (this.isConnected && this.ws?.readyState === WebSocket.OPEN) {
       const requestId = crypto.randomUUID();
       this.send({
@@ -304,7 +344,7 @@ export class BackendBridge {
       });
       return signal; // Backend will echo back processed signal
     }
-    
+
     // MOCK_MODE: return null to let the hook handle simulation
     return null;
   }
@@ -312,7 +352,10 @@ export class BackendBridge {
   /**
    * Update a family member's configuration through the backend.
    */
-  async updateMember(roleId: RoleId, updates: Record<string, any>): Promise<boolean> {
+  async updateMember(
+    roleId: RoleId,
+    updates: Record<string, any>
+  ): Promise<boolean> {
     if (this.isConnected && this.ws?.readyState === WebSocket.OPEN) {
       this.send({
         type: 'update_member',
@@ -324,14 +367,19 @@ export class BackendBridge {
 
     // Try REST fallback
     try {
-      const res = await fetch(`${this.config.apiUrl}/api/family/members/${roleId}`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...(this.config.authToken ? { 'Authorization': `Bearer ${this.config.authToken}` } : {}),
-        },
-        body: JSON.stringify(updates),
-      });
+      const res = await fetch(
+        `${this.config.apiUrl}/api/family/members/${roleId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(this.config.authToken
+              ? { Authorization: `Bearer ${this.config.authToken}` }
+              : {}),
+          },
+          body: JSON.stringify(updates),
+        }
+      );
       return res.ok;
     } catch {
       return false; // Backend unreachable, local update only
@@ -344,8 +392,8 @@ export class BackendBridge {
   async fetchMembers(): Promise<any[] | null> {
     try {
       const res = await fetch(`${this.config.apiUrl}/api/family/members`, {
-        headers: this.config.authToken 
-          ? { 'Authorization': `Bearer ${this.config.authToken}` } 
+        headers: this.config.authToken
+          ? { Authorization: `Bearer ${this.config.authToken}` }
           : {},
       });
       if (res.ok) {
@@ -361,10 +409,10 @@ export class BackendBridge {
   /**
    * Fetch system health from backend.
    */
-  async fetchHealth(): Promise<any | null> {
+  async fetchHealth(): Promise<Record<string, unknown> | null> {
     try {
-      const res = await fetch(`${this.config.apiUrl}/api/health`, { 
-        signal: AbortSignal.timeout(3000) 
+      const res = await fetch(`${this.config.apiUrl}/api/health`, {
+        signal: AbortSignal.timeout(3000),
       });
       if (res.ok) return await res.json();
     } catch {
@@ -377,7 +425,7 @@ export class BackendBridge {
    * Route an agent call through the backend (1:2 model ratio enforcement).
    * The backend Bun server proxies to the actual model API endpoint.
    * Returns the model response text, or null if backend unavailable.
-   * 
+   *
    * Protocol:
    *   Frontend → { type: 'agent_call', payload: { roleId, prompt, context, endpoint, model }, requestId }
    *   Backend  → { type: 'agent_response', payload: { content, roleId, model, latency }, requestId }
@@ -442,12 +490,15 @@ export class BackendBridge {
 
   // ---- Event System ----
 
-  on<K extends keyof EventMap>(event: K, callback: (data: EventMap[K]) => void): () => void {
+  on<K extends keyof EventMap>(
+    event: K,
+    callback: (data: EventMap[K]) => void
+  ): () => void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
     }
     this.listeners.get(event)!.add(callback as EventCallback);
-    
+
     // Return unsubscribe function
     return () => {
       this.listeners.get(event)?.delete(callback as EventCallback);
@@ -455,7 +506,7 @@ export class BackendBridge {
   }
 
   private emit<K extends keyof EventMap>(event: K, data: EventMap[K]): void {
-    this.listeners.get(event)?.forEach(cb => {
+    this.listeners.get(event)?.forEach((cb) => {
       try {
         cb(data);
       } catch (e) {
@@ -474,11 +525,12 @@ export class BackendBridge {
 
   private handleMessage(msg: BackendMessage): void {
     switch (msg.type) {
-      case 'pong':
+      case 'pong': {
         const latency = Date.now() - this.pingTimestamp;
         this.updateStatus({ latency, lastHeartbeat: Date.now() });
         this.emit('heartbeat', { latency, timestamp: Date.now() });
         break;
+      }
 
       case 'signal':
         this.emit('signal_received', msg.payload as FamilySignal);
@@ -536,19 +588,22 @@ export class BackendBridge {
   private scheduleReconnect(): void {
     this.reconnectAttempts++;
     const delay = Math.min(
-      this.config.reconnectInterval * Math.pow(this.config.backoffMultiplier, this.reconnectAttempts - 1),
+      this.config.reconnectInterval *
+        Math.pow(this.config.backoffMultiplier, this.reconnectAttempts - 1),
       this.config.maxReconnectDelay
     );
-    
-    this.updateStatus({ 
-      state: 'CONNECTING', 
-      reconnectAttempts: this.reconnectAttempts 
+
+    this.updateStatus({
+      state: 'CONNECTING',
+      reconnectAttempts: this.reconnectAttempts,
     });
-    
+
     if (this.reconnectAttempts <= 3) {
-      console.log(`[BackendBridge] Reconnecting in ${Math.round(delay)}ms (attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`);
+      console.log(
+        `[BackendBridge] Reconnecting in ${Math.round(delay)}ms (attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`
+      );
     }
-    
+
     this.reconnectTimer = setTimeout(() => {
       if (this.isDestroyed) return;
       // For reconnects, don't create a new promise - just try to connect directly
@@ -558,7 +613,7 @@ export class BackendBridge {
 
   private attemptReconnect(): void {
     if (this.isDestroyed) return;
-    
+
     try {
       this.ws = new WebSocket(this.config.wsUrl);
 
@@ -572,14 +627,14 @@ export class BackendBridge {
       this.ws.onopen = () => {
         clearTimeout(timeout);
         this.reconnectAttempts = 0;
-        this.updateStatus({ 
-          state: 'CONNECTED', 
+        this.updateStatus({
+          state: 'CONNECTED',
           reconnectAttempts: 0,
           wsReadyState: WebSocket.OPEN,
-          error: undefined
+          error: undefined,
         });
         this.startHeartbeat();
-        
+
         this.send({
           type: 'subscribe',
           payload: { channel: 'family_signals' },
@@ -607,17 +662,19 @@ export class BackendBridge {
       this.ws.onclose = () => {
         clearTimeout(timeout);
         this.stopHeartbeat();
-        
+
         if (!this.isDestroyed) {
           if (this.reconnectAttempts < this.config.maxReconnectAttempts) {
             this.scheduleReconnect();
           } else {
-            console.info('[BackendBridge] Max reconnect attempts. Entering MOCK_MODE.');
+            console.info(
+              '[BackendBridge] Max reconnect attempts. Entering MOCK_MODE.'
+            );
             this.enterMockMode();
             this.resolveConnect();
           }
         }
-        
+
         this.updateStatus({ wsReadyState: WebSocket.CLOSED });
       };
     } catch {
@@ -635,7 +692,9 @@ export class BackendBridge {
 
   private enterMockMode(): void {
     this.updateStatus({ state: 'MOCK_MODE', latency: 0 });
-    console.log('[BackendBridge] Running in MOCK_MODE. All operations will use local simulation.');
+    console.log(
+      '[BackendBridge] Running in MOCK_MODE. All operations will use local simulation.'
+    );
   }
 
   private updateStatus(partial: Partial<ConnectionStatus>): void {
@@ -649,7 +708,9 @@ export class BackendBridge {
 // ==========================================
 let _instance: BackendBridge | null = null;
 
-export function getBackendBridge(config?: Partial<BackendConfig>): BackendBridge {
+export function getBackendBridge(
+  config?: Partial<BackendConfig>
+): BackendBridge {
   if (!_instance) {
     _instance = new BackendBridge(config);
   }

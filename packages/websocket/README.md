@@ -34,10 +34,13 @@ pnpm add @yyc3/websocket
 import { useWebSocket } from '@yyc3/websocket';
 
 function MyComponent() {
-  const { state, send, subscribe, isConnected } = useWebSocket('ws://localhost:8080', {
-    autoReconnect: true,
-    maxReconnectAttempts: 3
-  });
+  const { state, send, subscribe, isConnected } = useWebSocket(
+    'ws://localhost:8080',
+    {
+      autoReconnect: true,
+      maxReconnectAttempts: 3,
+    }
+  );
 
   useEffect(() => {
     const unsubscribe = subscribe((message) => {
@@ -67,10 +70,10 @@ function MyComponent() {
 
 #### 参数 / Parameters
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| url | `string` | - | WebSocket 服务器 URL |
-| config | `Partial<WebSocketConfig>` | `{}` | 配置选项 |
+| 参数   | 类型                       | 默认值 | 说明                 |
+| ------ | -------------------------- | ------ | -------------------- |
+| url    | `string`                   | -      | WebSocket 服务器 URL |
+| config | `Partial<WebSocketConfig>` | `{}`   | 配置选项             |
 
 #### 返回值 / Returns
 
@@ -105,13 +108,13 @@ interface UseWebSocketReturn {
 
 ```typescript
 interface WebSocketConfig {
-  url: string;                              // WebSocket URL
-  reconnectInterval?: number;                // 重连间隔（毫秒）/ Reconnect interval (ms)
-  maxReconnectAttempts?: number;             // 最大重连次数 / Max reconnect attempts
-  heartbeatInterval?: number;                // 心跳间隔（毫秒）/ Heartbeat interval (ms)
-  heartbeatTimeout?: number;                  // 心跳超时（毫秒）/ Heartbeat timeout (ms)
-  autoReconnect?: boolean;                    // 自动重连 / Auto reconnect
-  protocols?: string | string[];             // 协议 / Protocols
+  url: string; // WebSocket URL
+  reconnectInterval?: number; // 重连间隔（毫秒）/ Reconnect interval (ms)
+  maxReconnectAttempts?: number; // 最大重连次数 / Max reconnect attempts
+  heartbeatInterval?: number; // 心跳间隔（毫秒）/ Heartbeat interval (ms)
+  heartbeatTimeout?: number; // 心跳超时（毫秒）/ Heartbeat timeout (ms)
+  autoReconnect?: boolean; // 自动重连 / Auto reconnect
+  protocols?: string | string[]; // 协议 / Protocols
 }
 ```
 
@@ -153,7 +156,7 @@ useEffect(() => {
       console.log('Terminal output:', message);
     },
     {
-      messageTypes: ['terminal_output']
+      messageTypes: ['terminal_output'],
     }
   );
   return unsubscribe;
@@ -171,7 +174,7 @@ useEffect(() => {
     {
       messageTypes: ['terminal_output', 'docker_log'],
       sources: ['server1', 'server2'],
-      priorities: ['high', 'normal']
+      priorities: ['high', 'normal'],
     }
   );
   return unsubscribe;
@@ -184,11 +187,11 @@ useEffect(() => {
 
 ```typescript
 type WebSocketState =
-  | 'connecting'     // 连接中 / Connecting
-  | 'connected'      // 已连接 / Connected
-  | 'disconnected'   // 已断开 / Disconnected
-  | 'reconnecting'   // 重连中 / Reconnecting
-  | 'failed';        // 连接失败 / Failed
+  | 'connecting' // 连接中 / Connecting
+  | 'connected' // 已连接 / Connected
+  | 'disconnected' // 已断开 / Disconnected
+  | 'reconnecting' // 重连中 / Reconnecting
+  | 'failed'; // 连接失败 / Failed
 ```
 
 ---
@@ -197,15 +200,15 @@ type WebSocketState =
 
 ```typescript
 type WebSocketMessageType =
-  | 'terminal_output'      // 终端输出 / Terminal output
-  | 'docker_log'           // Docker 日志 / Docker log
-  | 'git_operation'        // Git 操作 / Git operation
-  | 'system_diagnostic'    // 系统诊断 / System diagnostic
-  | 'workflow_execution'   // 工作流执行 / Workflow execution
-  | 'heartbeat'            // 心跳 / Heartbeat
-  | 'error'                // 错误 / Error
-  | 'ping'                 // Ping
-  | 'pong';                // Pong
+  | 'terminal_output' // 终端输出 / Terminal output
+  | 'docker_log' // Docker 日志 / Docker log
+  | 'git_operation' // Git 操作 / Git operation
+  | 'system_diagnostic' // 系统诊断 / System diagnostic
+  | 'workflow_execution' // 工作流执行 / Workflow execution
+  | 'heartbeat' // 心跳 / Heartbeat
+  | 'error' // 错误 / Error
+  | 'ping' // Ping
+  | 'pong'; // Pong
 ```
 
 ---
@@ -218,11 +221,11 @@ type WebSocketMessageType =
 const DEFAULT_FALLBACK: FallbackStrategyConfig = {
   enabled: true,
   mode: 'polling',
-  pollingInterval: 5000,        // 5 秒
+  pollingInterval: 5000, // 5 秒
   maxPollingFailures: 3,
   trigger: {
-    connectionFailures: 3,      // 3 次连接失败后降级
-    timeout: 10000,            // 10 秒超时
+    connectionFailures: 3, // 3 次连接失败后降级
+    timeout: 10000, // 10 秒超时
   },
 };
 ```
@@ -233,13 +236,13 @@ const DEFAULT_FALLBACK: FallbackStrategyConfig = {
 
 ```typescript
 interface WebSocketStatistics {
-  messagesSent: number;       // 发送消息数 / Messages sent
-  messagesReceived: number;    // 接收消息数 / Messages received
-  bytesSent: number;           // 发送字节数 / Bytes sent
-  bytesReceived: number;       // 接收字节数 / Bytes received
-  errorCount: number;          // 错误次数 / Error count
-  averageLatency: number;      // 平均延迟（毫秒）/ Average latency (ms)
-  lastActivityAt: Date;       // 最后活动时间 / Last activity time
+  messagesSent: number; // 发送消息数 / Messages sent
+  messagesReceived: number; // 接收消息数 / Messages received
+  bytesSent: number; // 发送字节数 / Bytes sent
+  bytesReceived: number; // 接收字节数 / Bytes received
+  errorCount: number; // 错误次数 / Error count
+  averageLatency: number; // 平均延迟（毫秒）/ Average latency (ms)
+  lastActivityAt: Date; // 最后活动时间 / Last activity time
 }
 ```
 
@@ -290,6 +293,7 @@ return (
 ### 连接失败 / Connection Failed
 
 1. 检查 WebSocket 服务器是否运行
+
    ```bash
    # 检查服务器状态 / Check server status
    curl -i -N \
@@ -309,9 +313,9 @@ return (
 确保 `autoReconnect` 设置为 `true`：
 
 ```tsx
-const { } = useWebSocket(url, {
-  autoReconnect: true,  // ✅ 必须启用 / Must be enabled
-  maxReconnectAttempts: 5
+const {} = useWebSocket(url, {
+  autoReconnect: true, // ✅ 必须启用 / Must be enabled
+  maxReconnectAttempts: 5,
 });
 ```
 
@@ -325,9 +329,9 @@ MIT License
 
 <div align="center">
 
-> 「***YanYuCloudCube***」
-> 「***<admin@0379.email>***」
-> 「***Words Initiate Quadrants, Language Serves as Core for Future***」
-> 「***All things converge in cloud pivot; Deep stacks ignite a new era of intelligence***」
+> 「**_YanYuCloudCube_**」
+> 「**_<admin@0379.email>_**」
+> 「**_Words Initiate Quadrants, Language Serves as Core for Future_**」
+> 「**_All things converge in cloud pivot; Deep stacks ignite a new era of intelligence_**」
 
 </div>

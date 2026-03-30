@@ -37,13 +37,13 @@ export interface StreamChunk {
 
 /**
  * 创建 AI 流式解析器 / Create AI stream parser
- * 
+ *
  * @returns {(response: Response) => AsyncGenerator<StreamChunk>} 流式解析器 / Stream parser
- * 
+ *
  * @example
  * ```ts
  * const parseStream = createAIStreamParser();
- * 
+ *
  * for await (const chunk of parseStream(response)) {
  *   console.log(chunk.content);
  *   if (chunk.done) break;
@@ -62,7 +62,7 @@ export function createAIStreamParser() {
 
     while (true) {
       const { done, value } = await reader.read();
-      
+
       if (done) {
         yield { content: '', done: true };
         break;
@@ -80,7 +80,7 @@ export function createAIStreamParser() {
             yield { content: '', done: true };
             return;
           }
-          
+
           try {
             const data = JSON.parse(dataStr);
             const content = data.choices?.[0]?.delta?.content || '';
