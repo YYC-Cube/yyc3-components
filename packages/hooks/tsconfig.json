@@ -15,12 +15,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "./dist",
-    "composite": true
+    "outDir": "./dist"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "__tests__"],
-  "references": [
-    { "path": "../types" }
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "__tests__"]
 }

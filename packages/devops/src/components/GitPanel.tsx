@@ -29,7 +29,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { useGit } from '../hooks/useGit';
-import type { GitCommitOptions, GitCheckoutOptions } from '../types/git';
+import type { GitFileChange, GitCommitOptions } from '../types/git';
 
 /**
  * Git 面板组件
@@ -56,7 +56,7 @@ export function GitPanel(): JSX.Element {
     push,
     pull,
     checkout,
-  } = useGit(true, 10000);
+  } = useGit();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'branches' | 'commits' | 'changes'>('overview');
   const [commitMessage, setCommitMessage] = useState('');
@@ -91,11 +91,7 @@ export function GitPanel(): JSX.Element {
    * 处理分支切换 / Handle branch checkout
    */
   const handleBranchCheckout = async (branchName: string): Promise<void> => {
-    const options: GitCheckoutOptions = {
-      branch: branchName,
-    };
-
-    await checkout(options);
+    await checkout(branchName);
   };
 
   /**
@@ -445,7 +441,7 @@ export function GitPanel(): JSX.Element {
 
                       <div className="flex items-center justify-between text-xs text-green-500/70">
                         <span>{commit.author} &lt;{commit.authorEmail}&gt;</span>
-                        {commit.branches.length > 0 && (
+                        {commit.branches && commit.branches.length > 0 && (
                           <div className="flex items-center gap-2">
                             <GitBranch className="w-3 h-3" />
                             <span>{commit.branches.join(', ')}</span>
@@ -474,7 +470,7 @@ export function GitPanel(): JSX.Element {
                         STAGED CHANGES ({stagedFiles.length}) / 已暂存变更
                       </h3>
                       <div className="space-y-2">
-                        {stagedFiles.map((file) => (
+                        {stagedFiles.map((file: GitFileChange) => (
                           <div
                             key={file.path}
                             className="p-3 bg-green-500/10 border border-green-500/30 rounded"
@@ -509,7 +505,7 @@ export function GitPanel(): JSX.Element {
                         UNSTAGED CHANGES ({unstagedFiles.length}) / 未暂存变更
                       </h3>
                       <div className="space-y-2">
-                        {unstagedFiles.map((file) => (
+                        {unstagedFiles.map((file: GitFileChange) => (
                           <div
                             key={file.path}
                             className="p-3 bg-green-500/5 border border-green-500/30 rounded hover:bg-green-500/10 transition-colors"

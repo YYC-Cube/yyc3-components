@@ -99,7 +99,7 @@ export function useChatPersistence(channelId: string, initialChats: Chat[] = [])
 
   // Wrapper
   const setChatsWrapper = useCallback((value: Chat[] | ((val: Chat[]) => Chat[])) => {
-    setChats(prev => {
+    setChats((prev: Chat[]) => {
       const newValue = typeof value === 'function' ? value(prev) : value;
       saveChats(newValue);
       return newValue;

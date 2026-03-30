@@ -11,21 +11,21 @@ export type SignalType =
   | 'error'
   | 'status';
 
-export interface FamilySignal {
+export interface FamilySignal<T = unknown> {
   id: string;
   type: SignalType;
   from: string;
   to?: string;
-  payload: any;
+  payload: T;
   timestamp: Date;
   requiresAck?: boolean;
 }
 
-export interface SignalResponse {
+export interface SignalResponse<T = unknown> {
   id: string;
   signalId: string;
   success: boolean;
-  data?: any;
+  data?: T;
   error?: string;
   timestamp: Date;
 }

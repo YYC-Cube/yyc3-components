@@ -94,7 +94,7 @@ export function useChannelManager(): UseChannelManagerReturn {
     // Clean up channel data
     localStorage.removeItem(`yyc3_chat_history_${id}`);
     
-    const newChannels = channels.filter(c => c.id !== id);
+    const newChannels = channels.filter((c: Channel) => c.id !== id);
     saveChannels(newChannels);
     
     if (activeChannelId === id) {
@@ -103,7 +103,7 @@ export function useChannelManager(): UseChannelManagerReturn {
   }, [channels, activeChannelId, saveChannels]);
 
   const updateChannelName = useCallback((id: string, name: string) => {
-    const newChannels = channels.map(c => 
+    const newChannels = channels.map((c: Channel) => 
       c.id === id ? { ...c, name } : c
     );
     saveChannels(newChannels);

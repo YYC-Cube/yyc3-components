@@ -192,7 +192,7 @@ export function useAI(): UseAIReturn {
             }
           }
         }
-      } catch (networkError: any) {
+      } catch (networkError: unknown) {
         // 网络失败时的模拟响应 / Simulated response on network failure
         const fallbackMessage = "Local inference node unreachable. Using simulated response.\n\n" + 
           `Your message has been processed. In production, this would be the actual AI response from ${currentConfig.model}.`;
@@ -204,8 +204,9 @@ export function useAI(): UseAIReturn {
         }
       }
 
-    } catch (error: any) {
-      onChunk(`\n[SYSTEM_ERROR]: ${error.message || 'Unknown error'}\n`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      onChunk(`\n[SYSTEM_ERROR]: ${errorMessage}\n`);
     } finally {
       setIsStreaming(false);
     }

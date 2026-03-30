@@ -35,18 +35,24 @@ export { dockerService } from './services/DockerService';
 // Types
 export type {
   DockerContainer,
-  DockerContainerState,
   DockerImage,
   DockerNetwork,
   DockerVolume,
   DockerLogEntry,
   DockerMetrics,
   ContainerCreateConfig,
-  ContainerUpdateConfig,
   ContainerOperationResult,
   ContainerOperationType,
-  UseDockerReturn,
+  ContainerStatus,
+  ContainerHealthStatus,
+  ContainerPort,
+  ContainerMount,
+  ContainerStats,
+  DockerNetworkDriver,
 } from './types/docker';
+
+// Hook Types
+export type { UseDockerReturn } from './hooks/useDocker';
 
 // Components
 export { ContainerManager } from './components/ContainerManager';

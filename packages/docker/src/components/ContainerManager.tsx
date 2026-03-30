@@ -169,7 +169,7 @@ export function ContainerManager(): JSX.Element {
       {/* 标签页 / Tabs */}
       <Tabs
         value={selectedTab}
-        onValueChange={(v) => setSelectedTab(v as typeof selectedTab)}
+        onValueChange={(v: string) => setSelectedTab(v as typeof selectedTab)}
         className="flex-1 flex flex-col"
       >
         <TabsList className="border-b border-green-500/30 bg-transparent rounded-none w-full justify-start">

@@ -9,6 +9,8 @@ export type ErrorCategory = 'network' | 'parse' | 'auth' | 'runtime' | 'validati
 
 export type ErrorSeverity = 'info' | 'warning' | 'error' | 'critical';
 
+export type ErrorBoundaryLevel = 'page' | 'module' | 'component';
+
 export interface ErrorStats {
   total: number;
   byCategory: Record<ErrorCategory, number>;

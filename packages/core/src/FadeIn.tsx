@@ -23,6 +23,8 @@ export interface FadeInProps extends BaseComponentProps, AnimationOptions {
   duration?: number;
   /** 点击事件 */
   onClick?: (e: React.MouseEvent) => void;
+  /** 自定义样式 */
+  style?: React.CSSProperties;
 }
 
 export function FadeIn({

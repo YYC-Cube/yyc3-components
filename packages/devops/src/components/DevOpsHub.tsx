@@ -123,7 +123,7 @@ export function DevOpsHub(): JSX.Element {
       <div className="flex-1 overflow-hidden">
         <Tabs
           value={activeTab}
-          onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+          onValueChange={(v: string) => setActiveTab(v as typeof activeTab)}
           className="h-full flex flex-col"
         >
           <TabsList className="border-b border-green-500/30 bg-black rounded-none w-full justify-start p-0">

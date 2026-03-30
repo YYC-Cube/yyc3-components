@@ -39,27 +39,28 @@ export type {
   MCPServer,
   MCPToolResult,
   MCPTool,
-  MCPToolParameter,
+  MCPToolParam,
+  MCPServerStatus,
+  MCPTransport,
   Workflow,
   WorkflowStep,
-  WorkflowExecutionResult,
+  WorkflowExecutionStatus,
   WorkflowCreateInput,
   WorkflowUpdateInput,
   InfraService,
-  InfraServiceStatus,
+  ServiceHealthStatus,
   DiagnosticIssue,
-  DiagnosticSeverity,
-  DiagnosticIssueStatus,
+  IssueSeverity,
   OpsLogEntry,
-  OpsLogLevel,
   DevOpsMetrics,
-  DevOpsConfig,
   WSConnectionStatus,
-  UseDevOpsReturn,
+  WorkflowTriggerType,
+  WorkflowStepType,
+  StepExecutionStatus,
 } from './types/devops';
 
 // Components
-export { default as DevOpsHub } from './components/DevOpsHub';
-export { default as GitPanel } from './components/GitPanel';
-export { default as SystemMonitor } from './components/SystemMonitor';
-export { default as WebSocketStatus } from './components/WebSocketStatus';
+export { DevOpsHub } from './components/DevOpsHub';
+export { GitPanel } from './components/GitPanel';
+export { SystemMonitor } from './components/SystemMonitor';
+export { WebSocketStatus } from './components/WebSocketStatus';
