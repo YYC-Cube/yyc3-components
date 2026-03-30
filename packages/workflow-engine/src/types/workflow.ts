@@ -1,4 +1,6 @@
-export type { WorkflowStep, WorkflowStatus, StepStatus, WorkflowDefinition, WorkflowInstance } from '../services/workflow-engine';
+import type { WorkflowDefinition, WorkflowStep, WorkflowStatus, StepStatus, WorkflowInstance } from '../services/workflow-engine';
+
+export type { WorkflowStep, WorkflowStatus, StepStatus, WorkflowDefinition, WorkflowInstance };
 
 export type Workflow = WorkflowDefinition;
 
