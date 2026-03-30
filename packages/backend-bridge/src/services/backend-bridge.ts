@@ -43,7 +43,7 @@ export interface BackendConfig {
  */
 function buildDefaultConfig(): BackendConfig {
   const snapshot = readConfigSnapshot();
-  const net = snapshot?.networkConfig;
+  const net = snapshot?.network;
 
   return {
     wsUrl: getWsBaseUrl(),

@@ -282,8 +282,10 @@ class GitServiceClass {
       throw new Error('NO_REPOSITORY / 未打开仓库');
     }
 
+    const startTime = Date.now();
     try {
       const result = await gitRepository.commit(path, options);
+      const duration = Date.now() - startTime;
       
       if (result.success) {
         await this.refresh();
@@ -295,7 +297,14 @@ class GitServiceClass {
         });
       }
 
-      return result;
+      return {
+        operation: 'commit',
+        success: result.success,
+        output: result.hash ? `Commit ${result.hash}` : '',
+        error: result.error,
+        timestamp: new Date(),
+        duration,
+      };
     } catch (error) {
       this.notifyObservers({
         type: 'error',
@@ -315,8 +324,10 @@ class GitServiceClass {
       throw new Error('NO_REPOSITORY / 未打开仓库');
     }
 
+    const startTime = Date.now();
     try {
       const result = await gitRepository.push(path, options);
+      const duration = Date.now() - startTime;
       
       if (result.success) {
         await this.refresh();
@@ -328,7 +339,14 @@ class GitServiceClass {
         });
       }
 
-      return result;
+      return {
+        operation: 'push',
+        success: result.success,
+        output: 'Push completed',
+        error: result.error,
+        timestamp: new Date(),
+        duration,
+      };
     } catch (error) {
       this.notifyObservers({
         type: 'error',
@@ -348,8 +366,10 @@ class GitServiceClass {
       throw new Error('NO_REPOSITORY / 未打开仓库');
     }
 
+    const startTime = Date.now();
     try {
       const result = await gitRepository.pull(path, options);
+      const duration = Date.now() - startTime;
       
       if (result.success) {
         await this.refresh();
@@ -361,7 +381,14 @@ class GitServiceClass {
         });
       }
 
-      return result;
+      return {
+        operation: 'pull',
+        success: result.success,
+        output: 'Pull completed',
+        error: result.error,
+        timestamp: new Date(),
+        duration,
+      };
     } catch (error) {
       this.notifyObservers({
         type: 'error',
@@ -381,8 +408,10 @@ class GitServiceClass {
       throw new Error('NO_REPOSITORY / 未打开仓库');
     }
 
+    const startTime = Date.now();
     try {
       const result = await gitRepository.checkout(path, options);
+      const duration = Date.now() - startTime;
       
       if (result.success) {
         await this.refresh();
@@ -394,7 +423,14 @@ class GitServiceClass {
         });
       }
 
-      return result;
+      return {
+        operation: 'checkout',
+        success: result.success,
+        output: `Checked out ${options.branch}`,
+        error: result.error,
+        timestamp: new Date(),
+        duration,
+      };
     } catch (error) {
       this.notifyObservers({
         type: 'error',
@@ -414,8 +450,10 @@ class GitServiceClass {
       throw new Error('NO_REPOSITORY / 未打开仓库');
     }
 
+    const startTime = Date.now();
     try {
-      const result = await gitRepository.merge(path, options);
+      const result = await gitRepository.merge(path, { branch: options.sourceBranch, strategy: options.strategy });
+      const duration = Date.now() - startTime;
       
       if (result.success) {
         await this.refresh();
@@ -427,7 +465,14 @@ class GitServiceClass {
         });
       }
 
-      return result;
+      return {
+        operation: 'merge',
+        success: result.success,
+        output: result.conflicts ? `Merge with conflicts: ${result.conflicts.join(', ')}` : 'Merge completed',
+        error: result.error,
+        timestamp: new Date(),
+        duration,
+      };
     } catch (error) {
       this.notifyObservers({
         type: 'error',
