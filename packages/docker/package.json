@@ -1,0 +1,60 @@
+{
+  "name": "@yyc3/docker",
+  "version": "1.0.0",
+  "description": "YYC3 Docker Management - Complete container, image, network, and volume management",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "yyc3",
+    "docker",
+    "containers",
+    "images",
+    "devops",
+    "react",
+    "typescript"
+  ],
+  "author": "YanYuCloudCube Team",
+  "license": "MIT",
+  "homepage": "https://github.com/YYC-Cube/yyc3-reusable-components#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YYC-Cube/yyc3-reusable-components.git",
+    "directory": "packages/docker"
+  },
+  "bugs": {
+    "url": "https://github.com/YYC-Cube/yyc3-reusable-components/issues"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "lucide-react": "^0.378.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^8.57.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}

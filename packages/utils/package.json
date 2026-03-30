@@ -1,0 +1,41 @@
+{
+  "name": "@yyc3/utils",
+  "version": "1.0.0",
+  "description": "YYC3工具函数库 - 通用JavaScript/TypeScript工具函数",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "keywords": [
+    "utils",
+    "tools",
+    "helpers",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "YYC3 Team <admin@0379.email>"
+}

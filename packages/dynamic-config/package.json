@@ -1,0 +1,44 @@
+{
+  "name": "@yyc3/dynamic-config",
+  "version": "1.0.0",
+  "description": "YYC3 Dynamic Config - Runtime configuration management with hot reload",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "yyc3",
+    "config",
+    "dynamic",
+    "settings",
+    "hot-reload"
+  ],
+  "author": "YanYuCloudCube Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18.0.0"
+  },
+  "dependencies": {
+    "zod": "^3.23.8",
+    "clsx": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  }
+}

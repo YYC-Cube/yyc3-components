@@ -1,0 +1,45 @@
+{
+  "name": "@yyc3/filesystem",
+  "version": "1.0.0",
+  "description": "YYC3 File System Manager - Complete file browsing, operations, and Git integration",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "yyc3",
+    "filesystem",
+    "files",
+    "git",
+    "browser"
+  ],
+  "author": "YanYuCloudCube Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.378.0",
+    "sonner": "^1.5.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  }
+}

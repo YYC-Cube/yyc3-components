@@ -1,0 +1,43 @@
+{
+  "name": "@yyc3/ai",
+  "version": "1.0.0",
+  "description": "YYC3 AI React Hooks - AI对话功能，支持流式响应",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "ai",
+    "chat",
+    "llm",
+    "openai",
+    "anthropic",
+    "ollama",
+    "streaming",
+    "react",
+    "hooks"
+  ],
+  "author": "YYC³ Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "@yyc3/crdt",
+  "version": "1.0.0",
+  "description": "YYC3 CRDT - Conflict-free Replicated Data Types for distributed systems",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "yyc3",
+    "crdt",
+    "distributed",
+    "data-structure",
+    "sync"
+  ],
+  "author": "YanYuCloudCube Team",
+  "license": "MIT",
+  "dependencies": {
+    "clsx": "^2.1.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}

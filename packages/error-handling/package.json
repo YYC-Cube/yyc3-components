@@ -1,0 +1,42 @@
+{
+  "name": "@yyc3/error-handling",
+  "version": "1.0.0",
+  "description": "YYC3可复用组件库 - 错误处理系统",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@yyc3/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "yyc3",
+    "error-handling",
+    "error-boundary",
+    "logging"
+  ],
+  "author": "YYC3 Team",
+  "license": "MIT"
+}

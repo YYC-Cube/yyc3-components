@@ -1,0 +1,39 @@
+{
+  "name": "@yyc3/storage",
+  "version": "1.0.0",
+  "description": "YYC3可复用组件库 - 存储系统",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "yyc3",
+    "storage",
+    "indexeddb",
+    "localstorage"
+  ],
+  "author": "YYC3 Team",
+  "license": "MIT"
+}

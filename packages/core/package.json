@@ -1,0 +1,49 @@
+{
+  "name": "@yyc3/core",
+  "version": "1.0.0",
+  "description": "YYC3可复用组件库 - 核心组件包",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@yyc3/types": "workspace:*",
+    "@yyc3/ui": "workspace:*",
+    "lucide-react": "^1.7.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "yyc3",
+    "react",
+    "components",
+    "core"
+  ],
+  "author": "YYC3 Team",
+  "license": "MIT"
+}
