@@ -170,7 +170,7 @@ export function useAI(): UseAIReturn {
 
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done) {break;}
 
           const chunk = decoder.decode(value, { stream: true });
           const lines = (buffer + chunk).split('\n');
@@ -180,12 +180,12 @@ export function useAI(): UseAIReturn {
             const trimmed = line.trim();
             if (trimmed.startsWith('data: ')) {
               const dataStr = trimmed.slice(6);
-              if (dataStr === '[DONE]') continue;
+              if (dataStr === '[DONE]') {continue;}
               
               try {
                 const data = JSON.parse(dataStr);
                 const content = data.choices?.[0]?.delta?.content || '';
-                if (content) onChunk(content);
+                if (content) {onChunk(content);}
               } catch (e) {
                 // 流式块解析异常忽略 / Ignore stream chunk parse error
               }

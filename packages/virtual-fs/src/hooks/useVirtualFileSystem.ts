@@ -292,7 +292,7 @@ function bundleFiles(files: Map<string, VirtualFile>, entryPoint: string): Bundl
   
   // 先处理非入口文件
   files.forEach((file, path) => {
-    if (path === entryPoint) return
+    if (path === entryPoint) {return}
     if (path.endsWith('.ts') || path.endsWith('.tsx') || path.endsWith('.js') || path.endsWith('.jsx')) {
       try {
         const stripped = stripTypeScript(file.content)
@@ -478,7 +478,7 @@ export function useVirtualFileSystem(
     setState(prev => {
       const newFiles = new Map(prev.files)
       const file = newFiles.get(oldPath)
-      if (!file) return prev
+      if (!file) {return prev}
       newFiles.delete(oldPath)
       newFiles.set(newPath, {
         ...file,
@@ -534,7 +534,7 @@ export function useVirtualFileSystem(
 
   const reset = useCallback(() => {
     setState({ files: initFiles(), entryPoint: defaultEntry })
-  }, []) // eslint-disable-line
+  }, [])  
 
   return {
     files,

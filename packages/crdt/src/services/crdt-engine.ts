@@ -214,7 +214,7 @@ export class CRDTEngine {
 
   private handleJoin(ws: any, msg: CollabInboundMessage): CollabOutboundMessage[] {
     const { sessionId, documentId, userId, userName } = msg
-    if (!sessionId || !documentId || !userId) return []
+    if (!sessionId || !documentId || !userId) {return []}
 
     const responses: CollabOutboundMessage[] = []
 
@@ -284,10 +284,10 @@ export class CRDTEngine {
 
   private handleLeave(msg: CollabInboundMessage): CollabOutboundMessage[] {
     const { sessionId, userId } = msg
-    if (!sessionId || !userId) return []
+    if (!sessionId || !userId) {return []}
 
     const session = this.sessions.get(sessionId)
-    if (!session) return []
+    if (!session) {return []}
 
     const participant = session.participants.get(userId)
     if (participant) {
@@ -305,10 +305,10 @@ export class CRDTEngine {
 
   private handleOperation(ws: any, msg: CollabInboundMessage): CollabOutboundMessage[] {
     const { sessionId, operation, baseVersion } = msg
-    if (!sessionId || !operation) return []
+    if (!sessionId || !operation) {return []}
 
     const session = this.sessions.get(sessionId)
-    if (!session) return []
+    if (!session) {return []}
 
     const doc = this.getDocument(session.documentId)
     const responses: CollabOutboundMessage[] = []
@@ -377,10 +377,10 @@ export class CRDTEngine {
 
   private handlePresence(ws: any, msg: CollabInboundMessage): CollabOutboundMessage[] {
     const { sessionId, participant: participantData } = msg
-    if (!sessionId || !participantData) return []
+    if (!sessionId || !participantData) {return []}
 
     const session = this.sessions.get(sessionId)
-    if (!session) return []
+    if (!session) {return []}
 
     const existing = session.participants.get(participantData.userId)
     if (existing) {
@@ -400,10 +400,10 @@ export class CRDTEngine {
 
   private handleSyncRequest(ws: any, msg: CollabInboundMessage): CollabOutboundMessage[] {
     const { documentId, userId } = msg
-    if (!documentId) return []
+    if (!documentId) {return []}
 
     const doc = this.documents.get(documentId)
-    if (!doc) return []
+    if (!doc) {return []}
 
     // 找到该文档的会话
     let targetSession: CollabSession | null = null
@@ -432,10 +432,10 @@ export class CRDTEngine {
 
   private handleVersionCheck(ws: any, msg: CollabInboundMessage): CollabOutboundMessage[] {
     const { documentId, localVersion } = msg
-    if (!documentId) return []
+    if (!documentId) {return []}
 
     const doc = this.documents.get(documentId)
-    if (!doc) return []
+    if (!doc) {return []}
 
     // 如果客户端版本落后，发送差量操作
     if (localVersion !== undefined && localVersion < doc.version) {
@@ -481,7 +481,7 @@ export class CRDTEngine {
       onlineParticipants: Array.from(this.sessions.values())
         .reduce((sum, s) => {
           let online = 0
-          s.participants.forEach(p => { if (p.isOnline) online++ })
+          s.participants.forEach(p => { if (p.isOnline) {online++} })
           return sum + online
         }, 0),
     }

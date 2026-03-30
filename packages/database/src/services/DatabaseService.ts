@@ -112,13 +112,13 @@ function generateConnectionId(): string {
  */
 function detectSQLType(sql: string): string {
   const normalized = sql.trim().toUpperCase();
-  if (normalized.startsWith("SELECT")) return "SELECT";
-  if (normalized.startsWith("INSERT")) return "INSERT";
-  if (normalized.startsWith("UPDATE")) return "UPDATE";
-  if (normalized.startsWith("DELETE")) return "DELETE";
-  if (normalized.startsWith("CREATE")) return "CREATE";
-  if (normalized.startsWith("ALTER")) return "ALTER";
-  if (normalized.startsWith("DROP")) return "DROP";
+  if (normalized.startsWith("SELECT")) {return "SELECT";}
+  if (normalized.startsWith("INSERT")) {return "INSERT";}
+  if (normalized.startsWith("UPDATE")) {return "UPDATE";}
+  if (normalized.startsWith("DELETE")) {return "DELETE";}
+  if (normalized.startsWith("CREATE")) {return "CREATE";}
+  if (normalized.startsWith("ALTER")) {return "ALTER";}
+  if (normalized.startsWith("DROP")) {return "DROP";}
   return "UNKNOWN";
 }
 
@@ -154,7 +154,7 @@ class DatabaseService {
    */
   private loadConnections(): Map<string, DatabaseConnection> {
     const stored = localStorage.getItem(STORAGE_KEYS.CONNECTIONS);
-    if (!stored) return new Map();
+    if (!stored) {return new Map();}
 
     try {
       const data: DatabaseConnection[] = JSON.parse(stored);
@@ -203,7 +203,7 @@ class DatabaseService {
    * 获取当前活跃连接 / Get active connection
    */
   getActiveConnection(): DatabaseConnection | null {
-    if (!this.activeConnectionId) return null;
+    if (!this.activeConnectionId) {return null;}
     return this.connections.get(this.activeConnectionId) || null;
   }
 
@@ -373,7 +373,7 @@ class DatabaseService {
    */
   getQueryHistory(connectionId?: string): SQLHistory[] {
     const stored = localStorage.getItem(STORAGE_KEYS.QUERY_HISTORY);
-    if (!stored) return [];
+    if (!stored) {return [];}
 
     try {
       const history: SQLHistory[] = JSON.parse(stored);

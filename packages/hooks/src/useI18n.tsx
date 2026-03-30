@@ -11,7 +11,26 @@
  */
 
 import React, { useState, useCallback, useMemo, createContext, useContext } from 'react';
-import type { Locale, LocaleInfo, I18nContextValue, I18nMessages } from '@yyc3/types';
+
+// Type definitions
+export type Locale = 'zh-CN' | 'en-US';
+
+export interface LocaleInfo {
+  code: string;
+  label: string;
+  nativeLabel: string;
+}
+
+export interface I18nContextValue {
+  locale: Locale;
+  setLocale: (locale: Locale) => void;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+  availableLocales: LocaleInfo[];
+}
+
+export interface I18nMessages {
+  [key: string]: string | I18nMessages;
+}
 
 // ============================================================
 // 工具函数

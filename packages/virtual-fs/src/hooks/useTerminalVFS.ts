@@ -72,7 +72,7 @@ function detectLanguage(filePath: string): string {
 // ==========================================
 
 function resolvePath(cwd: string, target: string): string {
-  if (target.startsWith('/')) return normalizePath(target)
+  if (target.startsWith('/')) {return normalizePath(target)}
   const parts = cwd.split('/').filter(Boolean)
   const segments = target.split('/').filter(Boolean)
   for (const seg of segments) {
@@ -86,8 +86,8 @@ function normalizePath(p: string): string {
   const parts = p.split('/').filter(Boolean)
   const result: string[] = []
   for (const part of parts) {
-    if (part === '..') result.pop()
-    else if (part !== '.') result.push(part)
+    if (part === '..') {result.pop()}
+    else if (part !== '.') {result.push(part)}
   }
   return '/' + result.join('/')
 }
@@ -149,14 +149,14 @@ function parseCommand(input: string): ParsedCommand {
       current += ch
     }
   }
-  if (current) tokens.push(current)
+  if (current) {tokens.push(current)}
 
   const name = tokens[0] || ''
   const flags: Record<string, boolean> = {}
   const args: string[] = []
   for (let i = 1; i < tokens.length; i++) {
     if (tokens[i].startsWith('-')) {
-      for (const ch of tokens[i].slice(1)) flags[ch] = true
+      for (const ch of tokens[i].slice(1)) {flags[ch] = true}
     } else {
       args.push(tokens[i])
     }
@@ -197,7 +197,7 @@ export function useTerminalVFS(vfs: UseVirtualFileSystemReturn): UseTerminalVFSR
 
   const execute = useCallback((command: string) => {
     const trimmed = command.trim()
-    if (!trimmed) return
+    if (!trimmed) {return}
 
     setHistory(prev => [...prev, trimmed])
     addLine('input', `$ ${trimmed}`)
@@ -258,7 +258,7 @@ export function useTerminalVFS(vfs: UseVirtualFileSystemReturn): UseTerminalVFSR
           if (content === null) {
             addLine('error', `cat: ${arg}: 文件不存在`)
           } else {
-            if (parsed.args.length > 1) addLine('info', `=== ${fullPath} ===`)
+            if (parsed.args.length > 1) {addLine('info', `=== ${fullPath} ===`)}
             if (content.length === 0) {
               addLine('info', '(空文件)')
             } else {
@@ -532,7 +532,7 @@ export function useTerminalVFS(vfs: UseVirtualFileSystemReturn): UseTerminalVFSR
           const regex = new RegExp(pattern, parsed.flags['i'] ? 'i' : '')
           searchFiles.forEach(filePath => {
             const content = vfs.readFile(filePath)
-            if (content === null) return
+            if (content === null) {return}
             content.split('\n').forEach((line, lineIdx) => {
               if (regex.test(line)) {
                 matchCount++
@@ -663,13 +663,13 @@ export function useTerminalVFS(vfs: UseVirtualFileSystemReturn): UseTerminalVFSR
             } else {
               // 安装特定包 → 更新 package.json
               const pkgJsonPath = '/package.json'
-              let pkgJson = vfs.readFile(pkgJsonPath) || '{"name":"project","version":"1.0.0","dependencies":{}}'
+              const pkgJson = vfs.readFile(pkgJsonPath) || '{"name":"project","version":"1.0.0","dependencies":{}}'
               try {
                 const pkg = JSON.parse(pkgJson)
-                if (!pkg.dependencies) pkg.dependencies = {}
+                if (!pkg.dependencies) {pkg.dependencies = {}}
                 const isDev = parsed.flags['D'] || parsed.flags['d']
                 const target = isDev ? 'devDependencies' : 'dependencies'
-                if (!pkg[target]) pkg[target] = {}
+                if (!pkg[target]) {pkg[target] = {}}
                 pkgNames.forEach(name => {
                   const version = `^1.0.0`
                   pkg[target][name] = version

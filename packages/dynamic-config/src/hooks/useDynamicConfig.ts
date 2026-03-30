@@ -68,7 +68,7 @@ const DEFAULT_UI_CONFIG: UIConfig = {
 const MIGRATIONS: Record<number, MigrationFn> = {
   // v1 → v2: 添加 computeNodes、extensions.author/category、endpoints.lastChecked
   2: (config: any) => {
-    if (!config.computeNodes) config.computeNodes = [];
+    if (!config.computeNodes) {config.computeNodes = [];}
     if (config.extensions) {
       config.extensions = config.extensions.map((ext: any) => ({ author: 'Unknown', category: 'runtime', ...ext }));
     }
@@ -448,17 +448,17 @@ export function DynamicConfigProvider({ children }: { children: React.ReactNode 
     return {
       add: (item: T) => mutate(prev => ({
         ...prev,
-        [section]: [...(prev[section] as T[]), item],
+        [section]: [...(prev[section] as unknown as T[]), item],
       })),
       update: (id: string, data: Partial<T>) => mutate(prev => ({
         ...prev,
-        [section]: (prev[section] as T[]).map(item =>
+        [section]: (prev[section] as unknown as T[]).map(item =>
           item.id === id ? { ...item, ...data } : item
         ),
       })),
       delete: (id: string) => mutate(prev => ({
         ...prev,
-        [section]: (prev[section] as T[]).filter(item => item.id !== id),
+        [section]: (prev[section] as unknown as T[]).filter(item => item.id !== id),
       })),
     };
   }

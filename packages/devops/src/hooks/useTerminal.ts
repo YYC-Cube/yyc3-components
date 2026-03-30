@@ -1,15 +1,2 @@
-export function useTerminal() {
-  return {
-    terminals: [],
-    activeTerminal: null,
-    loading: false,
-    error: null,
-    metrics: {
-      activeSessions: 0,
-      totalCommands: 0,
-    },
-    createTerminal: async () => {},
-    closeTerminal: async (_id: string) => {},
-    sendCommand: async (_id: string, _command: string) => {},
-  };
-}
+// Use real terminal hook from @yyc3/terminal
+export { useTerminal } from '@yyc3/terminal';

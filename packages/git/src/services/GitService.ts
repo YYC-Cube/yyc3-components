@@ -134,7 +134,7 @@ class GitServiceClass {
    */
   async refresh(): Promise<void> {
     const path = gitRepository.getCurrentPath();
-    if (!path) return;
+    if (!path) {return;}
 
     try {
       await this.loadRepositoryData(path);

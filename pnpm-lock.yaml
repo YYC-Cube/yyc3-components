@@ -277,6 +277,15 @@ importers:
 
   packages/devops:
     dependencies:
+      '@yyc3/docker':
+        specifier: workspace:*
+        version: link:../docker
+      '@yyc3/git':
+        specifier: workspace:*
+        version: link:../git
+      '@yyc3/terminal':
+        specifier: workspace:*
+        version: link:../terminal
       clsx:
         specifier: ^2.1.1
         version: 2.1.1

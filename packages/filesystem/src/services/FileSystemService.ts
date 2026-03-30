@@ -104,7 +104,7 @@ function isDangerousFile(extension: string): boolean {
  * 格式化文件大小 / Format file size
  */
 function formatFileSize(bytes: number): string {
-  if (bytes === 0) return "0 B";
+  if (bytes === 0) {return "0 B";}
   const units = ["B", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${units[i]}`;
@@ -114,8 +114,8 @@ function formatFileSize(bytes: number): string {
  * 获取文件图标类型 / Get file icon type
  */
 function getFileIconType(node: FSNode): string {
-  if (node.type === "directory") return "folder";
-  if (node.type === "symlink") return "link";
+  if (node.type === "directory") {return "folder";}
+  if (node.type === "symlink") {return "link";}
   
   const ext = node.extension.toLowerCase();
   const iconMap: Record<string, string> = {
