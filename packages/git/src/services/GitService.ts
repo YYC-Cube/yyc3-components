@@ -76,7 +76,7 @@ class GitServiceClass {
    */
   async openRepository(path: string): Promise<GitRepository> {
     try {
-      const repo = await gitRepository.getRepositoryStatus(path);
+      const repo = await gitRepository.getRepositoryStatus(path) as any;
       this.currentRepository = repo;
       gitRepository.setCurrentPath(path);
 
@@ -115,12 +115,12 @@ class GitServiceClass {
         gitRepository.getConfig(path),
       ]);
 
-      this.branches = branches;
-      this.commits = commits;
-      this.fileChanges = fileChanges;
-      this.remotes = remotes;
-      this.tags = tags;
-      this.config = config;
+      this.branches = branches as any;
+      this.commits = commits as any;
+      this.fileChanges = fileChanges as any;
+      this.remotes = remotes as any;
+      this.tags = tags as any;
+      this.config = config as any;
 
       // 更新指标 / Update metrics
       this.updateMetrics();
@@ -138,7 +138,7 @@ class GitServiceClass {
 
     try {
       await this.loadRepositoryData(path);
-      const repo = await gitRepository.getRepositoryStatus(path);
+      const repo = await gitRepository.getRepositoryStatus(path) as any;
       this.currentRepository = repo;
 
       this.notifyObservers({

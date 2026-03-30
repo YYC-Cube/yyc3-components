@@ -2,16 +2,17 @@
   "name": "@yyc3/crdt",
   "version": "1.0.0",
   "description": "YYC3 CRDT - Conflict-free Replicated Data Types for distributed systems",
-  "main": "./dist/index.mjs",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js"
     }
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -36,5 +37,18 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
+  },
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/YYC-Cube/yyc3-components#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YYC-Cube/yyc3-components.git",
+    "directory": "packages/crdt"
+  },
+  "bugs": {
+    "url": "https://github.com/YYC-Cube/yyc3-components/issues"
   }
 }

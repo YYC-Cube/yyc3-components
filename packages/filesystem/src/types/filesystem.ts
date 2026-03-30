@@ -370,3 +370,19 @@ export const MIME_TYPE_MAP: Record<string, string> = {
   ".tar": "application/x-tar",
   ".gz": "application/gzip",
 };
+
+export interface UseFileSystemReturn {
+  nodes: FSNode[];
+  currentPath: string;
+  isLoading: boolean;
+  error: string | null;
+  refresh: () => Promise<void>;
+  navigate: (path: string) => void;
+  createFile: (input: FSCreateInput) => Promise<FSOperationResult>;
+  createDirectory: (input: FSCreateInput) => Promise<FSOperationResult>;
+  readFile: (path: string) => Promise<FSReadResult>;
+  writeFile: (input: FSWriteInput) => Promise<FSOperationResult>;
+  deleteNode: (input: FSDeleteInput) => Promise<FSOperationResult>;
+  renameNode: (input: FSRenameInput) => Promise<FSOperationResult>;
+  search: (input: FSSearchInput) => Promise<FSSearchResult[]>;
+}

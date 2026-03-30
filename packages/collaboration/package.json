@@ -2,16 +2,17 @@
   "name": "@yyc3/collaboration",
   "version": "1.0.0",
   "description": "YYC3 Collaboration - Real-time collaborative editing with CRDT and OT",
-  "main": "./dist/index.mjs",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js"
     }
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -65,5 +66,9 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
+  },
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
   }
 }

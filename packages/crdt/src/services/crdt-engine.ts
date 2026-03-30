@@ -407,11 +407,12 @@ export class CRDTEngine {
 
     // 找到该文档的会话
     let targetSession: CollabSession | null = null
-    this.sessions.forEach(session => {
+    for (const session of this.sessions.values()) {
       if (session.documentId === documentId) {
         targetSession = session
+        break
       }
-    })
+    }
 
     return [{
       type: 'collab:sync',

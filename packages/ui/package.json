@@ -2,17 +2,18 @@
   "name": "@yyc3/ui",
   "version": "1.0.0",
   "description": "YYC3 UI Component Library - Complete shadcn/ui components with Tailwind CSS",
-  "main": "./dist/index.mjs",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js"
     },
     "./styles": "./dist/index.css"
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -97,5 +98,9 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
+  },
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -168,3 +168,90 @@ export interface FallbackStrategyConfig {
     timeout?: number;
   };
 }
+
+export interface TerminalOutputMessage extends WebSocketMessage<string> {
+  type: 'terminal_output';
+  data: string;
+  terminalId?: string;
+}
+
+export interface DockerLogMessage extends WebSocketMessage<Record<string, unknown>> {
+  type: 'docker_log';
+  data: {
+    containerId: string;
+    containerName?: string;
+    log: string;
+    timestamp: string;
+    stream?: 'stdout' | 'stderr';
+  };
+}
+
+export interface GitOperationMessage extends WebSocketMessage<Record<string, unknown>> {
+  type: 'git_operation';
+  data: {
+    repository: string;
+    operation: string;
+    status: 'pending' | 'success' | 'error';
+    progress?: number;
+    message?: string;
+  };
+}
+
+export interface SystemDiagnosticMessage extends WebSocketMessage<Record<string, unknown>> {
+  type: 'system_diagnostic';
+  data: {
+    cpu: number;
+    memory: number;
+    disk: number;
+    network?: {
+      bytesIn: number;
+      bytesOut: number;
+    };
+  };
+}
+
+export interface WorkflowExecutionMessage extends WebSocketMessage<Record<string, unknown>> {
+  type: 'workflow_execution';
+  data: {
+    workflowId: string;
+    stepId?: string;
+    status: 'running' | 'completed' | 'failed' | 'paused';
+    progress?: number;
+    result?: unknown;
+    error?: string;
+  };
+}
+
+export type WebSocketEvent =
+  | { type: 'open' }
+  | { type: 'close'; code: number; reason: string }
+  | { type: 'error'; error: Error }
+  | { type: 'message'; data: WebSocketMessage }
+  | { type: 'reconnect'; attempt: number }
+  | { type: 'state_change'; from: WebSocketState; to: WebSocketState };
+
+export interface LogStreamConfig {
+  source: string;
+  filter?: LogStreamFilter;
+  bufferSize?: number;
+  batchInterval?: number;
+}
+
+export interface LogStreamFilter {
+  levels?: ('info' | 'warn' | 'error' | 'debug')[];
+  sources?: string[];
+  keywords?: string[];
+  since?: Date;
+  until?: Date;
+}
+
+export interface LogStreamMessage {
+  id: string;
+  level: 'info' | 'warn' | 'error' | 'debug';
+  source: string;
+  message: string;
+  timestamp: Date;
+  metadata?: Record<string, unknown>;
+}
+
+export type WebSocketManagerState = WebSocketState;

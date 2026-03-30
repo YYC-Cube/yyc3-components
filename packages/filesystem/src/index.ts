@@ -50,4 +50,4 @@ export type {
 } from './types/filesystem';
 
 // Components
-export { default as FileManager } from './components/FileManagerSimple';
+export { FileManagerSimple as FileManager } from './components/FileManagerSimple';

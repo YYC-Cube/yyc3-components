@@ -8,7 +8,7 @@
 
 ## 📋 项目简介
 
-YYC3可复用组件库是从[AI Family](https://github.com/YYC-Cube/ai-family)项目中系统性提取的代码资产,包含高质量、生产就绪的React组件、工具函数、类型定义等,可直接用于新项目开发,大幅提升开发效率。
+YYC3可复用组件库:包含高质量、生产就绪的React组件、工具函数、类型定义等,可直接用于新项目开发,大幅提升开发效率。
 
 ### 项目特点
 
@@ -498,7 +498,6 @@ pnpm test
 
 ## 🙏 致谢
 
-感谢 [AI Family](https://github.com/YYC-Cube/ai-family) 项目提供的优秀代码资产
 
 感谢以下开源项目:
 
@@ -514,7 +513,6 @@ pnpm test
 - [GitHub](https://github.com/YYC-Cube/yyc3-reusable-components)
 - [NPM](https://www.npmjs.com/org/yyc3)
 - [文档](https://yyc3-cube.github.io/yyc3-reusable-components/)
-- [AI Family](https://github.com/YYC-Cube/ai-family)
 
 ---
 

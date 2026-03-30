@@ -12,7 +12,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -38,5 +39,14 @@
     "localization"
   ],
   "author": "YYC3 Team",
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://github.com/YYC-Cube/yyc3-components#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YYC-Cube/yyc3-components.git",
+    "directory": "packages/i18n"
+  },
+  "bugs": {
+    "url": "https://github.com/YYC-Cube/yyc3-components/issues"
+  }
 }

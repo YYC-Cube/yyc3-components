@@ -107,7 +107,9 @@ export class BroadcastChannelManager<T = unknown> {
   /**
    * 使用localStorage作为fallback
    */
-  private localStorageKey = `broadcast_${this.config.name}`;
+  private get localStorageKey(): string {
+    return `broadcast_${this.config.name}`;
+  }
   private storageListener: ((event: StorageEvent) => void) | null = null;
 
   private useLocalStorageFallback(): void {

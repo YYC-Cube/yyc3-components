@@ -1,8 +1,13 @@
 export const workflow = {
-  maxConcurrentSteps: 5,
-  defaultTimeout: 30000,
-  retryAttempts: 3,
+  enabled: true,
+  maxConcurrent: 5,
+  stepTimeout: 30000,
+  retryMax: 3,
   retryDelay: 1000,
   enableLogging: true,
   enableMetrics: true,
+  creation: {
+    requireApproval: true,
+    autoAdvance: true,
+  },
 };

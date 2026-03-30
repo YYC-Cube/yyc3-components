@@ -12,7 +12,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -34,7 +35,20 @@
     "react": ">=18.0.0"
   },
   "devDependencies": {
+    "@types/react": "^18.3.1",
     "tsup": "^8.0.0",
     "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/YYC-Cube/yyc3-components#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YYC-Cube/yyc3-components.git",
+    "directory": "packages/websocket"
+  },
+  "bugs": {
+    "url": "https://github.com/YYC-Cube/yyc3-components/issues"
   }
 }

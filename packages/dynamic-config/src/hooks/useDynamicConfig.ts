@@ -320,7 +320,7 @@ function createDefaultConfig(): DynamicConfig {
 // Context Type
 // ==========================================
 
-interface DynamicConfigContextType {
+export interface DynamicConfigContextType {
   config: DynamicConfig;
   
   // Provider CRUD

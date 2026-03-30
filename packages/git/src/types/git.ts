@@ -365,3 +365,25 @@ export interface GitMergeOptions {
   /** 合并消息 / Merge message */
   message?: string;
 }
+
+export type GitRepoInfo = GitRepository;
+
+export interface GitStatus {
+  branch: string;
+  ahead: number;
+  behind: number;
+  staged: GitFileChange[];
+  unstaged: GitFileChange[];
+  untracked: string[];
+  isClean: boolean;
+}
+
+export interface UseGitReturn {
+  repository: GitRepository | null;
+  branches: GitBranch[];
+  commits: GitCommit[];
+  status: GitStatus | null;
+  isLoading: boolean;
+  error: string | null;
+  refresh: () => Promise<void>;
+}
